@@ -1,12 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Users, ArrowLeft, Box, Settings2 } from "lucide-react";
-import { ASSESSMENT_MATRIX, PROFILES, STACKS } from "../data";
 
-export const MatrixLibrary = () => {
+interface MatrixLibraryProps {
+  matrix: any[];
+  profiles: any[];
+  stacks: Record<string, string>;
+}
+
+export const MatrixLibrary = ({
+  matrix,
+  profiles,
+  stacks,
+}: MatrixLibraryProps) => {
   const navigate = useNavigate();
-  const [activeStack, setActiveStack] = useState(STACKS.DOTNET);
+  // Default to first stack available or empty string
+  const [activeStack, setActiveStack] = useState("");
   const [activeTab, setActiveTab] = useState<"modules" | "profiles">("modules");
+
+  useEffect(() => {
+    // Set initial stack when stacks load
+    if (!activeStack && Object.values(stacks).length > 0) {
+      setActiveStack(Object.values(stacks)[0]);
+    }
+  }, [stacks, activeStack]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
@@ -14,7 +31,7 @@ export const MatrixLibrary = () => {
         {/* Header Section */}
         <header className="mb-10">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-6 font-semibold"
           >
             <ArrowLeft size={18} />
@@ -35,7 +52,7 @@ export const MatrixLibrary = () => {
             </div>
 
             <div className="flex bg-white p-1 rounded-xl shadow-sm border border-slate-200">
-              {Object.values(STACKS).map((s) => (
+              {Object.values(stacks).map((s) => (
                 <button
                   key={s}
                   onClick={() => setActiveStack(s)}
@@ -77,7 +94,7 @@ export const MatrixLibrary = () => {
         {/* Content Area */}
         {activeTab === "modules" ? (
           <div className="grid grid-cols-1 gap-6">
-            {ASSESSMENT_MATRIX.map((module) => (
+            {matrix.map((module) => (
               <div
                 key={module.id}
                 className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm"
@@ -107,7 +124,7 @@ export const MatrixLibrary = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {module.topics.map((topic) => (
+                      {module.topics.map((topic: any) => (
                         <tr
                           key={topic.id}
                           className="hover:bg-slate-50/50 transition-colors"
@@ -116,7 +133,7 @@ export const MatrixLibrary = () => {
                             {topic.name}
                           </td>
                           <td className="px-6 py-4 font-medium text-slate-600">
-                            {topic.mappings[activeStack]}
+                            {topic.mappings?.[activeStack]}
                           </td>
                           <td className="px-6 py-4 text-right">
                             <button className="text-xs font-bold text-indigo-500 hover:underline">
@@ -133,60 +150,64 @@ export const MatrixLibrary = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {PROFILES.filter((p) => p.stack === activeStack).map((profile) => (
-              <div
-                key={profile.id}
-                className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
-              >
-                <div className="p-6 border-b border-slate-100">
-                  <div className="flex justify-between items-start mb-4">
-                    <div
-                      className={`px-2 py-1 rounded text-[10px] font-bold uppercase bg-blue-100 text-blue-700`}
-                    >
-                      {profile.stack} Stack
+            {profiles
+              .filter((p: any) => p.stack === activeStack)
+              .map((profile: any) => (
+                <div
+                  key={profile.id}
+                  className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
+                >
+                  <div className="p-6 border-b border-slate-100">
+                    <div className="flex justify-between items-start mb-4">
+                      <div
+                        className={`px-2 py-1 rounded text-[10px] font-bold uppercase bg-blue-100 text-blue-700`}
+                      >
+                        {profile.stack} Stack
+                      </div>
+                      <Settings2 size={18} className="text-slate-300" />
                     </div>
-                    <Settings2 size={18} className="text-slate-300" />
-                  </div>
 
-                  <h3 className="text-xl font-bold text-slate-800">
-                    {profile.title}
-                  </h3>
-                  <p className="text-slate-500 text-sm">
-                    {profile.description}
-                  </p>
-                </div>
-                <div className="p-6">
-                  <h4 className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-4">
-                    Module Weight Distribution
-                  </h4>
-                  <div className="space-y-4">
-                    {Object.entries(profile.weights).map(([modId, weight]) => {
-                      const module = ASSESSMENT_MATRIX.find(
-                        (m) => m.id === modId,
-                      );
-                      return (
-                        <div key={modId}>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span className="font-medium text-slate-700">
-                              {module?.title || modId}
-                            </span>
-                            <span className="font-bold text-slate-900">
-                              {weight}%
-                            </span>
-                          </div>
-                          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full bg-indigo-500`}
-                              style={{ width: `${weight}%` }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
+                    <h3 className="text-xl font-bold text-slate-800">
+                      {profile.title}
+                    </h3>
+                    <p className="text-slate-500 text-sm">
+                      {profile.description}
+                    </p>
+                  </div>
+                  <div className="p-6">
+                    <h4 className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-4">
+                      Module Weight Distribution
+                    </h4>
+                    <div className="space-y-4">
+                      {Object.entries(profile.weights).map(
+                        ([modId, weight]) => {
+                          const module = matrix.find(
+                            (m: any) => m.id === modId,
+                          );
+                          return (
+                            <div key={modId}>
+                              <div className="flex justify-between text-sm mb-1">
+                                <span className="font-medium text-slate-700">
+                                  {module?.title || modId}
+                                </span>
+                                <span className="font-bold text-slate-900">
+                                  {weight as number}%
+                                </span>
+                              </div>
+                              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full bg-indigo-500`}
+                                  style={{ width: `${weight as number}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        },
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </div>

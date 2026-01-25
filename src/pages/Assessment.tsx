@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ChevronRight,
@@ -11,7 +11,6 @@ import {
   Layers,
   FileText,
 } from "lucide-react";
-import { ASSESSMENT_MATRIX, STACKS } from "../data";
 import { StatCard } from "../components/StatCard";
 
 interface AssessmentProps {
@@ -21,6 +20,8 @@ interface AssessmentProps {
   setNotes: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   candidateName: string;
   setCandidateName: (name: string) => void;
+  matrix: any[];
+  stacks: Record<string, string>;
 }
 
 export const Assessment = ({
@@ -30,10 +31,26 @@ export const Assessment = ({
   setNotes,
   candidateName,
   setCandidateName,
+  matrix,
+  stacks,
 }: AssessmentProps) => {
   const navigate = useNavigate();
-  const [expandedModules, setExpandedModules] = useState(new Set(["mod-core"]));
-  const [selectedStack, setSelectedStack] = useState(STACKS.DOTNET);
+  // Initialize with first module expanded if available
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(
+    new Set(),
+  );
+  const [selectedStack, setSelectedStack] = useState("");
+
+  // Initialize defaults when data loads
+  useEffect(() => {
+    if (matrix.length > 0 && expandedModules.size === 0) {
+      setExpandedModules(new Set([matrix[0].id]));
+    }
+    if (!selectedStack && Object.values(stacks).length > 0) {
+      // Default to first stack
+      setSelectedStack(Object.values(stacks)[0]);
+    }
+  }, [matrix, stacks, selectedStack, expandedModules]);
 
   const toggleModule = (id: string) => {
     const newSet = new Set(expandedModules);
@@ -64,16 +81,16 @@ export const Assessment = ({
     let completedCount = 0;
     let totalTopics = 0;
 
-    const moduleStats = ASSESSMENT_MATRIX.map((mod) => {
+    const moduleStats = matrix.map((mod) => {
       let modScore = 0;
       let modMax = 0;
       let modCompleted = 0;
 
-      mod.topics.forEach((t) => {
+      mod.topics.forEach((t: any) => {
         totalTopics++;
-        modMax += 5 * t.weight;
+        modMax += 5 * (t.weight || 1); // Default weight 1 if missing
         if (scores[t.id] !== undefined) {
-          modScore += scores[t.id] * t.weight;
+          modScore += scores[t.id] * (t.weight || 1);
           modCompleted++;
           completedCount++;
         }
@@ -103,7 +120,7 @@ export const Assessment = ({
       totalTopics,
       moduleStats,
     };
-  }, [scores]);
+  }, [scores, matrix]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
@@ -165,7 +182,7 @@ export const Assessment = ({
                 onChange={(e) => setSelectedStack(e.target.value)}
                 className="w-full font-bold text-slate-700 bg-transparent border-none p-0 focus:ring-0 cursor-pointer text-sm -ml-1"
               >
-                {Object.values(STACKS).map((s) => (
+                {Object.values(stacks).map((s) => (
                   <option key={s} value={s}>
                     {s}
                   </option>
@@ -203,7 +220,7 @@ export const Assessment = ({
 
         {/* Modules List */}
         <div className="space-y-4">
-          {ASSESSMENT_MATRIX.map((module) => {
+          {matrix.map((module) => {
             const isExpanded = expandedModules.has(module.id);
             const mStat = stats.moduleStats.find((s) => s.id === module.id);
 
@@ -285,7 +302,7 @@ export const Assessment = ({
                         </tr>
                       </thead>
                       <tbody>
-                        {module.topics.map((topic) => (
+                        {module.topics.map((topic: any) => (
                           <tr
                             key={topic.id}
                             className="group border-b border-slate-50 last:border-0 hover:bg-slate-50/30 transition-colors"
