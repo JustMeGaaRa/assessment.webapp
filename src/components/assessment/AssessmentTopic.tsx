@@ -7,6 +7,7 @@ interface AssessmentTopicProps {
   note: string;
   onScore: (id: string, score: number) => void;
   onNote: (id: string, note: string) => void;
+  isReadOnly?: boolean;
 }
 
 export const AssessmentTopic = ({
@@ -16,6 +17,7 @@ export const AssessmentTopic = ({
   note,
   onScore,
   onNote,
+  isReadOnly,
 }: AssessmentTopicProps) => {
   return (
     <tr className="group border-b border-slate-50 last:border-0 hover:bg-slate-50/30 transition-colors">
@@ -30,10 +32,15 @@ export const AssessmentTopic = ({
         </div>
         <input
           type="text"
-          placeholder="Add specific observation..."
-          className="w-full text-xs text-slate-500 bg-transparent border-none focus:ring-0 p-0 placeholder:italic"
+          placeholder={
+            isReadOnly
+              ? "No specific observation."
+              : "Add specific observation..."
+          }
+          className="w-full text-xs text-slate-500 bg-transparent border-none focus:ring-0 p-0 placeholder:italic disabled:opacity-50 disabled:cursor-not-allowed"
           value={note}
           onChange={(e) => onNote(topic.id, e.target.value)}
+          disabled={isReadOnly}
         />
       </td>
       <td className="px-6 py-4">
@@ -41,13 +48,14 @@ export const AssessmentTopic = ({
           {[0, 1, 2, 3, 4, 5].map((num) => (
             <div key={num} className="relative group/tooltip">
               <button
+                disabled={isReadOnly}
                 onClick={() => onScore(topic.id, num)}
-                className={`w-8 h-8 rounded-lg text-xs font-bold transition-all border relative z-0
+                className={`w-8 h-8 rounded-lg text-xs font-bold transition-all border relative z-0 disabled:cursor-not-allowed disabled:opacity-70
                 ${
                   score === num
                     ? "bg-indigo-600 text-white border-indigo-600 scale-110 shadow-md z-10"
                     : "bg-white text-slate-400 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
-                }`}
+                } ${isReadOnly && score !== num ? "opacity-30 grayscale" : ""}`}
               >
                 {num}
               </button>

@@ -159,6 +159,10 @@ export const Assessment = ({
                 notes={session.notes}
                 onScore={handleScore}
                 onNote={handleNote}
+                isReadOnly={
+                  session.status === "completed" ||
+                  session.status === "rejected"
+                }
               />
             );
           })}
@@ -178,9 +182,11 @@ export const Assessment = ({
           </div>
           <div className="flex gap-4 w-full md:w-auto">
             <button
-              disabled={session.status === "completed"}
+              disabled={
+                session.status === "completed" || session.status === "rejected"
+              }
               onClick={finishAssessment}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95"
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100"
             >
               <CheckCircle size={20} />
               {session.status === "completed" ? "Completed" : "Complete"}

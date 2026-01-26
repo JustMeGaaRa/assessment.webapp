@@ -24,6 +24,7 @@ interface AssessmentModuleProps {
   notes: Record<string, string>;
   onScore: (id: string, score: number) => void;
   onNote: (id: string, note: string) => void;
+  isReadOnly?: boolean;
 }
 
 export const AssessmentModule = ({
@@ -36,6 +37,7 @@ export const AssessmentModule = ({
   notes,
   onScore,
   onNote,
+  isReadOnly,
 }: AssessmentModuleProps) => {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200">
@@ -115,6 +117,7 @@ export const AssessmentModule = ({
                   note={notes[topic.id] || ""}
                   onScore={onScore}
                   onNote={onNote}
+                  isReadOnly={isReadOnly}
                 />
               ))}
             </tbody>
