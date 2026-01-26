@@ -2,13 +2,16 @@ import { ChevronRight } from "lucide-react";
 import type { Module } from "../../types";
 import { AssessmentTopic } from "./AssessmentTopic";
 
-interface ModuleStats {
+export interface ModuleStats {
   id: string;
   score: number;
   max: number;
-  percentage: number;
+  average: number;
+  weight: number;
+  roleScore: number;
   completed: number;
   total: number;
+  percentage?: number; // Optional now if we transition away, or we calculate it here.
 }
 
 interface AssessmentModuleProps {
@@ -69,21 +72,23 @@ export const AssessmentModule = ({
           <div className="flex flex-col items-end gap-1">
             <span
               className={`text-sm font-bold ${
-                stats.percentage > 70
+                (stats.percentage ?? 0) > 70
                   ? "text-emerald-600"
-                  : stats.percentage > 40
+                  : (stats.percentage ?? 0) > 40
                     ? "text-amber-600"
                     : "text-slate-400"
               }`}
             >
-              {stats.percentage}%
+              {stats.percentage ?? 0}%
             </span>
             <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
               <div
                 className={`h-full transition-all duration-500 ${
-                  stats.percentage > 70 ? "bg-emerald-500" : "bg-amber-500"
+                  (stats.percentage ?? 0) > 70
+                    ? "bg-emerald-500"
+                    : "bg-amber-500"
                 }`}
-                style={{ width: `${stats.percentage}%` }}
+                style={{ width: `${stats.percentage ?? 0}%` }}
               />
             </div>
           </div>

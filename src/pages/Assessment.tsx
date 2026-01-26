@@ -1,18 +1,25 @@
 import { useState, useMemo, useEffect } from "react";
 import { Save, CheckCircle, FileText, Library, ArrowLeft } from "lucide-react";
-import type { Module, AssessmentSession } from "../types";
+import type { Module, AssessmentSession, Profile } from "../types";
 import { AssessmentStats } from "../components/assessment/AssessmentStats";
 import { AssessmentModule } from "../components/assessment/AssessmentModule";
 import { PageHeader } from "../components/ui/PageHeader";
 import { useNavigate } from "react-router-dom";
+import { AssessmentSummary } from "../utils/AssessmentSummary";
 
 interface AssessmentProps {
   session: AssessmentSession;
   matrix: Module[];
+  profiles: Profile[];
   onUpdate: (data: Partial<AssessmentSession>) => void;
 }
 
-export const Assessment = ({ session, matrix, onUpdate }: AssessmentProps) => {
+export const Assessment = ({
+  session,
+  matrix,
+  profiles,
+  onUpdate,
+}: AssessmentProps) => {
   const navigate = useNavigate();
   // Initialize with first module expanded if available
   const [expandedModules, setExpandedModules] = useState<Set<string>>(
@@ -56,57 +63,48 @@ export const Assessment = ({ session, matrix, onUpdate }: AssessmentProps) => {
 
   const finishAssessment = () => {
     if (window.confirm("Mark this assessment as completed?")) {
-      onUpdate({ status: "completed" });
+      onUpdate({
+        status: "completed",
+        finalScore: stats.totalScore,
+      });
     }
   };
 
   // Calculations
   const stats = useMemo(() => {
-    let totalScore = 0;
-    let maxPossible = 0;
-    let completedCount = 0;
-    let totalTopics = 0;
+    const calculator = new AssessmentSummary(session, matrix, profiles);
+    const result = calculator.calculate();
 
+    // Map result back to UI requirements
+    // We iterate matrix again just to preserve order, or we can use Object.values(result.moduleScores) if order doesn't matter (but it does for list)
     const moduleStats = matrix.map((mod) => {
-      let modScore = 0;
-      let modMax = 0;
-      let modCompleted = 0;
-
-      mod.topics.forEach((t) => {
-        totalTopics++;
-        modMax += 5 * (t.weight || 1); // Default weight 1 if missing
-        if (session.scores[t.id] !== undefined) {
-          modScore += session.scores[t.id] * (t.weight || 1);
-          modCompleted++;
-          completedCount++;
-        }
-      });
-
-      totalScore += modScore;
-      maxPossible += modMax;
-
+      const s = result.moduleScores[mod.id];
       return {
         id: mod.id,
-        score: modScore,
-        max: modMax,
-        percentage: modMax > 0 ? Math.round((modScore / modMax) * 100) : 0,
-        completed: modCompleted,
-        total: mod.topics.length,
+        score: s.rawSum,
+        max: s.totalTopics * 5, // Keep for legacy usage if needed
+        average: s.averageScore,
+        weight: s.weight,
+        roleScore: s.weightedScore,
+        completed: s.completedTopics,
+        total: s.totalTopics,
+        // Calculate a percentage for the UI progress bar (based on raw scores vs max possible raw score)
+        // or based on average/5.
+        // Let's use Raw Score / (Total Topics * 5) * 100 for "Completion Quality"
+        percentage:
+          s.totalTopics > 0
+            ? Math.round((s.rawSum / (s.totalTopics * 5)) * 100)
+            : 0,
       };
     });
 
-    const overallPercentage =
-      maxPossible > 0 ? Math.round((totalScore / maxPossible) * 100) : 0;
-
     return {
-      totalScore,
-      maxPossible,
-      overallPercentage,
-      completedCount,
-      totalTopics,
+      totalScore: result.totalScore,
+      completedCount: result.completedCount,
+      totalTopics: result.totalTopics,
       moduleStats,
     };
-  }, [session.scores, matrix]);
+  }, [session, matrix, profiles]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">

@@ -98,6 +98,7 @@ const App = () => {
             <AssessmentRoute
               sessions={sessions}
               matrix={matrix}
+              profiles={profiles}
               updateSession={updateSession}
             />
           }
@@ -120,10 +121,12 @@ const App = () => {
 const AssessmentRoute = ({
   sessions,
   matrix,
+  profiles,
   updateSession,
 }: {
   sessions: AssessmentSession[];
   matrix: Module[];
+  profiles: Profile[];
   updateSession: (id: string, data: Partial<AssessmentSession>) => void;
 }) => {
   const { sessionId } = useParams();
@@ -137,6 +140,7 @@ const AssessmentRoute = ({
     <Assessment
       session={session}
       matrix={matrix}
+      profiles={profiles}
       onUpdate={(data) => updateSession(session.id, data)}
     />
   );

@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import {
-  User,
   Calendar,
   Layers,
   ChevronRight,
@@ -47,11 +46,22 @@ export const AssessmentSessionCard = ({
       className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group"
     >
       <div className="flex justify-between items-start mb-4">
-        <div
-          className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${getStatusColor(session.status)}`}
-        >
-          {getStatusIcon(session.status)}
-          {session.status}
+        <div className="flex gap-2">
+          <div
+            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${getStatusColor(session.status)}`}
+          >
+            {getStatusIcon(session.status)}
+            {session.status}
+          </div>
+          {session.status === "completed" &&
+            session.finalScore !== undefined && (
+              <div className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 bg-indigo-50 text-indigo-700 border border-indigo-100">
+                <span className="text-[10px]">Score:</span>
+                <span className="text-[10px]">
+                  {session.finalScore.toFixed(1)}
+                </span>
+              </div>
+            )}
         </div>
         <div className="text-slate-300 group-hover:text-indigo-500 transition-colors">
           <ChevronRight size={20} />

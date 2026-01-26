@@ -38,4 +38,5 @@ export interface AssessmentSession {
   status: "ongoing" | "completed" | "rejected";
   scores: Record<string, number>;
   notes: Record<string, string>;
+  finalScore?: number;
 }

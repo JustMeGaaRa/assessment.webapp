@@ -39,18 +39,32 @@ export const AssessmentTopic = ({
       <td className="px-6 py-4">
         <div className="flex justify-end gap-1">
           {[0, 1, 2, 3, 4, 5].map((num) => (
-            <button
-              key={num}
-              onClick={() => onScore(topic.id, num)}
-              className={`w-8 h-8 rounded-lg text-xs font-bold transition-all border
+            <div key={num} className="relative group/tooltip">
+              <button
+                onClick={() => onScore(topic.id, num)}
+                className={`w-8 h-8 rounded-lg text-xs font-bold transition-all border relative z-0
                 ${
                   score === num
-                    ? "bg-indigo-600 text-white border-indigo-600 scale-110 shadow-md"
+                    ? "bg-indigo-600 text-white border-indigo-600 scale-110 shadow-md z-10"
                     : "bg-white text-slate-400 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
                 }`}
-            >
-              {num}
-            </button>
+              >
+                {num}
+              </button>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-[10px] font-medium rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl">
+                {
+                  {
+                    0: "N/A",
+                    1: "Novice",
+                    2: "Beginner",
+                    3: "Competent",
+                    4: "Proficient",
+                    5: "Expert",
+                  }[num]
+                }
+                <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800" />
+              </div>
+            </div>
           ))}
         </div>
       </td>

@@ -53,8 +53,8 @@ export const AssessmentStats = ({
       {/* 4. Total Points */}
       <StatCard
         icon={<Trophy className="text-amber-500" size={20} />}
-        label="Total Points"
-        value={stats.totalScore}
+        label="Score"
+        value={stats.totalScore.toFixed(1)}
       />
 
       {/* 5. Reset */}
