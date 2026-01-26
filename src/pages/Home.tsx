@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { parseAssessmentData, validateCsvContent } from "../utils/csvHelpers";
-import type { Module, Profile, FileStatus } from "../types";
-import { HomeHeader } from "../components/home/HomeHeader";
+import type { Module, Profile, FileStatus, AssessmentSession } from "../types";
 import { ImportStep } from "../components/home/ImportStep";
 import { SessionForm } from "../components/home/SessionForm";
+import { AssessmentSessionCard } from "../components/dashboard/AssessmentSessionCard";
+import { NewAssessmentCard } from "../components/dashboard/NewAssessmentCard";
+import { Modal } from "../components/ui/Modal";
+import { FileText, Library, UploadCloud } from "lucide-react";
+import { PageHeader } from "../components/ui/PageHeader";
 
 interface HomeProps {
-  setCandidateName: (name: string) => void;
-  setSelectedStack: (stack: string) => void;
-  setSelectedProfileId: (id: string) => void;
-  onStart: () => void;
+  sessions: AssessmentSession[];
+  onCreateSession: (session: AssessmentSession) => void;
   onDataLoad: (
     matrix: Module[],
     profiles: Profile[],
@@ -18,21 +20,29 @@ interface HomeProps {
   ) => void;
   existingStacks: string[];
   existingProfiles: Profile[];
+  hasData: boolean;
 }
 
 export const Home = ({
-  setCandidateName,
-  setSelectedStack,
-  setSelectedProfileId,
-  onStart,
+  sessions,
+  onCreateSession,
   onDataLoad,
   existingStacks,
   existingProfiles,
   hasData,
-}: HomeProps & { hasData?: boolean }) => {
+}: HomeProps) => {
   const navigate = useNavigate();
-  // If data exists, start at step 2. Otherwise step 1.
-  const [step, setStep] = useState(hasData ? 2 : 1);
+
+  // Modal States
+  const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+
+  // Automatically prompt for import if no data exists on load
+  useEffect(() => {
+    if (!hasData) {
+      setIsImportModalOpen(true);
+    }
+  }, [hasData]);
 
   // File States
   const [profFile, setProfFile] = useState<File | null>(null);
@@ -72,9 +82,9 @@ export const Home = ({
   const [selectedStackKey, setSelectedStackKey] = useState("");
   const [selectedProfileId, setLocalProfileId] = useState("");
 
-  // Auto-select defaults when entering step 2
+  // Auto-select defaults when session modal opens
   useEffect(() => {
-    if (step === 2) {
+    if (isSessionModalOpen) {
       if (!selectedStackKey && currentStacks.length > 0) {
         setSelectedStackKey(currentStacks[0]);
       }
@@ -83,7 +93,7 @@ export const Home = ({
       }
     }
   }, [
-    step,
+    isSessionModalOpen,
     currentStacks,
     currentProfiles,
     selectedStackKey,
@@ -102,7 +112,6 @@ export const Home = ({
     setStatus("uploading");
     setError(null);
 
-    // Reading File if present
     let content = "";
     if (file) {
       try {
@@ -119,26 +128,18 @@ export const Home = ({
         return;
       }
     } else {
-      // Assume URL fetch mock or implementation
-      // For now, fail URL
       setStatus("error");
       setError("URL import not implemented yet");
       return;
     }
 
-    // Validate
     const errorMsg = validateCsvContent(content, type);
     if (errorMsg) {
-      setStatus("idle"); // Reset to idle to allow re-upload? Or error state.
-      // Actually, if we set 'error' state, we might want to stay in idle/error UI.
-      // My DataSourceInput UI handles 'error' prop.
-      // If I set status to 'idle', it shows the upload box. If error is set, it shows error style. Perfect.
       setStatus("idle");
       setError(errorMsg);
       return;
     }
 
-    // Simulate Parsing Progress if valid
     let p = 0;
     const interval = setInterval(() => {
       p += Math.random() * 20;
@@ -152,7 +153,6 @@ export const Home = ({
     }, 200);
   };
 
-  // Watch for file changes
   useEffect(() => {
     if (!profFile && !profUrl) {
       setProfStatus("idle");
@@ -207,14 +207,8 @@ export const Home = ({
     }
   }, [modFile, modUrl, modStatus, modError]);
 
-  // Parse when all required ready
   useEffect(() => {
     if (profStatus === "done" && topStatus === "done") {
-      // Ideally we read the actual file content here.
-      // For this demo, since we don't have FileReader async logic in the simulation above,
-      // we will do it "just in time" or assume we read it.
-      // Let's actually read them now.
-
       const readAll = async () => {
         const filesToRead: {
           name: string;
@@ -257,13 +251,12 @@ export const Home = ({
       };
       readAll();
     }
-  }, [profStatus, topStatus, modStatus, profFile, topFile, modFile]); // Re-run if status changes to done
+  }, [profStatus, topStatus, modStatus, profFile, topFile, modFile]);
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !selectedStackKey || !selectedProfileId) return;
 
-    // Use default/existing if parsing wasn't done or failed, otherwise use parsed
     if (parsedContext) {
       onDataLoad(
         parsedContext.matrix,
@@ -272,23 +265,37 @@ export const Home = ({
       );
     }
 
-    setCandidateName(name);
-    setSelectedStack(selectedStackKey);
-    setSelectedProfileId(selectedProfileId);
-    // We would pass stack/profile selection to App if App needed it for logic,
-    // but typically Assessment page handles the active stack view.
-    // However, if we want to "Pre-select" the profile, we might need to store that in App state or pass it.
-    // For now, onStart just resets scores.
-    onStart();
-
     const sessionId = crypto.randomUUID();
+    const profile = currentProfiles.find((p) => p.id === selectedProfileId);
+
+    const newSession: AssessmentSession = {
+      id: sessionId,
+      candidateName: name,
+      profileId: selectedProfileId,
+      profileTitle: profile?.title || "Unknown Profile",
+      stack: selectedStackKey,
+      date: new Date().toISOString(),
+      status: "ongoing",
+      scores: {},
+      notes: {},
+    };
+
+    onCreateSession(newSession);
     navigate(`/assessment/${sessionId}`);
   };
 
-  // Handle moving to next step
-  const canGoNext = profStatus === "done" && topStatus === "done";
+  const handleImportComplete = () => {
+    if (parsedContext) {
+      onDataLoad(
+        parsedContext.matrix,
+        parsedContext.profiles,
+        parsedContext.stacks,
+      );
+    }
+    setIsImportModalOpen(false);
+  };
 
-  // Is form valid?
+  const canImport = profStatus === "done" && topStatus === "done";
   const isFormValid =
     name.trim().length > 0 &&
     selectedStackKey !== "" &&
@@ -297,73 +304,130 @@ export const Home = ({
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <HomeHeader />
-
-        <div className="max-w-2xl mx-auto">
-          {/* Steps Indicator */}
-          <div className="flex items-center gap-2 mb-8">
-            <div
-              className={`h-1 flex-1 rounded-full ${step === 1 ? "bg-indigo-600" : "bg-emerald-500"}`}
-            />
-            <div
-              className={`h-1 flex-1 rounded-full transition-colors ${step === 2 ? "bg-indigo-600" : "bg-slate-200"}`}
-            />
-          </div>
-
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden p-6 md:p-10">
-            {step === 1 ? (
-              <ImportStep
-                profFile={profFile}
-                setProfFile={setProfFile}
-                profUrl={profUrl}
-                setProfUrl={setProfUrl}
-                profStatus={profStatus}
-                profProgress={profProgress}
-                profError={profError}
-                topFile={topFile}
-                setTopFile={setTopFile}
-                topUrl={topUrl}
-                setTopUrl={setTopUrl}
-                topStatus={topStatus}
-                topProgress={topProgress}
-                topError={topError}
-                modFile={modFile}
-                setModFile={setModFile}
-                modUrl={modUrl}
-                setModUrl={setModUrl}
-                modStatus={modStatus}
-                modProgress={modProgress}
-                modError={modError}
-                canGoNext={canGoNext}
-                onNext={() => setStep(2)}
-              />
-            ) : (
-              <SessionForm
-                name={name}
-                setName={setNameInput}
-                selectedStackKey={selectedStackKey}
-                setSelectedStackKey={setSelectedStackKey}
-                selectedProfileId={selectedProfileId}
-                setSelectedProfileId={setLocalProfileId}
-                currentStacks={currentStacks}
-                currentProfiles={currentProfiles}
-                handleStart={handleStart}
-                isFormValid={isFormValid}
-                onBack={() => setStep(1)}
-              />
-            )}
-          </div>
-
-          <div className="text-center mt-8">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+          <div></div>
+          <div className="flex gap-3">
             <button
               onClick={() => navigate("/library")}
-              className="text-slate-400 font-semibold hover:text-indigo-600 text-sm transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
             >
-              View Matrix Library
+              <Library size={18} />
+              <span>View Library</span>
+            </button>
+
+            <button
+              onClick={() => setIsImportModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
+            >
+              <UploadCloud size={18} />
+              <span>Import Data</span>
             </button>
           </div>
         </div>
+
+        <PageHeader
+          icon={<FileText className="text-indigo-600 w-8 h-8" />}
+          title="Technical Assessment Portal"
+          description="Streamlined assessment process for engineering candidates."
+        />
+
+        <div className="max-w-7xl mx-auto">
+          {!hasData ? (
+            <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-lg max-w-2xl mx-auto mt-12">
+              <div className="w-20 h-20 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <UploadCloud size={40} />
+              </div>
+              <h2 className="text-2xl font-black text-slate-800 mb-3">
+                Library is Empty
+              </h2>
+              <p className="text-slate-500 mb-8 max-w-md mx-auto">
+                You need to import your assessment matrix data (Profiles,
+                Topics, Modules) to get started.
+              </p>
+              <button
+                onClick={() => setIsImportModalOpen(true)}
+                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95"
+              >
+                Import Data Now
+              </button>
+            </div>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold text-slate-800 mb-6">
+                Recent Assessments
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <NewAssessmentCard
+                  onClick={() => setIsSessionModalOpen(true)}
+                />
+                {sessions.slice(0, 10).map((session) => (
+                  <AssessmentSessionCard key={session.id} session={session} />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </div>
+
+      {/* New Session Modal */}
+      <Modal
+        isOpen={isSessionModalOpen}
+        onClose={() => setIsSessionModalOpen(false)}
+        title="Start New Assessment"
+      >
+        <SessionForm
+          name={name}
+          setName={setNameInput}
+          selectedStackKey={selectedStackKey}
+          setSelectedStackKey={setSelectedStackKey}
+          selectedProfileId={selectedProfileId}
+          setSelectedProfileId={setLocalProfileId}
+          currentStacks={currentStacks}
+          currentProfiles={currentProfiles}
+          handleStart={handleStart}
+          isFormValid={isFormValid}
+        />
+      </Modal>
+
+      {/* Import Data Modal */}
+      <Modal
+        isOpen={isImportModalOpen}
+        onClose={() => hasData && setIsImportModalOpen(false)}
+        title="Import Assessment Data"
+      >
+        <ImportStep
+          profFile={profFile}
+          setProfFile={setProfFile}
+          profUrl={profUrl}
+          setProfUrl={setProfUrl}
+          profStatus={profStatus}
+          profProgress={profProgress}
+          profError={profError}
+          topFile={topFile}
+          setTopFile={setTopFile}
+          topUrl={topUrl}
+          setTopUrl={setTopUrl}
+          topStatus={topStatus}
+          topProgress={topProgress}
+          topError={topError}
+          modFile={modFile}
+          setModFile={setModFile}
+          modUrl={modUrl}
+          setModUrl={setModUrl}
+          modStatus={modStatus}
+          modProgress={modProgress}
+          modError={modError}
+        />
+        <div className="mt-6 flex justify-end">
+          <button
+            disabled={!canImport}
+            onClick={handleImportComplete}
+            className="px-6 py-2 bg-indigo-600 disabled:bg-slate-300 text-white font-bold rounded-xl transition-colors"
+          >
+            Save & Update Library
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

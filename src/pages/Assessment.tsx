@@ -1,31 +1,19 @@
 import { useState, useMemo, useEffect } from "react";
-import { Save } from "lucide-react";
-import type { Module } from "../types";
-import { AssessmentHeader } from "../components/assessment/AssessmentHeader";
+import { Save, CheckCircle, FileText, Library, ArrowLeft } from "lucide-react";
+import type { Module, AssessmentSession } from "../types";
 import { AssessmentStats } from "../components/assessment/AssessmentStats";
 import { AssessmentModule } from "../components/assessment/AssessmentModule";
+import { PageHeader } from "../components/ui/PageHeader";
+import { useNavigate } from "react-router-dom";
 
 interface AssessmentProps {
-  scores: Record<string, number>;
-  setScores: React.Dispatch<React.SetStateAction<Record<string, number>>>;
-  notes: Record<string, string>;
-  setNotes: React.Dispatch<React.SetStateAction<Record<string, string>>>;
-  candidateName: string;
+  session: AssessmentSession;
   matrix: Module[];
-  selectedStack: string;
-  selectedProfileTitle: string;
+  onUpdate: (data: Partial<AssessmentSession>) => void;
 }
 
-export const Assessment = ({
-  scores,
-  setScores,
-  notes,
-  setNotes,
-  candidateName,
-  matrix,
-  selectedStack,
-  selectedProfileTitle,
-}: AssessmentProps) => {
+export const Assessment = ({ session, matrix, onUpdate }: AssessmentProps) => {
+  const navigate = useNavigate();
   // Initialize with first module expanded if available
   const [expandedModules, setExpandedModules] = useState<Set<string>>(
     new Set(),
@@ -46,17 +34,29 @@ export const Assessment = ({
   };
 
   const handleScore = (topicId: string, score: number) => {
-    setScores((prev) => ({ ...prev, [topicId]: score }));
+    onUpdate({
+      scores: { ...session.scores, [topicId]: score },
+    });
   };
 
   const handleNote = (topicId: string, note: string) => {
-    setNotes((prev) => ({ ...prev, [topicId]: note }));
+    onUpdate({
+      notes: { ...session.notes, [topicId]: note },
+    });
   };
 
   const resetAssessment = () => {
     if (window.confirm("Are you sure you want to clear all scores?")) {
-      setScores({});
-      setNotes({});
+      onUpdate({
+        scores: {},
+        notes: {},
+      });
+    }
+  };
+
+  const finishAssessment = () => {
+    if (window.confirm("Mark this assessment as completed?")) {
+      onUpdate({ status: "completed" });
     }
   };
 
@@ -75,8 +75,8 @@ export const Assessment = ({
       mod.topics.forEach((t) => {
         totalTopics++;
         modMax += 5 * (t.weight || 1); // Default weight 1 if missing
-        if (scores[t.id] !== undefined) {
-          modScore += scores[t.id] * (t.weight || 1);
+        if (session.scores[t.id] !== undefined) {
+          modScore += session.scores[t.id] * (t.weight || 1);
           modCompleted++;
           completedCount++;
         }
@@ -106,17 +106,39 @@ export const Assessment = ({
       totalTopics,
       moduleStats,
     };
-  }, [scores, matrix]);
+  }, [session.scores, matrix]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <AssessmentHeader />
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-8 font-semibold group"
+          >
+            <div className="p-1 rounded-full group-hover:bg-slate-100 transition-colors">
+              <ArrowLeft size={20} />
+            </div>
+            <span>Back to Dashboard</span>
+          </button>
+          <button
+            onClick={() => navigate("/library")}
+            className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
+          >
+            <Library size={18} />
+            <span>View Library</span>
+          </button>
+        </div>
+        <PageHeader
+          icon={<FileText className="text-indigo-600 w-8 h-8" />}
+          title="Assessment Session"
+          description="Evaluate candidate technical competencies."
+        />
 
         <AssessmentStats
-          candidateName={candidateName}
-          selectedProfileTitle={selectedProfileTitle}
-          selectedStack={selectedStack}
+          candidateName={session.candidateName}
+          selectedProfileTitle={session.profileTitle}
+          selectedStack={session.stack}
           stats={stats}
           onReset={resetAssessment}
         />
@@ -134,9 +156,9 @@ export const Assessment = ({
                 isExpanded={isExpanded}
                 stats={mStat}
                 onToggle={toggleModule}
-                selectedStack={selectedStack}
-                scores={scores}
-                notes={notes}
+                selectedStack={session.stack}
+                scores={session.scores}
+                notes={session.notes}
                 onScore={handleScore}
                 onNote={handleNote}
               />
@@ -156,14 +178,25 @@ export const Assessment = ({
                 : `${stats.totalTopics - stats.completedCount} Topics Remaining`}
             </h3>
           </div>
-          <button
-            disabled={stats.completedCount === 0}
-            className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-3 bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95"
-            onClick={() => window.print()}
-          >
-            <Save size={20} />
-            Export Evaluation Report
-          </button>
+          <div className="flex gap-4 w-full md:w-auto">
+            <button
+              disabled={session.status === "completed"}
+              onClick={finishAssessment}
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95"
+            >
+              <CheckCircle size={20} />
+              {session.status === "completed" ? "Completed" : "Complete"}
+            </button>
+
+            <button
+              disabled={stats.completedCount === 0}
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95"
+              onClick={() => window.print()}
+            >
+              <Save size={20} />
+              Export
+            </button>
+          </div>
         </footer>
       </div>
 

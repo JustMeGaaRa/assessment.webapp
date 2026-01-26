@@ -27,3 +27,15 @@ export interface AppData {
 }
 
 export type FileStatus = "idle" | "uploading" | "parsing" | "done" | "error";
+
+export interface AssessmentSession {
+  id: string;
+  candidateName: string;
+  profileId: string;
+  profileTitle: string;
+  stack: string;
+  date: string;
+  status: "ongoing" | "completed" | "rejected";
+  scores: Record<string, number>;
+  notes: Record<string, string>;
+}

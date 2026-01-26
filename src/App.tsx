@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useParams,
+} from "react-router-dom";
 import { Assessment } from "./pages/Assessment";
 import { MatrixLibrary } from "./pages/MatrixLibrary";
 import { Home } from "./pages/Home";
-import type { Module, Profile } from "./types";
+import type { Module, Profile, AssessmentSession } from "./types";
 
 const STORAGE_KEY = "assessment_matrix_data";
+const SESSIONS_KEY = "assessment_sessions";
 
 const App = () => {
   // Master Data State with Persistence
@@ -34,17 +41,16 @@ const App = () => {
     }
   }, [matrix, profiles, stacks]);
 
-  // Assessment Data State (Lifted)
-  const [scores, setScores] = useState<Record<string, number>>({});
-  const [notes, setNotes] = useState<Record<string, string>>({});
-  const [candidateName, setCandidateName] = useState("");
-  const [activeStack, setActiveStack] = useState("");
-  const [activeProfileId, setActiveProfileId] = useState("");
+  // Assessment Sessions State
+  const [sessions, setSessions] = useState<AssessmentSession[]>(() => {
+    const saved = localStorage.getItem(SESSIONS_KEY);
+    return saved ? JSON.parse(saved) : [];
+  });
 
-  const resetSession = () => {
-    setScores({});
-    setNotes({});
-  };
+  // Persist sessions
+  useEffect(() => {
+    localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+  }, [sessions]);
 
   const handleDataLoad = (
     m: Module[],
@@ -54,15 +60,21 @@ const App = () => {
     setMatrix(m);
     setProfiles(p);
     setStacks(s);
-    // Explicit save to ensure immediate persistence before effect if needed,
-    // though effect will catch it.
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({ matrix: m, profiles: p, stacks: s }),
     );
   };
 
-  const activeProfile = profiles.find((p) => p.id === activeProfileId);
+  const createSession = (session: AssessmentSession) => {
+    setSessions((prev) => [session, ...prev]);
+  };
+
+  const updateSession = (id: string, data: Partial<AssessmentSession>) => {
+    setSessions((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, ...data } : s)),
+    );
+  };
 
   return (
     <BrowserRouter>
@@ -71,10 +83,8 @@ const App = () => {
           path="/"
           element={
             <Home
-              setCandidateName={setCandidateName}
-              setSelectedStack={setActiveStack}
-              setSelectedProfileId={setActiveProfileId}
-              onStart={resetSession}
+              sessions={sessions}
+              onCreateSession={createSession}
               onDataLoad={handleDataLoad}
               existingStacks={Object.values(stacks)}
               existingProfiles={profiles}
@@ -85,15 +95,10 @@ const App = () => {
         <Route
           path="/assessment/:sessionId"
           element={
-            <Assessment
-              scores={scores}
-              setScores={setScores}
-              notes={notes}
-              setNotes={setNotes}
-              candidateName={candidateName}
+            <AssessmentRoute
+              sessions={sessions}
               matrix={matrix}
-              selectedStack={activeStack}
-              selectedProfileTitle={activeProfile?.title || ""}
+              updateSession={updateSession}
             />
           }
         />
@@ -109,6 +114,31 @@ const App = () => {
         />
       </Routes>
     </BrowserRouter>
+  );
+};
+
+const AssessmentRoute = ({
+  sessions,
+  matrix,
+  updateSession,
+}: {
+  sessions: AssessmentSession[];
+  matrix: Module[];
+  updateSession: (id: string, data: Partial<AssessmentSession>) => void;
+}) => {
+  const { sessionId } = useParams();
+  const session = sessions.find((s) => s.id === sessionId);
+
+  if (!session) {
+    return <Navigate to="/" replace />;
+  }
+
+  return (
+    <Assessment
+      session={session}
+      matrix={matrix}
+      onUpdate={(data) => updateSession(session.id, data)}
+    />
   );
 };
 

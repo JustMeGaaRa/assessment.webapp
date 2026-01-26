@@ -1,4 +1,4 @@
-import { ChevronLeft, User, ArrowRight } from "lucide-react";
+import { User, ArrowRight, Layers, Users } from "lucide-react";
 import type { Profile } from "../../types";
 
 interface SessionFormProps {
@@ -12,7 +12,6 @@ interface SessionFormProps {
   currentProfiles: Profile[];
   handleStart: (e: React.FormEvent) => void;
   isFormValid: boolean;
-  onBack: () => void;
 }
 
 export const SessionForm = ({
@@ -26,29 +25,12 @@ export const SessionForm = ({
   currentProfiles,
   handleStart,
   isFormValid,
-  onBack,
 }: SessionFormProps) => {
   return (
     <form
       onSubmit={handleStart}
       className="space-y-8 animate-in slide-in-from-right-4 fade-in duration-300"
     >
-      <div className="flex items-center gap-4">
-        <button
-          type="button"
-          onClick={onBack}
-          className="p-2 hover:bg-slate-100 rounded-full text-slate-400"
-        >
-          <ChevronLeft size={24} />
-        </button>
-        <div>
-          <h2 className="text-xl font-bold text-slate-800">Session Details</h2>
-          <p className="text-slate-500 text-sm">
-            Enter candidate and assessment context.
-          </p>
-        </div>
-      </div>
-
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
@@ -67,15 +49,15 @@ export const SessionForm = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">
-              Tech Stack <span className="text-red-500">*</span>
+            <label className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+              <Layers size={16} className="text-slate-400" />
+              Technology Stack <span className="text-red-500">*</span>
             </label>
             <select
               value={selectedStackKey}
               onChange={(e) => setSelectedStackKey(e.target.value)}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
             >
-              <option value="">Select Stack...</option>
               {currentStacks.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -85,7 +67,8 @@ export const SessionForm = ({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">
+            <label className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+              <Users size={16} className="text-slate-400" />
               Role Profile <span className="text-red-500">*</span>
             </label>
             <select
@@ -93,7 +76,6 @@ export const SessionForm = ({
               onChange={(e) => setSelectedProfileId(e.target.value)}
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
             >
-              <option value="">Select Profile...</option>
               {currentProfiles.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.title}
