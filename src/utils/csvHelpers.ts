@@ -1,3 +1,4 @@
+import type { Module, Profile, Topic, AppData } from "../types";
 
 // Simple CSV Parser handling basic quotes
 const parseCSV = (text: string): string[][] => {
@@ -37,23 +38,55 @@ const parseCSV = (text: string): string[][] => {
   return result;
 };
 
-export interface ParsedData {
-  matrix: any[];
-  profiles: any[];
-  stacks: Record<string, string>;
+export const validateCsvContent = (content: string, type: "profiles" | "topics" | "modules"): string | null => {
+  const rows = parseCSV(content);
+  if (rows.length === 0) return "File is empty";
+  
+  const headers = rows[0].map(h => h.trim().toLowerCase());
+  
+  const hasField = (field: string) => headers.includes(field.toLowerCase());
+
+  if (type === "topics") {
+     const required = ["module code", "module name", "topic"];
+     const missing = required.filter(f => !hasField(f));
+     if (missing.length > 0) {
+         return `Missing required columns: ${missing.map(m => `"${m}"`).join(", ")}`;
+     }
+  }
+
+  if (type === "modules") {
+     const required = ["module code", "module name", "module summary"];
+     const missing = required.filter(f => !hasField(f));
+     if (missing.length > 0) {
+         return `Missing required columns: ${missing.map(m => `"${m}"`).join(", ")}`;
+     }
+  }
+
+  if (type === "profiles") {
+      const required = ["module code", "module name"];
+      const missing = required.filter(f => !hasField(f));
+      if (missing.length > 0) {
+          return `Missing required columns: ${missing.map(m => `"${m}"`).join(", ")}`;
+      }
+      // Check for at least one profile column?
+      if (headers.length <= required.length) {
+          return "Profiles file must contain at least one profile column";
+      }
+  }
+  return null;
 }
 
 export const parseAssessmentData = (
   files: { name: string; content: string; type: "profiles" | "topics" | "modules" }[]
-): ParsedData => {
-  let matrix: any[] = [];
-  const profiles: any[] = [];
+): AppData => {
+  let matrix: Module[] = [];
+  const profiles: Profile[] = [];
   // stacks is Record<KEY, Label> e.g. { DOTNET: ".NET" }
-  let stacks: Record<string, string> = {}; 
+  const stacks: Record<string, string> = {}; 
   
   // Temporary storage
-  const modulesMap = new Map<string, any>(); // Map<Code, Module>
-  const profileWeightsMap = new Map<string, Record<string, number>>(); // Map<ProfileKey, { ModCode: Weight }>
+  const modulesMap = new Map<string, Module>(); // Map<Code, Module>
+  // Profile logic doesn't use profileWeightsMap currently, it writes directly to profiles array, so removing unused map.
   const stackKeys: string[] = [];
 
   // 1. Parse Topics (Required for Stacks and Base Modules)
@@ -102,21 +135,14 @@ export const parseAssessmentData = (
              }
         }
 
-        const topic = {
+        const topic: Topic = {
             id: topicId,
             name: topicName,
             weight: 1, // Default weight, not specified in CSV requirement, assuming 1 or logic
             mappings
         };
         
-        // CSV spec didn't mention Topic Weight, defaulting logic:
-        // Or maybe infer from somewhere? The prompt says "The fields for topics csv file are..." -> no weight mention.
-        // We'll calculate module weights from profiles later, but individual topic weights internal to module?
-        // Let's assume weight 1 for now or random distribution if not provided. 
-        // Actually, previous data had topic weights. The prompt implies "The fields... are...". 
-        // We will default to 1.
-        
-        modulesMap.get(modCode).topics.push(topic);
+        modulesMap.get(modCode)!.topics.push(topic);
     }
   }
 
@@ -132,7 +158,7 @@ export const parseAssessmentData = (
           const summary = row[2];
           
           if (modulesMap.has(modCode)) {
-              modulesMap.get(modCode).description = summary;
+              modulesMap.get(modCode)!.description = summary;
           }
       }
   }
@@ -147,8 +173,8 @@ export const parseAssessmentData = (
       for (let j = 2; j < headers.length; j++) {
           // Header might be "Mid-Level .NET %"
           // Clean it
-          let rawName = headers[j];
-          let pName = rawName.replace("%", "").trim();
+          const rawName = headers[j];
+          const pName = rawName.replace("%", "").trim();
           profileNames.push(pName);
           
           // Initialize profile entry

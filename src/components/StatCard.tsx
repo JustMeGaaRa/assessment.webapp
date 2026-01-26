@@ -13,9 +13,7 @@ export const StatCard = ({ icon, label, value }: StatCardProps) => (
       <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400">
         {label}
       </p>
-      <p className="text-lg font-black text-slate-700 leading-none mt-1">
-        {value}
-      </p>
+      <p className="font-bold text-slate-700 text-sm truncate">{value}</p>
     </div>
   </div>
 );

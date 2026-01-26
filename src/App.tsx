@@ -1,25 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Assessment } from "./pages/Assessment";
 import { MatrixLibrary } from "./pages/MatrixLibrary";
 import { Home } from "./pages/Home";
-import { ASSESSMENT_MATRIX, PROFILES, STACKS } from "./data";
+import type { Module, Profile } from "./types";
+
+const STORAGE_KEY = "assessment_matrix_data";
 
 const App = () => {
-  // Master Data State
-  const [matrix, setMatrix] = useState(ASSESSMENT_MATRIX);
-  const [profiles, setProfiles] = useState(PROFILES);
-  const [stacks, setStacks] = useState<Record<string, string>>(STACKS);
+  // Master Data State with Persistence
+  const [matrix, setMatrix] = useState<Module[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).matrix : [];
+  });
+
+  const [profiles, setProfiles] = useState<Profile[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).profiles : [];
+  });
+
+  const [stacks, setStacks] = useState<Record<string, string>>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).stacks : {};
+  });
+
+  // Persist changes
+  useEffect(() => {
+    if (matrix.length > 0) {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ matrix, profiles, stacks }),
+      );
+    }
+  }, [matrix, profiles, stacks]);
 
   // Assessment Data State (Lifted)
   const [scores, setScores] = useState<Record<string, number>>({});
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [candidateName, setCandidateName] = useState("");
+  const [activeStack, setActiveStack] = useState("");
+  const [activeProfileId, setActiveProfileId] = useState("");
 
   const resetSession = () => {
     setScores({});
     setNotes({});
   };
+
+  const handleDataLoad = (
+    m: Module[],
+    p: Profile[],
+    s: Record<string, string>,
+  ) => {
+    setMatrix(m);
+    setProfiles(p);
+    setStacks(s);
+    // Explicit save to ensure immediate persistence before effect if needed,
+    // though effect will catch it.
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ matrix: m, profiles: p, stacks: s }),
+    );
+  };
+
+  const activeProfile = profiles.find((p) => p.id === activeProfileId);
 
   return (
     <BrowserRouter>
@@ -29,14 +72,13 @@ const App = () => {
           element={
             <Home
               setCandidateName={setCandidateName}
+              setSelectedStack={setActiveStack}
+              setSelectedProfileId={setActiveProfileId}
               onStart={resetSession}
-              onDataLoad={(m, p, s) => {
-                setMatrix(m);
-                setProfiles(p);
-                setStacks(s);
-              }}
+              onDataLoad={handleDataLoad}
               existingStacks={Object.values(stacks)}
               existingProfiles={profiles}
+              hasData={matrix.length > 0}
             />
           }
         />
@@ -49,9 +91,9 @@ const App = () => {
               notes={notes}
               setNotes={setNotes}
               candidateName={candidateName}
-              setCandidateName={setCandidateName}
               matrix={matrix}
-              stacks={stacks}
+              selectedStack={activeStack}
+              selectedProfileTitle={activeProfile?.title || ""}
             />
           }
         />

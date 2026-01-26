@@ -1,240 +1,144 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FileText,
-  User,
-  ArrowRight,
-  UploadCloud,
-  Link as LinkIcon,
-  FileSpreadsheet,
-  Check,
-  Loader2,
-  ChevronLeft,
-} from "lucide-react";
-import { parseAssessmentData } from "../utils/csvHelpers";
+import { parseAssessmentData, validateCsvContent } from "../utils/csvHelpers";
+import type { Module, Profile, FileStatus } from "../types";
+import { HomeHeader } from "../components/home/HomeHeader";
+import { ImportStep } from "../components/home/ImportStep";
+import { SessionForm } from "../components/home/SessionForm";
 
 interface HomeProps {
   setCandidateName: (name: string) => void;
+  setSelectedStack: (stack: string) => void;
+  setSelectedProfileId: (id: string) => void;
   onStart: () => void;
   onDataLoad: (
-    matrix: any[],
-    profiles: any[],
+    matrix: Module[],
+    profiles: Profile[],
     stacks: Record<string, string>,
   ) => void;
   existingStacks: string[];
-  existingProfiles: any[];
+  existingProfiles: Profile[];
 }
-
-type DataSourceMode = "file" | "url";
-type FileStatus = "idle" | "uploading" | "parsing" | "done";
-
-interface DataSourceInputProps {
-  label: string;
-  required?: boolean;
-  file: File | null;
-  setFile: (f: File | null) => void;
-  url: string;
-  setUrl: (u: string) => void;
-  status: FileStatus;
-  progress: number;
-}
-
-const DataSourceInput = ({
-  label,
-  required,
-  file,
-  setFile,
-  url,
-  setUrl,
-  status,
-  progress,
-}: DataSourceInputProps) => {
-  const [mode, setMode] = useState<DataSourceMode>("file");
-  const [isDragging, setIsDragging] = useState(false);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  }, []);
-
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      setIsDragging(false);
-      const droppedFile = e.dataTransfer.files[0];
-      if (droppedFile && droppedFile.name.endsWith(".csv")) {
-        setFile(droppedFile);
-      }
-    },
-    [setFile],
-  );
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
-
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <label className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-          <FileSpreadsheet size={16} className="text-slate-400" />
-          {label} {required && <span className="text-red-500">*</span>}
-        </label>
-        {status === "idle" && (
-          <div className="flex bg-slate-100 p-0.5 rounded-lg">
-            <button
-              type="button"
-              onClick={() => setMode("file")}
-              className={`px-2 py-0.5 text-[10px] font-bold rounded-md transition-all ${
-                mode === "file"
-                  ? "bg-white text-indigo-600 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              Upload
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("url")}
-              className={`px-2 py-0.5 text-[10px] font-bold rounded-md transition-all ${
-                mode === "url"
-                  ? "bg-white text-indigo-600 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700"
-              }`}
-            >
-              Link
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className="relative">
-        {status !== "idle" ? (
-          <div className="border border-slate-200 rounded-xl p-4 bg-slate-50">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <FileSpreadsheet className="text-indigo-600" size={20} />
-                <span className="text-sm font-bold text-slate-700">
-                  {file?.name || "Remote CSV"}
-                </span>
-              </div>
-              {status === "done" ? (
-                <div className="flex items-center gap-1 text-emerald-600 text-xs font-bold uppercase tracking-wider">
-                  <Check size={14} /> Ready
-                </div>
-              ) : (
-                <div className="flex items-center gap-1 text-indigo-600 text-xs font-bold uppercase tracking-wider">
-                  <Loader2 size={14} className="animate-spin" /> {status}...
-                </div>
-              )}
-            </div>
-            {status !== "done" && (
-              <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-indigo-600 transition-all duration-300"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            )}
-          </div>
-        ) : mode === "file" ? (
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`relative border-2 border-dashed rounded-xl p-6 transition-all flex flex-col items-center justify-center text-center group ${
-              isDragging
-                ? "border-indigo-500 bg-indigo-50/50"
-                : "border-slate-200 hover:border-indigo-400 hover:bg-slate-50"
-            }`}
-          >
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileSelect}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-            <div className="p-2 bg-indigo-50 text-indigo-500 rounded-full mb-2 group-hover:scale-110 transition-transform">
-              <UploadCloud size={20} />
-            </div>
-            <p className="text-xs font-semibold text-slate-600">
-              <span className="text-indigo-600">Click</span> or drag csv
-            </p>
-          </div>
-        ) : (
-          <div className="relative">
-            <LinkIcon
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-              size={16}
-            />
-            <input
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://..."
-              className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400 text-sm"
-            />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 export const Home = ({
   setCandidateName,
+  setSelectedStack,
+  setSelectedProfileId,
   onStart,
   onDataLoad,
   existingStacks,
   existingProfiles,
-}: HomeProps) => {
+  hasData,
+}: HomeProps & { hasData?: boolean }) => {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
+  // If data exists, start at step 2. Otherwise step 1.
+  const [step, setStep] = useState(hasData ? 2 : 1);
 
   // File States
   const [profFile, setProfFile] = useState<File | null>(null);
   const [profUrl, setProfUrl] = useState("");
   const [profStatus, setProfStatus] = useState<FileStatus>("idle");
   const [profProgress, setProfProgress] = useState(0);
+  const [profError, setProfError] = useState<string | null>(null);
 
   const [topFile, setTopFile] = useState<File | null>(null);
   const [topUrl, setTopUrl] = useState("");
   const [topStatus, setTopStatus] = useState<FileStatus>("idle");
   const [topProgress, setTopProgress] = useState(0);
+  const [topError, setTopError] = useState<string | null>(null);
 
   const [modFile, setModFile] = useState<File | null>(null);
   const [modUrl, setModUrl] = useState("");
   const [modStatus, setModStatus] = useState<FileStatus>("idle");
   const [modProgress, setModProgress] = useState(0);
+  const [modError, setModError] = useState<string | null>(null);
 
   // Parsed Output
   const [parsedContext, setParsedContext] = useState<{
-    matrix: any[];
-    profiles: any[];
+    matrix: Module[];
+    profiles: Profile[];
     stacks: Record<string, string>;
   } | null>(null);
+
+  const currentStacks = parsedContext
+    ? Object.values(parsedContext.stacks)
+    : existingStacks;
+  const currentProfiles = parsedContext
+    ? parsedContext.profiles
+    : existingProfiles;
 
   // Form State
   const [name, setNameInput] = useState("");
   const [selectedStackKey, setSelectedStackKey] = useState("");
-  const [selectedProfileId, setSelectedProfileId] = useState("");
+  const [selectedProfileId, setLocalProfileId] = useState("");
 
-  // Handler to simulate upload/parse
-  const processFile = (
+  // Auto-select defaults when entering step 2
+  useEffect(() => {
+    if (step === 2) {
+      if (!selectedStackKey && currentStacks.length > 0) {
+        setSelectedStackKey(currentStacks[0]);
+      }
+      if (!selectedProfileId && currentProfiles.length > 0) {
+        setLocalProfileId(currentProfiles[0].id);
+      }
+    }
+  }, [
+    step,
+    currentStacks,
+    currentProfiles,
+    selectedStackKey,
+    selectedProfileId,
+  ]);
+
+  const processFile = async (
     file: File | null,
     url: string,
+    type: "profiles" | "topics" | "modules",
     setStatus: (s: FileStatus) => void,
     setProgress: (p: number) => void,
+    setError: (e: string | null) => void,
   ) => {
     if (!file && !url) return;
     setStatus("uploading");
+    setError(null);
+
+    // Reading File if present
+    let content = "";
+    if (file) {
+      try {
+        content = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.onerror = reject;
+          reader.readAsText(file);
+        });
+      } catch (e) {
+        console.error(e);
+        setStatus("error");
+        setError("Failed to read file");
+        return;
+      }
+    } else {
+      // Assume URL fetch mock or implementation
+      // For now, fail URL
+      setStatus("error");
+      setError("URL import not implemented yet");
+      return;
+    }
+
+    // Validate
+    const errorMsg = validateCsvContent(content, type);
+    if (errorMsg) {
+      setStatus("idle"); // Reset to idle to allow re-upload? Or error state.
+      // Actually, if we set 'error' state, we might want to stay in idle/error UI.
+      // My DataSourceInput UI handles 'error' prop.
+      // If I set status to 'idle', it shows the upload box. If error is set, it shows error style. Perfect.
+      setStatus("idle");
+      setError(errorMsg);
+      return;
+    }
+
+    // Simulate Parsing Progress if valid
     let p = 0;
     const interval = setInterval(() => {
       p += Math.random() * 20;
@@ -250,22 +154,58 @@ export const Home = ({
 
   // Watch for file changes
   useEffect(() => {
-    if ((profFile || profUrl) && profStatus === "idle") {
-      processFile(profFile, profUrl, setProfStatus, setProfProgress);
+    if (!profFile && !profUrl) {
+      setProfStatus("idle");
+      setProfError(null);
+      return;
     }
-  }, [profFile, profUrl, profStatus]);
+    if ((profFile || profUrl) && profStatus === "idle" && !profError) {
+      processFile(
+        profFile,
+        profUrl,
+        "profiles",
+        setProfStatus,
+        setProfProgress,
+        setProfError,
+      );
+    }
+  }, [profFile, profUrl, profStatus, profError]);
 
   useEffect(() => {
-    if ((topFile || topUrl) && topStatus === "idle") {
-      processFile(topFile, topUrl, setTopStatus, setTopProgress);
+    if (!topFile && !topUrl) {
+      setTopStatus("idle");
+      setTopError(null);
+      return;
     }
-  }, [topFile, topUrl, topStatus]);
+    if ((topFile || topUrl) && topStatus === "idle" && !topError) {
+      processFile(
+        topFile,
+        topUrl,
+        "topics",
+        setTopStatus,
+        setTopProgress,
+        setTopError,
+      );
+    }
+  }, [topFile, topUrl, topStatus, topError]);
 
   useEffect(() => {
-    if ((modFile || modUrl) && modStatus === "idle") {
-      processFile(modFile, modUrl, setModStatus, setModProgress);
+    if (!modFile && !modUrl) {
+      setModStatus("idle");
+      setModError(null);
+      return;
     }
-  }, [modFile, modUrl, modStatus]);
+    if ((modFile || modUrl) && modStatus === "idle" && !modError) {
+      processFile(
+        modFile,
+        modUrl,
+        "modules",
+        setModStatus,
+        setModProgress,
+        setModError,
+      );
+    }
+  }, [modFile, modUrl, modStatus, modError]);
 
   // Parse when all required ready
   useEffect(() => {
@@ -321,7 +261,7 @@ export const Home = ({
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim() || !selectedStackKey || !selectedProfileId) return;
 
     // Use default/existing if parsing wasn't done or failed, otherwise use parsed
     if (parsedContext) {
@@ -333,6 +273,8 @@ export const Home = ({
     }
 
     setCandidateName(name);
+    setSelectedStack(selectedStackKey);
+    setSelectedProfileId(selectedProfileId);
     // We would pass stack/profile selection to App if App needed it for logic,
     // but typically Assessment page handles the active stack view.
     // However, if we want to "Pre-select" the profile, we might need to store that in App state or pass it.
@@ -343,33 +285,19 @@ export const Home = ({
     navigate(`/assessment/${sessionId}`);
   };
 
-  const currentStacks = parsedContext
-    ? Object.values(parsedContext.stacks)
-    : existingStacks;
-  const currentProfiles = parsedContext
-    ? parsedContext.profiles
-    : existingProfiles;
-
   // Handle moving to next step
   const canGoNext = profStatus === "done" && topStatus === "done";
+
+  // Is form valid?
+  const isFormValid =
+    name.trim().length > 0 &&
+    selectedStackKey !== "" &&
+    selectedProfileId !== "";
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-12 md:mb-16 text-center max-w-2xl mx-auto">
-          <div className="inline-flex items-center justify-center p-4 bg-white rounded-2xl shadow-sm border border-slate-100 mb-6">
-            <div className="p-3 bg-indigo-50 rounded-xl">
-              <FileText className="text-indigo-600 w-8 h-8" />
-            </div>
-          </div>
-          <h1 className="text-4xl font-black text-slate-800 tracking-tight mb-3">
-            Technical Evaluation Portal
-          </h1>
-          <p className="text-lg text-slate-500 font-medium leading-relaxed">
-            Streamlined assessment process for engineering candidates. Configure
-            your matrix and start a new session.
-          </p>
-        </header>
+        <HomeHeader />
 
         <div className="max-w-2xl mx-auto">
           {/* Steps Indicator */}
@@ -384,150 +312,45 @@ export const Home = ({
 
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden p-6 md:p-10">
             {step === 1 ? (
-              <div className="space-y-8 animate-in slide-in-from-right-4 fade-in duration-300">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">
-                    1
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-800">
-                      Import Assessment Data
-                    </h2>
-                    <p className="text-slate-500 text-sm">
-                      Upload configuration files to build the matrix.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-6">
-                  <DataSourceInput
-                    label="Role Profiles"
-                    required
-                    file={profFile}
-                    setFile={setProfFile}
-                    url={profUrl}
-                    setUrl={setProfUrl}
-                    status={profStatus}
-                    progress={profProgress}
-                  />
-                  <DataSourceInput
-                    label="Topics & Stacks"
-                    required
-                    file={topFile}
-                    setFile={setTopFile}
-                    url={topUrl}
-                    setUrl={setTopUrl}
-                    status={topStatus}
-                    progress={topProgress}
-                  />
-                  <DataSourceInput
-                    label="Module Summaries"
-                    file={modFile}
-                    setFile={setModFile}
-                    url={modUrl}
-                    setUrl={setModUrl}
-                    status={modStatus}
-                    progress={modProgress}
-                  />
-                </div>
-
-                <div className="flex justify-end pt-4">
-                  <button
-                    onClick={() => setStep(2)}
-                    disabled={!canGoNext}
-                    className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next Step <ArrowRight size={18} />
-                  </button>
-                </div>
-              </div>
+              <ImportStep
+                profFile={profFile}
+                setProfFile={setProfFile}
+                profUrl={profUrl}
+                setProfUrl={setProfUrl}
+                profStatus={profStatus}
+                profProgress={profProgress}
+                profError={profError}
+                topFile={topFile}
+                setTopFile={setTopFile}
+                topUrl={topUrl}
+                setTopUrl={setTopUrl}
+                topStatus={topStatus}
+                topProgress={topProgress}
+                topError={topError}
+                modFile={modFile}
+                setModFile={setModFile}
+                modUrl={modUrl}
+                setModUrl={setModUrl}
+                modStatus={modStatus}
+                modProgress={modProgress}
+                modError={modError}
+                canGoNext={canGoNext}
+                onNext={() => setStep(2)}
+              />
             ) : (
-              <form
-                onSubmit={handleStart}
-                className="space-y-8 animate-in slide-in-from-right-4 fade-in duration-300"
-              >
-                <div className="flex items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="p-2 hover:bg-slate-100 rounded-full text-slate-400"
-                  >
-                    <ChevronLeft size={24} />
-                  </button>
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-800">
-                      Session Details
-                    </h2>
-                    <p className="text-slate-500 text-sm">
-                      Enter candidate and assessment context.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                      <User size={16} className="text-slate-400" />
-                      Candidate Name
-                    </label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setNameInput(e.target.value)}
-                      placeholder="e.g. John Doe"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
-                      autoFocus
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">
-                        Tech Stack
-                      </label>
-                      <select
-                        value={selectedStackKey}
-                        onChange={(e) => setSelectedStackKey(e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-                      >
-                        <option value="">Select Stack...</option>
-                        {currentStacks.map((s) => (
-                          <option key={s} value={s}>
-                            {s}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">
-                        Role Profile
-                      </label>
-                      <select
-                        value={selectedProfileId}
-                        onChange={(e) => setSelectedProfileId(e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-                      >
-                        <option value="">Select Profile...</option>
-                        {currentProfiles.map((p: any) => (
-                          <option key={p.id} value={p.id}>
-                            {p.title}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={!name.trim()}
-                  className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
-                >
-                  <span>Start Assessment</span>
-                  <ArrowRight size={20} />
-                </button>
-              </form>
+              <SessionForm
+                name={name}
+                setName={setNameInput}
+                selectedStackKey={selectedStackKey}
+                setSelectedStackKey={setSelectedStackKey}
+                selectedProfileId={selectedProfileId}
+                setSelectedProfileId={setLocalProfileId}
+                currentStacks={currentStacks}
+                currentProfiles={currentProfiles}
+                handleStart={handleStart}
+                isFormValid={isFormValid}
+                onBack={() => setStep(1)}
+              />
             )}
           </div>
 
