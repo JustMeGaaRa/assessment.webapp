@@ -1,11 +1,26 @@
-import { useState } from "react";
-import { Save, CheckCircle, FileText, Library, ArrowLeft } from "lucide-react";
+import { useRef, useState } from "react";
+import {
+  Save,
+  CheckCircle,
+  FileText,
+  Library,
+  ArrowLeft,
+  Download,
+  Upload,
+  FileSpreadsheet,
+} from "lucide-react";
 import type { Module, AssessmentSession, Profile } from "../types";
 import { AssessmentStats } from "../components/assessment/AssessmentStats";
 import { AssessmentModule } from "../components/assessment/AssessmentModule";
 import { PageHeader } from "../components/ui/PageHeader";
 import { useNavigate } from "react-router-dom";
 import { AssessmentSummary } from "../utils/AssessmentSummary";
+import {
+  exportSessionToJSON,
+  importSessionFromJSON,
+  exportAssessmentToCSV,
+  parseAssessmentCSV,
+} from "../utils/fileHelpers";
 
 interface AssessmentProps {
   session: AssessmentSession;
@@ -21,8 +36,10 @@ export const Assessment = ({
   onUpdate,
 }: AssessmentProps) => {
   const navigate = useNavigate();
-  // Initialize with first module expanded if available
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const csvInputRef = useRef<HTMLInputElement>(null);
 
+  // Initialize with first module expanded if available
   const [expandedModules, setExpandedModules] = useState<Set<string>>(() => {
     return matrix.length > 0 ? new Set([matrix[0].id]) : new Set();
   });
@@ -62,6 +79,82 @@ export const Assessment = ({
         finalScore: stats.totalScore,
       });
     }
+  };
+
+  // --- JSON Handlers ---
+  const handleExportJSON = () => {
+    exportSessionToJSON(session);
+  };
+
+  const handleImportJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (
+      !window.confirm(
+        "Importing will overwrite current session data. Continue?",
+      )
+    ) {
+      e.target.value = ""; // Reset
+      return;
+    }
+
+    importSessionFromJSON(file)
+      .then((newSession) => {
+        onUpdate({
+          candidateName: newSession.candidateName,
+          profileId: newSession.profileId,
+          profileTitle: newSession.profileTitle,
+          stack: newSession.stack,
+          scores: newSession.scores,
+          notes: newSession.notes,
+          status: newSession.status,
+        });
+        alert("Assessment JSON imported successfully!");
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Failed to import JSON. Invalid file.");
+      })
+      .finally(() => {
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      });
+  };
+
+  // --- CSV Handlers ---
+  const handleExportCSV = () => {
+    exportAssessmentToCSV(session, matrix);
+  };
+
+  const handleImportCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (
+      !window.confirm(
+        "Importing CSV will update scores and notes. Existing data will be merged/overwritten. Continue?",
+      )
+    ) {
+      e.target.value = "";
+      return;
+    }
+
+    parseAssessmentCSV(file)
+      .then(({ scores: newScores, notes: newNotes }) => {
+        // Merge with existing or overwrite
+        onUpdate({
+          scores: { ...session.scores, ...newScores },
+          notes: { ...session.notes, ...newNotes },
+        });
+        alert("Assessment CSV scores imported successfully!");
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Failed to parse CSV file.");
+      })
+      .finally(() => {
+        if (csvInputRef.current) csvInputRef.current.value = "";
+      });
   };
 
   // Calculations
@@ -112,7 +205,66 @@ export const Assessment = ({
               <span>Back to Dashboard</span>
             </button>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-2">
+            {/* Inputs */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept=".json"
+              onChange={handleImportJSON}
+            />
+            <input
+              type="file"
+              ref={csvInputRef}
+              className="hidden"
+              accept=".csv"
+              onChange={handleImportCSV}
+            />
+
+            {/* JSON Group */}
+            <div className="flex gap-1 items-center bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-2 px-3 py-1.5 text-slate-600 font-bold hover:text-indigo-600 transition-all text-xs"
+                title="Import JSON Backup"
+              >
+                <Upload size={14} />
+                <span className="hidden sm:inline">JSON</span>
+              </button>
+              <div className="w-px h-4 bg-slate-200"></div>
+              <button
+                onClick={handleExportJSON}
+                className="flex items-center gap-2 px-3 py-1.5 text-slate-600 font-bold hover:text-indigo-600 transition-all text-xs"
+                title="Export JSON Backup"
+              >
+                <Download size={14} />
+                <span className="hidden sm:inline">JSON</span>
+              </button>
+            </div>
+
+            {/* CSV Group */}
+            <div className="flex gap-1 items-center bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+              <button
+                onClick={() => csvInputRef.current?.click()}
+                className="flex items-center gap-2 px-3 py-1.5 text-slate-600 font-bold hover:text-emerald-600 transition-all text-xs"
+                title="Import Scores CSV"
+              >
+                <FileSpreadsheet size={14} />
+                <span className="hidden sm:inline">Import</span>
+              </button>
+              <div className="w-px h-4 bg-slate-200"></div>
+              <button
+                onClick={handleExportCSV}
+                className="flex items-center gap-2 px-3 py-1.5 text-slate-600 font-bold hover:text-emerald-600 transition-all text-xs"
+                title="Export Scores CSV"
+              >
+                <FileSpreadsheet size={14} />
+                <span className="hidden sm:inline">Export</span>
+              </button>
+            </div>
+
+            <div className="w-px h-8 bg-slate-300 mx-1 hidden sm:block"></div>
             <button
               onClick={() => navigate("/library")}
               className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
