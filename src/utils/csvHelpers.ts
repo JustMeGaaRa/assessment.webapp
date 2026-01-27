@@ -1,41 +1,14 @@
 import type { Module, Profile, Topic, AppData } from "../types";
 
-// Simple CSV Parser handling basic quotes
+import Papa from "papaparse";
+
+// Simple CSV Parser handling basic quotes using PapaParse
 const parseCSV = (text: string): string[][] => {
-  const result: string[][] = [];
-  let row: string[] = [];
-  let current = "";
-  let insideQuote = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-    const nextChar = text[i + 1];
-
-    if (char === '"') {
-      if (insideQuote && nextChar === '"') {
-        current += '"';
-        i++; // Skip escape
-      } else {
-        insideQuote = !insideQuote;
-      }
-    } else if (char === "," && !insideQuote) {
-      row.push(current.trim());
-      current = "";
-    } else if ((char === "\r" || char === "\n") && !insideQuote) {
-      if (current || row.length > 0) row.push(current.trim());
-      if (row.length > 0) result.push(row);
-      row = [];
-      current = "";
-      if (char === "\r" && nextChar === "\n") i++;
-    } else {
-      current += char;
-    }
-  }
-  if (current || row.length > 0) {
-    row.push(current.trim());
-    result.push(row);
-  }
-  return result;
+  const result = Papa.parse<string[]>(text, {
+    skipEmptyLines: 'greedy', // Skip lines that are empty or contain only whitespace
+    transform: (value) => value.trim(), // Mimic original behavior of trimming values
+  });
+  return result.data;
 };
 
 export const validateCsvContent = (content: string, type: "profiles" | "topics" | "modules"): string | null => {
