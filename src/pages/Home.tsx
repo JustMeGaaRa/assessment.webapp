@@ -35,14 +35,11 @@ export const Home = ({
 
   // Modal States
   const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [manualImportOpen, setManualImportOpen] = useState(false);
 
-  // Automatically prompt for import if no data exists on load
-  useEffect(() => {
-    if (!hasData) {
-      setIsImportModalOpen(true);
-    }
-  }, [hasData]);
+  // Open modal if no data exists OR user manually opened it
+  // This avoids the "setState inside useEffect" pattern (cascading render)
+  const isImportModalOpen = !hasData || manualImportOpen;
 
   // File States
   const [profFile, setProfFile] = useState<File | null>(null);
@@ -82,23 +79,15 @@ export const Home = ({
   const [selectedStackKey, setSelectedStackKey] = useState("");
   const [selectedProfileId, setLocalProfileId] = useState("");
 
-  // Auto-select defaults when session modal opens
-  useEffect(() => {
-    if (isSessionModalOpen) {
-      if (!selectedStackKey && currentStacks.length > 0) {
-        setSelectedStackKey(currentStacks[0]);
-      }
-      if (!selectedProfileId && currentProfiles.length > 0) {
-        setLocalProfileId(currentProfiles[0].id);
-      }
+  const handleOpenSessionModal = () => {
+    if (!selectedStackKey && currentStacks.length > 0) {
+      setSelectedStackKey(currentStacks[0]);
     }
-  }, [
-    isSessionModalOpen,
-    currentStacks,
-    currentProfiles,
-    selectedStackKey,
-    selectedProfileId,
-  ]);
+    if (!selectedProfileId && currentProfiles.length > 0) {
+      setLocalProfileId(currentProfiles[0].id);
+    }
+    setIsSessionModalOpen(true);
+  };
 
   const processFile = async (
     file: File | null,
@@ -153,15 +142,16 @@ export const Home = ({
     }, 200);
   };
 
-  useEffect(() => {
-    if (!profFile && !profUrl) {
+  // Event Handlers for File/URL changes
+  // We handle this via events instead of useEffect to avoid cascading renders
+  const handleProfFileChange = (file: File | null) => {
+    setProfFile(file);
+    if (!file && !profUrl) {
       setProfStatus("idle");
       setProfError(null);
-      return;
-    }
-    if ((profFile || profUrl) && profStatus === "idle" && !profError) {
+    } else {
       processFile(
-        profFile,
+        file,
         profUrl,
         "profiles",
         setProfStatus,
@@ -169,17 +159,33 @@ export const Home = ({
         setProfError,
       );
     }
-  }, [profFile, profUrl, profStatus, profError]);
+  };
 
-  useEffect(() => {
-    if (!topFile && !topUrl) {
+  const handleProfUrlChange = (url: string) => {
+    setProfUrl(url);
+    if (!profFile && !url) {
+      setProfStatus("idle");
+      setProfError(null);
+    } else {
+      processFile(
+        profFile,
+        url,
+        "profiles",
+        setProfStatus,
+        setProfProgress,
+        setProfError,
+      );
+    }
+  };
+
+  const handleTopFileChange = (file: File | null) => {
+    setTopFile(file);
+    if (!file && !topUrl) {
       setTopStatus("idle");
       setTopError(null);
-      return;
-    }
-    if ((topFile || topUrl) && topStatus === "idle" && !topError) {
+    } else {
       processFile(
-        topFile,
+        file,
         topUrl,
         "topics",
         setTopStatus,
@@ -187,17 +193,33 @@ export const Home = ({
         setTopError,
       );
     }
-  }, [topFile, topUrl, topStatus, topError]);
+  };
 
-  useEffect(() => {
-    if (!modFile && !modUrl) {
+  const handleTopUrlChange = (url: string) => {
+    setTopUrl(url);
+    if (!topFile && !url) {
+      setTopStatus("idle");
+      setTopError(null);
+    } else {
+      processFile(
+        topFile,
+        url,
+        "topics",
+        setTopStatus,
+        setTopProgress,
+        setTopError,
+      );
+    }
+  };
+
+  const handleModFileChange = (file: File | null) => {
+    setModFile(file);
+    if (!file && !modUrl) {
       setModStatus("idle");
       setModError(null);
-      return;
-    }
-    if ((modFile || modUrl) && modStatus === "idle" && !modError) {
+    } else {
       processFile(
-        modFile,
+        file,
         modUrl,
         "modules",
         setModStatus,
@@ -205,7 +227,24 @@ export const Home = ({
         setModError,
       );
     }
-  }, [modFile, modUrl, modStatus, modError]);
+  };
+
+  const handleModUrlChange = (url: string) => {
+    setModUrl(url);
+    if (!modFile && !url) {
+      setModStatus("idle");
+      setModError(null);
+    } else {
+      processFile(
+        modFile,
+        url,
+        "modules",
+        setModStatus,
+        setModProgress,
+        setModError,
+      );
+    }
+  };
 
   useEffect(() => {
     if (profStatus === "done" && topStatus === "done") {
@@ -292,7 +331,7 @@ export const Home = ({
         parsedContext.stacks,
       );
     }
-    setIsImportModalOpen(false);
+    setManualImportOpen(false);
   };
 
   const canImport = profStatus === "done" && topStatus === "done";
@@ -316,7 +355,7 @@ export const Home = ({
             </button>
 
             <button
-              onClick={() => setIsImportModalOpen(true)}
+              onClick={() => setManualImportOpen(true)}
               className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
             >
               <UploadCloud size={18} />
@@ -345,7 +384,7 @@ export const Home = ({
                 Topics, Modules) to get started.
               </p>
               <button
-                onClick={() => setIsImportModalOpen(true)}
+                onClick={() => setManualImportOpen(true)}
                 className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95"
               >
                 Import Data Now
@@ -357,9 +396,7 @@ export const Home = ({
                 Recent Assessments
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <NewAssessmentCard
-                  onClick={() => setIsSessionModalOpen(true)}
-                />
+                <NewAssessmentCard onClick={handleOpenSessionModal} />
                 {sessions.slice(0, 10).map((session) => (
                   <AssessmentSessionCard key={session.id} session={session} />
                 ))}
@@ -392,28 +429,28 @@ export const Home = ({
       {/* Import Data Modal */}
       <Modal
         isOpen={isImportModalOpen}
-        onClose={() => hasData && setIsImportModalOpen(false)}
+        onClose={() => hasData && setManualImportOpen(false)}
         title="Import Assessment Data"
       >
         <ImportStep
           profFile={profFile}
-          setProfFile={setProfFile}
+          setProfFile={handleProfFileChange}
           profUrl={profUrl}
-          setProfUrl={setProfUrl}
+          setProfUrl={handleProfUrlChange}
           profStatus={profStatus}
           profProgress={profProgress}
           profError={profError}
           topFile={topFile}
-          setTopFile={setTopFile}
+          setTopFile={handleTopFileChange}
           topUrl={topUrl}
-          setTopUrl={setTopUrl}
+          setTopUrl={handleTopUrlChange}
           topStatus={topStatus}
           topProgress={topProgress}
           topError={topError}
           modFile={modFile}
-          setModFile={setModFile}
+          setModFile={handleModFileChange}
           modUrl={modUrl}
-          setModUrl={setModUrl}
+          setModUrl={handleModUrlChange}
           modStatus={modStatus}
           modProgress={modProgress}
           modError={modError}

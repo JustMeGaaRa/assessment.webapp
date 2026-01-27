@@ -10,7 +10,9 @@ export const PageHeader = ({ title, description, icon }: PageHeaderProps) => {
       <div className="flex justify-between items-start mb-8"></div>
 
       <div className="flex items-center gap-4">
-        <div className="p-3.5 bg-indigo-50 rounded-2xl shrink-0">{icon}</div>
+        <div className="hidden md:block p-3.5 bg-indigo-50 rounded-2xl shrink-0">
+          {icon}
+        </div>
         <div>
           <h1 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight leading-none mb-1.5">
             {title}

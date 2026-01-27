@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import { Save, CheckCircle, FileText, Library, ArrowLeft } from "lucide-react";
 import type { Module, AssessmentSession, Profile } from "../types";
 import { AssessmentStats } from "../components/assessment/AssessmentStats";
@@ -22,16 +22,10 @@ export const Assessment = ({
 }: AssessmentProps) => {
   const navigate = useNavigate();
   // Initialize with first module expanded if available
-  const [expandedModules, setExpandedModules] = useState<Set<string>>(
-    new Set(),
-  );
 
-  // Initialize defaults when data loads
-  useEffect(() => {
-    if (matrix.length > 0 && expandedModules.size === 0) {
-      setExpandedModules(new Set([matrix[0].id]));
-    }
-  }, [matrix, expandedModules]);
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(() => {
+    return matrix.length > 0 ? new Set([matrix[0].id]) : new Set();
+  });
 
   const toggleModule = (id: string) => {
     const newSet = new Set(expandedModules);
@@ -71,61 +65,64 @@ export const Assessment = ({
   };
 
   // Calculations
-  const stats = useMemo(() => {
-    const calculator = new AssessmentSummary(session, matrix, profiles);
-    const result = calculator.calculate();
 
-    // Map result back to UI requirements
-    // We iterate matrix again just to preserve order, or we can use Object.values(result.moduleScores) if order doesn't matter (but it does for list)
-    const moduleStats = matrix.map((mod) => {
-      const s = result.moduleScores[mod.id];
-      return {
-        id: mod.id,
-        score: s.rawSum,
-        max: s.totalTopics * 5, // Keep for legacy usage if needed
-        average: s.averageScore,
-        weight: s.weight,
-        roleScore: s.weightedScore,
-        completed: s.completedTopics,
-        total: s.totalTopics,
-        // Calculate a percentage for the UI progress bar (based on raw scores vs max possible raw score)
-        // or based on average/5.
-        // Let's use Raw Score / (Total Topics * 5) * 100 for "Completion Quality"
-        percentage:
-          s.totalTopics > 0
-            ? Math.round((s.rawSum / (s.totalTopics * 5)) * 100)
-            : 0,
-      };
-    });
+  const calculator = new AssessmentSummary(session, matrix, profiles);
+  const result = calculator.calculate();
 
+  // Map result back to UI requirements
+  // We iterate matrix again just to preserve order, or we can use Object.values(result.moduleScores) if order doesn't matter (but it does for list)
+  const moduleStats = matrix.map((mod) => {
+    const s = result.moduleScores[mod.id];
     return {
-      totalScore: result.totalScore,
-      completedCount: result.completedCount,
-      totalTopics: result.totalTopics,
-      moduleStats,
+      id: mod.id,
+      score: s.rawSum,
+      max: s.totalTopics * 5, // Keep for legacy usage if needed
+      average: s.averageScore,
+      weight: s.weight,
+      roleScore: s.weightedScore,
+      completed: s.completedTopics,
+      total: s.totalTopics,
+      // Calculate a percentage for the UI progress bar (based on raw scores vs max possible raw score)
+      // or based on average/5.
+      // Let's use Raw Score / (Total Topics * 5) * 100 for "Completion Quality"
+      percentage:
+        s.totalTopics > 0
+          ? Math.round((s.rawSum / (s.totalTopics * 5)) * 100)
+          : 0,
     };
-  }, [session, matrix, profiles]);
+  });
+
+  const stats = {
+    totalScore: result.totalScore,
+    completedCount: result.completedCount,
+    totalTopics: result.totalTopics,
+    moduleStats,
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-8 font-semibold group"
-          >
-            <div className="p-1 rounded-full group-hover:bg-slate-100 transition-colors">
-              <ArrowLeft size={20} />
-            </div>
-            <span>Back to Dashboard</span>
-          </button>
-          <button
-            onClick={() => navigate("/library")}
-            className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
-          >
-            <Library size={18} />
-            <span>View Library</span>
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors mb-8 font-semibold group"
+            >
+              <div className="p-1 rounded-full group-hover:bg-slate-100 transition-colors">
+                <ArrowLeft size={20} />
+              </div>
+              <span>Back to Dashboard</span>
+            </button>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => navigate("/library")}
+              className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
+            >
+              <Library size={18} />
+              <span>View Library</span>
+            </button>
+          </div>
         </div>
         <PageHeader
           icon={<FileText className="text-indigo-600 w-8 h-8" />}
