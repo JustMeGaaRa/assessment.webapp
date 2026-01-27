@@ -9,7 +9,7 @@ interface LibraryModuleProps {
 export const LibraryModule = ({ module, activeStack }: LibraryModuleProps) => {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-      <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+      <div className="px-4 py-3 md:px-6 md:py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
         <div>
           <h3 className="text-lg font-bold text-slate-800">{module.title}</h3>
           <p className="text-xs text-slate-500 font-medium">
@@ -24,9 +24,13 @@ export const LibraryModule = ({ module, activeStack }: LibraryModuleProps) => {
         <table className="w-full text-left">
           <thead>
             <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
-              <th className="px-6 py-3 w-1/3">Topic</th>
-              <th className="px-6 py-3">Current Stack ({activeStack})</th>
-              <th className="px-6 py-3 text-right">Actions</th>
+              <th className="px-4 py-2 md:px-6 md:py-3 w-1/3">Topic</th>
+              <th className="px-4 py-2 md:px-6 md:py-3">
+                Current Stack ({activeStack})
+              </th>
+              <th className="px-4 py-2 md:px-6 md:py-3 text-right hidden md:table-cell">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
