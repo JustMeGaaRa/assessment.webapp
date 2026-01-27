@@ -24,15 +24,15 @@ import {
 
 interface AssessmentProps {
   session: AssessmentSession;
-  matrix: Module[];
-  profiles: Profile[];
+  modules: Module[];
+  profile: Profile;
   onUpdate: (data: Partial<AssessmentSession>) => void;
 }
 
 export const Assessment = ({
   session,
-  matrix,
-  profiles,
+  modules,
+  profile,
   onUpdate,
 }: AssessmentProps) => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export const Assessment = ({
 
   // Initialize with first module expanded if available
   const [expandedModules, setExpandedModules] = useState<Set<string>>(() => {
-    return matrix.length > 0 ? new Set([matrix[0].id]) : new Set();
+    return modules.length > 0 ? new Set([modules[0].id]) : new Set();
   });
 
   const toggleModule = (id: string) => {
@@ -123,7 +123,7 @@ export const Assessment = ({
 
   // --- CSV Handlers ---
   const handleExportCSV = () => {
-    exportAssessmentToCSV(session, matrix);
+    exportAssessmentToCSV(session, modules);
   };
 
   const handleImportCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,12 +159,12 @@ export const Assessment = ({
 
   // Calculations
 
-  const calculator = new AssessmentSummary(session, matrix, profiles);
+  const calculator = new AssessmentSummary(session, modules, profile);
   const result = calculator.calculate();
 
   // Map result back to UI requirements
   // We iterate matrix again just to preserve order, or we can use Object.values(result.moduleScores) if order doesn't matter (but it does for list)
-  const moduleStats = matrix.map((mod) => {
+  const moduleStats = modules.map((mod) => {
     const s = result.moduleScores[mod.id];
     return {
       id: mod.id,
@@ -290,7 +290,7 @@ export const Assessment = ({
 
         {/* Modules List */}
         <div className="space-y-4">
-          {matrix.map((module) => {
+          {modules.map((module) => {
             const isExpanded = expandedModules.has(module.id);
             const mStat = stats.moduleStats.find((s) => s.id === module.id);
 

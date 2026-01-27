@@ -136,11 +136,19 @@ const AssessmentRoute = ({
     return <Navigate to="/" replace />;
   }
 
+  const profile = profiles.find((p) => p.id === session.profileId);
+
+  if (!profile) {
+    return <Navigate to="/" replace />;
+  }
+
+  const profileModules = matrix.filter((m) => profile.weights[m.id] > 0);
+
   return (
     <Assessment
       session={session}
-      matrix={matrix}
-      profiles={profiles}
+      modules={profileModules}
+      profile={profile}
       onUpdate={(data) => updateSession(session.id, data)}
     />
   );

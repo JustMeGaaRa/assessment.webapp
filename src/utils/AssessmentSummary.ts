@@ -23,17 +23,17 @@ export interface AssessmentSummaryResult {
 
 export class AssessmentSummary {
   private session: AssessmentSession;
-  private matrix: Module[];
-  private profile: Profile | undefined;
+  private modules: Module[];
+  private profile: Profile;
 
   constructor(
     session: AssessmentSession,
-    matrix: Module[],
-    profiles: Profile[]
+    modules: Module[],
+    profile: Profile
   ) {
     this.session = session;
-    this.matrix = matrix;
-    this.profile = profiles.find((p) => p.id === session.profileId);
+    this.modules = modules;
+    this.profile = profile;
   }
 
   public calculate(): AssessmentSummaryResult {
@@ -42,7 +42,7 @@ export class AssessmentSummary {
     let globalCompletedCount = 0;
     let globalTotalTopics = 0;
 
-    this.matrix.forEach((module) => {
+    this.modules.forEach((module) => {
       let moduleSum = 0;
       let moduleCompletedCount = 0;
       const moduleTotalTopics = module.topics.length;
@@ -63,7 +63,7 @@ export class AssessmentSummary {
         moduleCompletedCount > 0 ? moduleSum / moduleCompletedCount : 0;
 
       // Get Weight
-      const weight = this.profile?.weights?.[module.id] || 0;
+      const weight = this.profile.weights[module.id];
 
       // Calculate Weighted Contribution
       const weightedScore = averageScore * weight / 100;
