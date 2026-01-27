@@ -76,23 +76,29 @@ export const AssessmentModule = ({
           <div className="flex flex-col items-end gap-1 flex-shrink-0">
             <span
               className={`text-sm font-bold ${
-                (stats.percentage ?? 0) > 70
-                  ? "text-emerald-600"
-                  : (stats.percentage ?? 0) > 40
-                    ? "text-amber-600"
-                    : "text-slate-400"
+                (stats.percentage ?? 0) === 0 ? "text-slate-400" : ""
               }`}
+              style={
+                (stats.percentage ?? 0) > 0
+                  ? {
+                      color: `hsl(${Math.round(
+                        ((stats.percentage ?? 0) * 120) / 100,
+                      )}, 70%, 45%)`,
+                    }
+                  : undefined
+              }
             >
               {stats.percentage ?? 0}%
             </span>
             <div className="w-16 md:w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all duration-500 ${
-                  (stats.percentage ?? 0) > 70
-                    ? "bg-emerald-500"
-                    : "bg-amber-500"
-                }`}
-                style={{ width: `${stats.percentage ?? 0}%` }}
+                className="h-full transition-all duration-500"
+                style={{
+                  width: `${stats.percentage ?? 0}%`,
+                  backgroundColor: `hsl(${Math.round(
+                    ((stats.percentage ?? 0) * 120) / 100,
+                  )}, 70%, 50%)`,
+                }}
               />
             </div>
           </div>

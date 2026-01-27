@@ -82,12 +82,10 @@ export const Assessment = ({
       roleScore: s.weightedScore,
       completed: s.completedTopics,
       total: s.totalTopics,
-      // Calculate a percentage for the UI progress bar (based on raw scores vs max possible raw score)
-      // or based on average/5.
-      // Let's use Raw Score / (Total Topics * 5) * 100 for "Completion Quality"
+      // Calculate a percentage for the UI progress bar (coverage of topics scored)
       percentage:
         s.totalTopics > 0
-          ? Math.round((s.rawSum / (s.totalTopics * 5)) * 100)
+          ? Math.round((s.completedTopics / s.totalTopics) * 100)
           : 0,
     };
   });
