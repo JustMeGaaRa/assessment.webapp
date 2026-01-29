@@ -7,10 +7,10 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
-import type { AssessmentSession } from "../../types";
+import type { AssessorEvaluation } from "../../types";
 
 interface AssessmentSessionCardProps {
-  session: AssessmentSession;
+  session: AssessorEvaluation;
 }
 
 export const AssessmentSessionCard = ({
@@ -18,7 +18,7 @@ export const AssessmentSessionCard = ({
 }: AssessmentSessionCardProps) => {
   const navigate = useNavigate();
 
-  const getStatusColor = (status: AssessmentSession["status"]) => {
+  const getStatusColor = (status: AssessorEvaluation["status"]) => {
     switch (status) {
       case "completed":
         return "text-emerald-600 bg-emerald-50";
@@ -29,7 +29,7 @@ export const AssessmentSessionCard = ({
     }
   };
 
-  const getStatusIcon = (status: AssessmentSession["status"]) => {
+  const getStatusIcon = (status: AssessorEvaluation["status"]) => {
     switch (status) {
       case "completed":
         return <CheckCircle2 size={16} />;
@@ -42,8 +42,10 @@ export const AssessmentSessionCard = ({
 
   return (
     <div
-      onClick={() => navigate(`/assessment/${session.id}`)}
-      className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+      onClick={() =>
+        navigate(`/assessment/${session.assessmentId ?? session.id}`)
+      }
+      className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group min-h-[220px] flex flex-col"
     >
       <div className="flex justify-between items-start mb-4">
         <div className="flex gap-2">

@@ -35,6 +35,20 @@ export interface AssessmentSession {
   profileTitle: string;
   stack: string;
   date: string;
+  locked?: boolean;
+}
+
+export interface AssessorEvaluation {
+  id: string; // Evaluation ID
+  assessmentId: string; // Link to AssessmentSession
+  assessorName?: string; // Optional if not set yet
+  // Snapshot data (can be removed if we fully normalize, but keeping for safety/export)
+  candidateName: string;
+  profileId: string;
+  profileTitle: string;
+  stack: string;
+  
+  date: string;
   status: "ongoing" | "completed" | "rejected";
   scores: Record<string, number>;
   notes: Record<string, string>;

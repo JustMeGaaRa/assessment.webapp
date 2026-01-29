@@ -1,5 +1,5 @@
 import { User, Layers, CheckCircle2, Trophy, RotateCcw } from "lucide-react";
-import { StatCard } from "../StatCard";
+import { StatCard } from "../ui/StatCard";
 
 interface AssessmentStatsProps {
   candidateName: string;

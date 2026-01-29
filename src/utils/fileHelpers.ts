@@ -1,10 +1,10 @@
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
-import type { AssessmentSession, Module } from "../types";
+import type { AssessorEvaluation, Module } from "../types";
 
 // --- JSON Helpers ---
 
-export const exportSessionToJSON = (session: AssessmentSession) => {
+export const exportSessionToJSON = (session: AssessorEvaluation) => {
   const blob = new Blob([JSON.stringify(session, null, 2)], {
     type: "application/json",
   });
@@ -16,7 +16,7 @@ export const exportSessionToJSON = (session: AssessmentSession) => {
 
 export const importSessionFromJSON = (
   file: File,
-): Promise<AssessmentSession> => {
+): Promise<AssessorEvaluation> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -26,7 +26,7 @@ export const importSessionFromJSON = (
         if (!json.id || !json.candidateName || !json.scores) {
           throw new Error("Invalid assessment file format");
         }
-        resolve(json as AssessmentSession);
+        resolve(json as AssessorEvaluation);
       } catch (err) {
         reject(err);
       }
@@ -39,7 +39,7 @@ export const importSessionFromJSON = (
 // --- CSV Helpers (Full Assessment Level) ---
 
 export const exportAssessmentToCSV = (
-  session: AssessmentSession,
+  session: AssessorEvaluation,
   matrix: Module[],
 ) => {
   // Flatten all topics from all modules

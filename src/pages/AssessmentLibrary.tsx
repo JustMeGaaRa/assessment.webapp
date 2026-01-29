@@ -7,17 +7,17 @@ import { LibraryProfile } from "../components/library/LibraryProfile";
 import { PageHeader } from "../components/ui/PageHeader";
 import { useNavigate } from "react-router-dom";
 
-interface MatrixLibraryProps {
+interface AssessmentLibraryPageProps {
   matrix: Module[];
   profiles: Profile[];
   stacks: Record<string, string>;
 }
 
-export const MatrixLibrary = ({
+export const AssessmentLibraryPage = ({
   matrix,
   profiles,
   stacks,
-}: MatrixLibraryProps) => {
+}: AssessmentLibraryPageProps) => {
   const navigate = useNavigate();
   // Default to first stack available or empty string
   const [activeStack, setActiveStack] = useState(Object.values(stacks)[0]);

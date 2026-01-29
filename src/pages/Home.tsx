@@ -1,18 +1,26 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { parseAssessmentData, validateCsvContent } from "../utils/csvHelpers";
-import type { Module, Profile, FileStatus, AssessmentSession } from "../types";
-import { ImportStep } from "../components/home/ImportStep";
+import type {
+  Module,
+  Profile,
+  FileStatus,
+  AssessorEvaluation,
+  AssessmentSession,
+} from "../types";
+import { ImportForm } from "../components/home/ImportForm";
 import { SessionForm } from "../components/home/SessionForm";
 import { AssessmentSessionCard } from "../components/dashboard/AssessmentSessionCard";
 import { NewAssessmentCard } from "../components/dashboard/NewAssessmentCard";
 import { Modal } from "../components/ui/Modal";
-import { FileText, Library, UploadCloud } from "lucide-react";
+import { Box, Library, UploadCloud } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 
-interface HomeProps {
-  sessions: AssessmentSession[];
-  onCreateSession: (session: AssessmentSession) => void;
+interface HomePageProps {
+  assessments: AssessmentSession[];
+  evaluations: AssessorEvaluation[];
+  onCreateAssessment: (assessment: AssessmentSession) => void;
+  onCreateSession: (session: AssessorEvaluation) => void;
   onDataLoad: (
     matrix: Module[],
     profiles: Profile[],
@@ -21,16 +29,21 @@ interface HomeProps {
   existingStacks: string[];
   existingProfiles: Profile[];
   hasData: boolean;
+  assessorName: string;
+  setAssessorName: (name: string) => void;
 }
 
-export const Home = ({
-  sessions,
-  onCreateSession,
+export const HomePage = ({
+  assessments,
+  evaluations,
+  onCreateAssessment,
   onDataLoad,
   existingStacks,
   existingProfiles,
   hasData,
-}: HomeProps) => {
+  assessorName,
+  setAssessorName,
+}: HomePageProps) => {
   const navigate = useNavigate();
 
   // Modal States
@@ -304,23 +317,21 @@ export const Home = ({
       );
     }
 
-    const sessionId = crypto.randomUUID();
+    const assessmentId = crypto.randomUUID();
     const profile = currentProfiles.find((p) => p.id === selectedProfileId);
 
-    const newSession: AssessmentSession = {
-      id: sessionId,
+    const newAssessment: AssessmentSession = {
+      id: assessmentId,
       candidateName: name,
       profileId: selectedProfileId,
       profileTitle: profile?.title || "Unknown Profile",
       stack: selectedStackKey,
       date: new Date().toISOString(),
-      status: "ongoing",
-      scores: {},
-      notes: {},
+      locked: false,
     };
 
-    onCreateSession(newSession);
-    navigate(`/assessment/${sessionId}`);
+    onCreateAssessment(newAssessment);
+    navigate(`/assessment/${assessmentId}`);
   };
 
   const handleImportComplete = () => {
@@ -365,7 +376,7 @@ export const Home = ({
         </div>
 
         <PageHeader
-          icon={<FileText className="text-indigo-600 w-8 h-8" />}
+          icon={<Box className="text-indigo-600 w-8 h-8" />}
           title="Technical Assessment Portal"
           description="Streamlined assessment process for engineering candidates."
         />
@@ -396,10 +407,60 @@ export const Home = ({
                 Recent Assessments
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <NewAssessmentCard onClick={handleOpenSessionModal} />
-                {sessions.slice(0, 10).map((session) => (
-                  <AssessmentSessionCard key={session.id} session={session} />
-                ))}
+                <NewAssessmentCard
+                  title="New Assessment"
+                  description="Start a new evaluation session for a candidate"
+                  onClick={handleOpenSessionModal}
+                />
+                {assessments.slice(0, 10).map((assessment) => {
+                  // Find evaluations for this assessment to compute status/score
+                  const relatedEvals = evaluations.filter(
+                    (e) => e.assessmentId === assessment.id,
+                  );
+                  const completed = relatedEvals.filter(
+                    (e) => e.status === "completed",
+                  );
+                  const isCompleted =
+                    relatedEvals.length > 0 &&
+                    relatedEvals.every((e) => e.status === "completed");
+                  // Compute average score
+                  const totalScore = completed.reduce(
+                    (acc, curr) => acc + (curr.finalScore || 0),
+                    0,
+                  );
+                  const avgScore =
+                    completed.length > 0
+                      ? totalScore / completed.length
+                      : undefined;
+
+                  // Construct a display object compatible with AssessmentSessionCard
+                  // We treat 'locked' as a pseudo-status or just use ongoing/completed
+                  const displaySession: AssessorEvaluation = {
+                    id: assessment.id, // Use Group ID as ID for navigation
+                    assessmentId: assessment.id, // It IS the assessment
+                    candidateName: assessment.candidateName,
+                    profileTitle: assessment.profileTitle,
+                    profileId: assessment.profileId,
+                    stack: assessment.stack,
+                    date: assessment.date,
+                    status: assessment.locked
+                      ? "completed"
+                      : isCompleted
+                        ? "completed"
+                        : "ongoing",
+                    scores: {},
+                    notes: {},
+                    finalScore: avgScore,
+                    assessorName: "Group", // Placeholder
+                  };
+
+                  return (
+                    <AssessmentSessionCard
+                      key={assessment.id}
+                      session={displaySession}
+                    />
+                  );
+                })}
               </div>
             </>
           )}
@@ -432,7 +493,7 @@ export const Home = ({
         onClose={() => hasData && setManualImportOpen(false)}
         title="Import Assessment Data"
       >
-        <ImportStep
+        <ImportForm
           profFile={profFile}
           setProfFile={handleProfFileChange}
           profUrl={profUrl}
@@ -454,10 +515,12 @@ export const Home = ({
           modStatus={modStatus}
           modProgress={modProgress}
           modError={modError}
+          assessorName={assessorName}
+          setAssessorName={setAssessorName}
         />
         <div className="mt-6 flex justify-end">
           <button
-            disabled={!canImport}
+            disabled={!canImport || !assessorName.trim()}
             onClick={handleImportComplete}
             className="px-6 py-2 bg-indigo-600 disabled:bg-slate-300 text-white font-bold rounded-xl transition-colors"
           >

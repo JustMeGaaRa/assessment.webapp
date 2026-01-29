@@ -1,4 +1,4 @@
-import type { AssessmentSession, Module, Profile } from "../types";
+import type { AssessorEvaluation, Module, Profile } from "../types";
 
 export interface ModuleScore {
   moduleId: string;
@@ -21,13 +21,13 @@ export interface AssessmentSummaryResult {
   totalTopics: number;
 }
 
-export class AssessmentSummary {
-  private session: AssessmentSession;
+export class AssessmentHelper {
+  private session: AssessorEvaluation;
   private modules: Module[];
   private profile: Profile;
 
   constructor(
-    session: AssessmentSession,
+    session: AssessorEvaluation,
     modules: Module[],
     profile: Profile
   ) {
@@ -92,5 +92,39 @@ export class AssessmentSummary {
       completedCount: globalCompletedCount,
       totalTopics: globalTotalTopics,
     };
+  }
+
+  /**
+   * Calculates the overall aggregated score for an assessment based on multiple evaluations.
+   * @param matrix The assessment matrix (modules)
+   * @param profile The candidate's profile (weights)
+   * @param moduleScores A record of ModuleID -> Array of scores (one per assessor)
+   * @returns The overall weighted percentage (0-100)
+   */
+  public static calculateAggregateScore(
+    matrix: Module[],
+    profile: Profile,
+    moduleScores: Record<string, number[]>
+  ): number {
+    let totalWeightedScore = 0;
+    let totalWeight = 0;
+
+    matrix.forEach((mod) => {
+      const weight = profile.weights[mod.id] || 0;
+      const scores = moduleScores[mod.id] || [];
+
+      if (scores.length > 0) {
+        // Average score for this module across all assessors
+        const avgModScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+        
+        // Add weighted contribution (Score/5 * Weight)
+        totalWeightedScore += (avgModScore / 5) * weight;
+        totalWeight += weight;
+      }
+    });
+
+    return totalWeight > 0
+      ? Math.round((totalWeightedScore / totalWeight) * 100)
+      : 0;
   }
 }
