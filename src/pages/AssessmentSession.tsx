@@ -21,29 +21,31 @@ import { AssessmentHelper } from "../utils/assessmentHelper";
 
 interface AssessmentSessionPageProps {
   assessment?: AssessmentSession; // The group object
-  sessions: AssessorEvaluation[]; // The evaluations
+  evaluations: AssessorEvaluation[]; // The evaluations
   onCreateSession: (session: AssessorEvaluation) => void;
   onUpdateAssessment: (id: string, data: Partial<AssessmentSession>) => void;
   onUpdateSession: (id: string, data: Partial<AssessorEvaluation>) => void; // Keeping for potential future use or cleanup
   matrix: Module[];
-  profiles: Profile[];
+  profile: Profile;
   assessorName: string;
 }
 
 export const AssessmentSessionPage = ({
   assessment,
-  sessions,
+  evaluations,
   onCreateSession,
   onUpdateAssessment,
   assessorName,
   matrix,
-  profiles,
+  profile,
 }: AssessmentSessionPageProps) => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
 
   // Filter evaluations for this assessment
-  const evaluations = sessions.filter((s) => s.assessmentId === assessmentId);
+  const assessmentEvaluations = evaluations.filter(
+    (evaluation) => evaluation.assessmentId === assessmentId,
+  );
 
   const candidateName = assessment?.candidateName || "Unknown Candidate";
   const isLocked = assessment?.locked || false;
@@ -197,15 +199,11 @@ export const AssessmentSessionPage = ({
         />
 
         {/* Assessment Summary Section */}
-        {assessment && evaluations.length > 0 && (
+        {assessment && assessmentEvaluations.length > 0 && (
           <div className="grid grid-cols-1 gap-10 mb-10">
             {(() => {
-              const profile = profiles.find(
-                (p) => p.id === assessment.profileId,
-              );
-
               // Prepare assessors data
-              const assessors = evaluations.map((ev, idx) => {
+              const assessors = assessmentEvaluations.map((ev, idx) => {
                 const style = colors[idx % colors.length];
                 return {
                   id: ev.id,
@@ -233,7 +231,7 @@ export const AssessmentSessionPage = ({
 
               matrix.forEach((module) => {
                 resultScores[module.id] = {};
-                evaluations.forEach((evaluation) => {
+                assessmentEvaluations.forEach((evaluation) => {
                   resultScores[module.id][evaluation.id] = getModuleScore(
                     evaluation,
                     module.id,
@@ -247,7 +245,7 @@ export const AssessmentSessionPage = ({
               const resultNotes: Record<string, string> = {};
               matrix.forEach((module) => {
                 const notesList: string[] = [];
-                evaluations.forEach((evaluation) => {
+                assessmentEvaluations.forEach((evaluation) => {
                   // Find if there is a note for this module or topics within?
                   // Current AssessorEvaluation stores notes by TopicID.
                   // We need to see if we aggregate topic notes or if we change UI to support module notes.
@@ -276,25 +274,10 @@ export const AssessmentSessionPage = ({
                 stack: assessment.stack,
                 date: new Date(assessment.date).toLocaleDateString(),
                 assessors,
+                evaluations: assessmentEvaluations,
                 scores: resultScores,
                 notes: resultNotes,
               };
-
-              // Calculate overall score using Helper
-              const overallScore = profile
-                ? AssessmentHelper.calculateAggregateScore(
-                    matrix,
-                    profile,
-                    // Transform resultScores (Mod -> EvalId -> Score) to (Mod -> Score[])
-                    Object.keys(resultScores).reduce(
-                      (acc, modId) => {
-                        acc[modId] = Object.values(resultScores[modId]);
-                        return acc;
-                      },
-                      {} as Record<string, number[]>,
-                    ),
-                  )
-                : 0;
 
               return (
                 <AssessmentSummaryCard
@@ -302,7 +285,6 @@ export const AssessmentSessionPage = ({
                   result={assessmentResult}
                   profile={profile}
                   matrix={matrix}
-                  overallScore={overallScore}
                 />
               );
             })()}
@@ -326,7 +308,7 @@ export const AssessmentSessionPage = ({
             </>
           )}
           {/* Existing Evaluations */}
-          {evaluations.map((evalSession) => (
+          {assessmentEvaluations.map((evalSession) => (
             <AssessmentEvaluationCard
               key={evalSession.id}
               evalSession={evalSession}

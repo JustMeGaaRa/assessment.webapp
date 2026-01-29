@@ -50,7 +50,8 @@ export interface AssessorEvaluation {
   
   date: string;
   status: "ongoing" | "completed" | "rejected";
-  scores: Record<string, number>;
-  notes: Record<string, string>;
+  
+  scores: Record<string, number>; // { topicId, score }
+  notes: Record<string, string>; // { topicId, note }
   finalScore?: number;
 }

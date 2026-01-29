@@ -140,7 +140,7 @@ const App = () => {
           path="/assessment/:assessmentId/evaluation/:evaluationId"
           element={
             <AssessmentEvaluationRoute
-              sessions={evaluations}
+              evaluations={evaluations}
               matrix={matrix}
               profiles={profiles}
               updateSession={updateEvaluation}
@@ -200,44 +200,49 @@ const AssessmentSessionRoute = ({
   const { assessmentId } = useParams();
   const assessment = assessments.find((a) => a.id === assessmentId);
 
-  // If assessment not found, handle legacy or error?
-  // For now, if not found, we might want to check if there are evaluations with this ID as assessmentId (legacy structure support)
-  // If we can't find the Group object, but we have evaluations, we might need to "fake" it or redirect.
-  // Given the task is about creation, we assume we have it.
+  if (!assessment) {
+    return <Navigate to="/" replace />;
+  }
+
+  const profile = profiles.find((p) => p.id === assessment.profileId);
+
+  if (!profile) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <AssessmentSessionPage
       assessment={assessment}
-      sessions={evaluations}
+      evaluations={evaluations}
       onCreateSession={onCreateSession}
       onUpdateAssessment={onUpdateAssessment}
       onUpdateSession={onUpdateSession}
       matrix={matrix}
-      profiles={profiles}
+      profile={profile}
       assessorName={assessorName}
     />
   );
 };
 
 const AssessmentEvaluationRoute = ({
-  sessions,
+  evaluations,
   matrix,
   profiles,
   updateSession,
 }: {
-  sessions: AssessorEvaluation[];
+  evaluations: AssessorEvaluation[];
   matrix: Module[];
   profiles: Profile[];
   updateSession: (id: string, data: Partial<AssessorEvaluation>) => void;
 }) => {
   const { evaluationId } = useParams();
-  const session = sessions.find((s) => s.id === evaluationId);
+  const evaluation = evaluations.find((s) => s.id === evaluationId);
 
-  if (!session) {
+  if (!evaluation) {
     return <Navigate to="/" replace />;
   }
 
-  const profile = profiles.find((p) => p.id === session.profileId);
+  const profile = profiles.find((p) => p.id === evaluation.profileId);
 
   if (!profile) {
     return <Navigate to="/" replace />;
@@ -247,10 +252,10 @@ const AssessmentEvaluationRoute = ({
 
   return (
     <AssessorEvaluationPage
-      session={session}
+      evaluation={evaluation}
       modules={profileModules}
       profile={profile}
-      onUpdate={(data) => updateSession(session.id, data)}
+      onUpdate={(data) => updateSession(evaluation.id, data)}
     />
   );
 };

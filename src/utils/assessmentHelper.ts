@@ -1,6 +1,6 @@
 import type { AssessorEvaluation, Module, Profile } from "../types";
 
-export interface ModuleScore {
+export interface ModuleSummary {
   moduleId: string;
   moduleTitle: string;
   totalTopics: number;
@@ -16,11 +16,75 @@ export interface AssessmentSummaryResult {
   profileTitle: string;
   stack: string;
   totalScore: number;
-  moduleScores: Record<string, ModuleScore>;
+  moduleScores: Record<string, ModuleSummary>;
   completedCount: number;
   totalTopics: number;
 }
 
+// evaluated types
+export interface AssessorTopicScores {
+  topicId: string;
+  score: number;
+  notes: string[];
+}
+
+export interface AssessorModuleScores {
+  moduleId: string;
+  topics: Record<string, AssessorTopicScores>;
+}
+
+export interface AssessorScore {
+  evaluationId: string;
+  modules: Record<string, AssessorModuleScores>
+}
+
+export interface AssessmentFeedback {
+  assessmentId: string;
+  evaluations: Record<string, AssessorScore>;
+}
+
+// calculated scores
+export interface AssessorSummaryBreakdown {
+  evaluationId: string;
+  moduleId: string;
+  topics: Record<string, AssessorTopicScores>
+}
+
+export interface ModuleSummaryBreakdown {
+  moduleId: string;
+  evaluations: Record<string, AssessorSummaryBreakdown>
+}
+
+export interface AssessmentSummaryBreakdown {
+  assessmentId: string;
+  modules: Record<string, ModuleSummaryBreakdown>
+}
+
+// calculated results
+export interface ModuleStatistics {
+  moduleId: string;
+  averageScore: number;
+  weightedScore: number;
+  weight: number;
+  notes: string[];
+}
+
+export interface AggregatedAssessorStatistics {
+  moduleId: string;
+  averageScore: number;
+  weightedScore: number;
+  weight: number;
+  evaluationScores: Record<string, ModuleStatistics>;
+  notes: string[];
+}
+
+export interface AssessmentStatistics {
+  assessmentId: string;
+  totalScore: number;
+  moduleScores: Record<string, AggregatedAssessorStatistics>;
+}
+
+// helper class
 export class AssessmentHelper {
   private session: AssessorEvaluation;
   private modules: Module[];
@@ -37,7 +101,7 @@ export class AssessmentHelper {
   }
 
   public calculate(): AssessmentSummaryResult {
-    const moduleScores: Record<string, ModuleScore> = {};
+    const moduleScores: Record<string, ModuleSummary> = {};
     let grandTotalWeightedScore = 0;
     let globalCompletedCount = 0;
     let globalTotalTopics = 0;
@@ -94,37 +158,101 @@ export class AssessmentHelper {
     };
   }
 
-  /**
-   * Calculates the overall aggregated score for an assessment based on multiple evaluations.
-   * @param matrix The assessment matrix (modules)
-   * @param profile The candidate's profile (weights)
-   * @param moduleScores A record of ModuleID -> Array of scores (one per assessor)
-   * @returns The overall weighted percentage (0-100)
-   */
-  public static calculateAggregateScore(
-    matrix: Module[],
+  public static calculateAverageModuleScorePerAssessor(
     profile: Profile,
-    moduleScores: Record<string, number[]>
-  ): number {
-    let totalWeightedScore = 0;
-    let totalWeight = 0;
+    moduleId: string,
+    // a list of topic scores for a single module from a single assessor
+    // { topicId, AssessorTopicScores }
+    topics: Record<string, AssessorTopicScores>
+  ): ModuleStatistics {
+    const totalScore = Object.values(topics).reduce((total, topic) => total + (topic.score ?? 0), 0);
+    const scoredTopics = Object.values(topics).length;
+    const averageScore = scoredTopics > 0 ? totalScore / scoredTopics : 0;
+    const weight = profile.weights[moduleId] || 0;
+    const weightedScore = averageScore * weight / 100;
+    const notes = Object.values(topics).flatMap(topic => topic.notes);
 
-    matrix.forEach((mod) => {
-      const weight = profile.weights[mod.id] || 0;
-      const scores = moduleScores[mod.id] || [];
+    return {
+      moduleId,
+      averageScore,
+      weightedScore,
+      weight,
+      notes
+    };
+  }
 
-      if (scores.length > 0) {
-        // Average score for this module across all assessors
-        const avgModScore = scores.reduce((a, b) => a + b, 0) / scores.length;
-        
-        // Add weighted contribution (Score/5 * Weight)
-        totalWeightedScore += (avgModScore / 5) * weight;
-        totalWeight += weight;
+  public static calculateAverageModuleScoreAcrossAssessors(
+    profile: Profile,
+    moduleId: string,
+    // a list of module scores for a single module from each assessor
+    // { evaluationId, AssessorSummaryBreakdown }
+    evaluations: Record<string, AssessorSummaryBreakdown>
+  ): AggregatedAssessorStatistics {
+    const moduleEvaluationScores = Object.values(evaluations).reduce((acc, evaluation) => ({
+      ...acc,
+      [evaluation.evaluationId]: {
+        evaluationId: evaluation.evaluationId,
+        ...this.calculateAverageModuleScorePerAssessor(profile, moduleId, evaluation.topics),
       }
-    });
+    }), {} as Record<string, ModuleStatistics>);
 
-    return totalWeight > 0
-      ? Math.round((totalWeightedScore / totalWeight) * 100)
-      : 0;
+    const moduleScores = Object.values(moduleEvaluationScores);
+
+    return {
+      moduleId,
+      averageScore: moduleScores.reduce((total, evaluation) => total + evaluation.averageScore, 0) / moduleScores.length,
+      weightedScore: moduleScores.reduce((total, evaluation) => total + evaluation.weightedScore, 0) / moduleScores.length,
+      weight: moduleScores[0].weight,
+      evaluationScores: moduleEvaluationScores,
+      notes: moduleScores.flatMap(evaluation => evaluation.notes),
+    }
+  }
+
+  public static calculateAssessmentScoreAcrossAssessors(
+    profile: Profile,
+    modules: Module[],
+    assessment: AssessmentSummaryBreakdown
+  ): AssessmentStatistics {
+    const profileModules = modules.filter((mod) => profile.weights[mod.id] > 0);
+
+    const moduleScores = profileModules.reduce((acc, module) => ({
+      ...acc,
+      [module.id]: this.calculateAverageModuleScoreAcrossAssessors(profile, module.id, assessment.modules[module.id].evaluations),
+    }), {} as Record<string, AggregatedAssessorStatistics>);
+
+    const totalScore = Object.values(moduleScores).reduce((total, moduleScore) => total + moduleScore.weightedScore, 0);
+    
+    return {
+      assessmentId: assessment.assessmentId,
+      totalScore,
+      moduleScores
+    }
+  }
+
+  public static changeAssessmentStructure(
+    modules: Module[],
+    profile: Profile,
+    assessment: AssessmentFeedback
+  ): AssessmentSummaryBreakdown {
+    const profileModules = modules.filter((mod) => profile.weights[mod.id] > 0);
+    
+    return {
+      assessmentId: assessment.assessmentId,
+      modules: profileModules.reduce((mm, module) => ({
+        ...mm,
+        [module.id]: {
+          moduleId: module.id,
+          evaluations: Object.values(assessment.evaluations).reduce((ee, evaluation) => ({
+            ...ee,
+            [evaluation.evaluationId]: {
+                moduleId: module.id,
+                evaluationId: evaluation.evaluationId,
+                topics: evaluation.modules[module.id].topics,
+                notes: Object.values(evaluation.modules[module.id].topics).flatMap(topic => topic.notes),
+            }
+          }), {} as Record<string, AssessorSummaryBreakdown>)
+        }
+      }), {} as Record<string, ModuleSummaryBreakdown>)
+    } as AssessmentSummaryBreakdown;
   }
 }

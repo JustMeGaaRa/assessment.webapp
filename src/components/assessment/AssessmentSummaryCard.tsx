@@ -6,7 +6,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-import type { Module, Profile } from "../../types";
+import type { AssessorEvaluation, Module, Profile } from "../../types";
+import { AssessmentHelper } from "../../utils/assessmentHelper";
 
 export interface Assessor {
   id: string;
@@ -24,6 +25,7 @@ export interface AssessmentResult {
   stack: string;
   date: string;
   assessors: Assessor[];
+  evaluations: AssessorEvaluation[];
   scores: {
     [moduleId: string]: {
       [evaluationId: string]: number;
@@ -38,16 +40,62 @@ export const AssessmentSummaryCard = ({
   result,
   profile,
   matrix,
-  overallScore,
 }: {
   result: AssessmentResult;
-  profile: Profile | undefined;
+  profile: Profile;
   matrix: Module[];
-  overallScore: number;
 }) => {
+  const profileModules = matrix.filter(
+    (module) => profile.weights[module.id] > 0,
+  );
+  const assessment = {
+    assessmentId: result.id,
+    evaluations: result.evaluations.reduce(
+      (ee, evaluation) => ({
+        ...ee,
+        [evaluation.id]: {
+          evaluationId: evaluation.id,
+          modules: profileModules.reduce(
+            (mm, module) => ({
+              ...mm,
+              [module.id]: {
+                moduleId: module.id,
+                topics: module.topics.reduce(
+                  (tt, topic) => ({
+                    ...tt,
+                    [topic.id]: {
+                      topicId: topic.id,
+                      score: evaluation.scores[topic.id],
+                      notes: evaluation.notes,
+                    },
+                  }),
+                  {},
+                ),
+              },
+            }),
+            {},
+          ),
+        },
+      }),
+      {},
+    ),
+  };
+
+  const restructuredAssessment = AssessmentHelper.changeAssessmentStructure(
+    matrix,
+    profile,
+    assessment,
+  );
+  const assessmentSummary =
+    AssessmentHelper.calculateAssessmentScoreAcrossAssessors(
+      profile,
+      matrix,
+      restructuredAssessment,
+    );
+
   return (
     <div
-      key={result.id}
+      key={assessmentSummary.assessmentId}
       className="bg-white border border-slate-200 rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-full relative overflow-hidden"
     >
       {/* Background Accent */}
@@ -78,7 +126,7 @@ export const AssessmentSummaryCard = ({
         </div>
         <div className="text-right">
           <div className="text-5xl font-black text-indigo-600">
-            {overallScore}%
+            {assessmentSummary.totalScore.toFixed(1)}
           </div>
           <div className="text-[10px] font-black uppercase text-slate-400 tracking-widest mt-1">
             Summary Score
@@ -94,7 +142,7 @@ export const AssessmentSummaryCard = ({
         <div className="flex flex-wrap gap-2">
           {result.assessors.map((assessor) => (
             <div
-              key={assessor.name}
+              key={assessor.id}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${assessor.light} ${assessor.text} border border-transparent shadow-sm`}
             >
               <div className={`w-2 h-2 rounded-full ${assessor.color}`} />
@@ -107,17 +155,13 @@ export const AssessmentSummaryCard = ({
       {/* Modules Performance List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 items-start">
         {matrix.map((mod) => {
-          const moduleScores = result.scores[mod.id] || {};
-          const scoreValues = Object.values(moduleScores);
-          const average =
-            scoreValues.length > 0
-              ? (
-                  scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length
-                ).toFixed(1)
-              : "0.0";
-
-          const weight = profile?.weights[mod.id] || 0;
-          const weightedPoints = ((Number(average) / 5) * weight).toFixed(1);
+          const averagePoints = (
+            assessmentSummary.moduleScores[mod.id]?.averageScore ?? 0
+          ).toFixed(1);
+          const weight = assessmentSummary.moduleScores[mod.id]?.weight ?? 0;
+          const weightedPoints = (
+            assessmentSummary.moduleScores[mod.id]?.weightedScore ?? 0
+          ).toFixed(2);
 
           return (
             <div
@@ -137,14 +181,14 @@ export const AssessmentSummaryCard = ({
                 <div className="text-right shrink-0">
                   <div className="flex items-baseline justify-end gap-1">
                     <span className="text-3xl font-black text-slate-800">
-                      {average}
+                      {averagePoints}
                     </span>
                     <span className="text-xs text-slate-400 font-bold uppercase">
                       / 5
                     </span>
                   </div>
                   <div className="text-[10px] font-black text-indigo-500 bg-indigo-50 px-2 py-1 rounded-full mt-1 inline-block">
-                    {weightedPoints} pts (W: {weight})
+                    {weightedPoints} points (weight: {weight}%)
                   </div>
                 </div>
               </div>
@@ -152,7 +196,10 @@ export const AssessmentSummaryCard = ({
               {/* Stacked Assessor Bars */}
               <div className="space-y-4 mb-4">
                 {result.assessors.map((assessor) => {
-                  const score = moduleScores[assessor.id] || 0;
+                  const score =
+                    assessmentSummary.moduleScores[mod.id]?.evaluationScores[
+                      assessor.id
+                    ]?.averageScore ?? 0;
                   const percentage = (score / 5) * 100;
 
                   return (

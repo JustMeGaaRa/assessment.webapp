@@ -19,14 +19,14 @@ import {
 import { AssessmentHelper } from "../utils/assessmentHelper";
 
 interface AssessorEvaluationPageProps {
-  session: AssessorEvaluation;
+  evaluation: AssessorEvaluation;
   modules: Module[];
   profile: Profile;
   onUpdate: (data: Partial<AssessorEvaluation>) => void;
 }
 
 export const AssessorEvaluationPage = ({
-  session,
+  evaluation,
   modules,
   profile,
   onUpdate,
@@ -47,13 +47,13 @@ export const AssessorEvaluationPage = ({
 
   const handleScore = (topicId: string, score: number) => {
     onUpdate({
-      scores: { ...session.scores, [topicId]: score },
+      scores: { ...evaluation.scores, [topicId]: score },
     });
   };
 
   const handleNote = (topicId: string, note: string) => {
     onUpdate({
-      notes: { ...session.notes, [topicId]: note },
+      notes: { ...evaluation.notes, [topicId]: note },
     });
   };
 
@@ -77,16 +77,16 @@ export const AssessorEvaluationPage = ({
 
   // --- JSON Handlers ---
   const handleExportJSON = () => {
-    exportSessionToJSON(session);
+    exportSessionToJSON(evaluation);
   };
 
   // --- CSV Handlers ---
   const handleExportCSV = () => {
-    exportAssessmentToCSV(session, modules);
+    exportAssessmentToCSV(evaluation, modules);
   };
 
   // Calculations
-  const calculator = new AssessmentHelper(session, modules, profile);
+  const calculator = new AssessmentHelper(evaluation, modules, profile);
   const result = calculator.calculate();
 
   const moduleStats = modules.map((mod) => {
@@ -172,9 +172,9 @@ export const AssessorEvaluationPage = ({
         />
 
         <AssessmentStats
-          candidateName={session.candidateName}
-          selectedProfileTitle={session.profileTitle}
-          selectedStack={session.stack}
+          candidateName={evaluation.candidateName}
+          selectedProfileTitle={evaluation.profileTitle}
+          selectedStack={evaluation.stack}
           stats={stats}
           onReset={resetAssessment}
         />
@@ -183,23 +183,25 @@ export const AssessorEvaluationPage = ({
         <div className="space-y-4">
           {modules.map((module) => {
             const isExpanded = expandedModules.has(module.id);
-            const mStat = stats.moduleStats.find((s) => s.id === module.id);
+            const moduleStats = stats.moduleStats.find(
+              (stats) => stats.id === module.id,
+            );
 
             return (
               <AssessmentModule
                 key={module.id}
                 module={module}
                 isExpanded={isExpanded}
-                stats={mStat}
+                stats={moduleStats}
                 onToggle={toggleModule}
-                selectedStack={session.stack}
-                scores={session.scores}
-                notes={session.notes}
+                selectedStack={evaluation.stack}
+                scores={evaluation.scores}
+                notes={evaluation.notes}
                 onScore={handleScore}
                 onNote={handleNote}
                 isReadOnly={
-                  session.status === "completed" ||
-                  session.status === "rejected"
+                  evaluation.status === "completed" ||
+                  evaluation.status === "rejected"
                 }
               />
             );
@@ -221,13 +223,14 @@ export const AssessorEvaluationPage = ({
           <div className="flex gap-4 w-full md:w-auto">
             <button
               disabled={
-                session.status === "completed" || session.status === "rejected"
+                evaluation.status === "completed" ||
+                evaluation.status === "rejected"
               }
               onClick={finishAssessment}
               className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100"
             >
               <CheckCircle size={20} />
-              {session.status === "completed" ? "Completed" : "Complete"}
+              {evaluation.status === "completed" ? "Completed" : "Complete"}
             </button>
           </div>
         </footer>
