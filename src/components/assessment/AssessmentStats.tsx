@@ -1,45 +1,45 @@
 import { User, Layers, CheckCircle2, Trophy, RotateCcw } from "lucide-react";
 import { StatCard } from "../ui/StatCard";
 
-interface AssessmentStatsProps {
-  candidateName: string;
-  selectedProfileTitle: string;
-  selectedStack: string;
+interface AssessmentEvaluationStatsProps {
+  candidate: string;
+  profile: string;
+  stack: string;
   stats: {
-    completedCount: number;
+    completedTopics: number;
     totalTopics: number;
     totalScore: number;
   };
   onReset: () => void;
 }
 
-export const AssessmentStats = ({
-  candidateName,
-  selectedProfileTitle,
-  selectedStack,
+export const AssessmentEvaluationStats = ({
+  candidate,
+  profile,
+  stack,
   stats,
   onReset,
-}: AssessmentStatsProps) => {
+}: AssessmentEvaluationStatsProps) => {
   const statItems = [
     {
       icon: <User size={20} className="text-slate-400" />,
       label: "Candidate",
-      value: candidateName,
+      value: candidate,
     },
     {
       icon: <Layers size={20} className="text-indigo-500" />,
       label: "Profile",
-      value: selectedProfileTitle,
+      value: profile,
     },
     {
       icon: <Layers size={20} className="text-indigo-500" />,
       label: "Tech Stack",
-      value: selectedStack,
+      value: stack,
     },
     {
       icon: <CheckCircle2 className="text-emerald-500" size={20} />,
       label: "Progress",
-      value: `${stats.completedCount} / ${stats.totalTopics}`,
+      value: `${stats.completedTopics} / ${stats.totalTopics}`,
     },
     {
       icon: <Trophy className="text-amber-500" size={20} />,

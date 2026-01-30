@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { parseAssessmentData, validateCsvContent } from "../utils/csvHelpers";
 import type {
-  Module,
-  Profile,
+  ModuleState,
+  ProfileState,
   FileStatus,
-  AssessorEvaluation,
-  AssessmentSession,
+  AssessorEvaluationState,
+  AssessmentSessionState,
 } from "../types";
 import { ImportForm } from "../components/home/ImportForm";
 import { SessionForm } from "../components/home/SessionForm";
@@ -17,17 +17,17 @@ import { Box, Library, UploadCloud } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 
 interface HomePageProps {
-  assessments: AssessmentSession[];
-  evaluations: AssessorEvaluation[];
-  onCreateAssessment: (assessment: AssessmentSession) => void;
-  onCreateSession: (session: AssessorEvaluation) => void;
+  assessments: AssessmentSessionState[];
+  evaluations: AssessorEvaluationState[];
+  onCreateAssessment: (assessment: AssessmentSessionState) => void;
+  onCreateSession: (session: AssessorEvaluationState) => void;
   onDataLoad: (
-    matrix: Module[],
-    profiles: Profile[],
+    matrix: ModuleState[],
+    profiles: ProfileState[],
     stacks: Record<string, string>,
   ) => void;
   existingStacks: string[];
-  existingProfiles: Profile[];
+  existingProfiles: ProfileState[];
   hasData: boolean;
   assessorName: string;
   setAssessorName: (name: string) => void;
@@ -75,8 +75,8 @@ export const HomePage = ({
 
   // Parsed Output
   const [parsedContext, setParsedContext] = useState<{
-    matrix: Module[];
-    profiles: Profile[];
+    matrix: ModuleState[];
+    profiles: ProfileState[];
     stacks: Record<string, string>;
   } | null>(null);
 
@@ -320,7 +320,7 @@ export const HomePage = ({
     const assessmentId = crypto.randomUUID();
     const profile = currentProfiles.find((p) => p.id === selectedProfileId);
 
-    const newAssessment: AssessmentSession = {
+    const newAssessment: AssessmentSessionState = {
       id: assessmentId,
       candidateName: name,
       profileId: selectedProfileId,
@@ -435,7 +435,7 @@ export const HomePage = ({
 
                   // Construct a display object compatible with AssessmentSessionCard
                   // We treat 'locked' as a pseudo-status or just use ongoing/completed
-                  const displaySession: AssessorEvaluation = {
+                  const displaySession: AssessorEvaluationState = {
                     id: assessment.id, // Use Group ID as ID for navigation
                     assessmentId: assessment.id, // It IS the assessment
                     candidateName: assessment.candidateName,

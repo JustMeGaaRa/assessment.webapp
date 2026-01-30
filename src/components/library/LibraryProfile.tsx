@@ -1,9 +1,9 @@
 import { Settings2 } from "lucide-react";
-import type { Module, Profile } from "../../types";
+import type { ModuleState, ProfileState } from "../../types";
 
 interface LibraryProfileProps {
-  profile: Profile;
-  matrix: Module[];
+  profile: ProfileState;
+  matrix: ModuleState[];
 }
 
 export const LibraryProfile = ({ profile, matrix }: LibraryProfileProps) => {

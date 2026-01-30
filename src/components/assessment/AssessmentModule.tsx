@@ -1,23 +1,17 @@
 import { ChevronRight } from "lucide-react";
-import type { Module } from "../../types";
+import type { ModuleState } from "../../types";
 import { AssessmentTopic } from "./AssessmentTopic";
 
-export interface ModuleStats {
-  id: string;
-  score: number;
-  max: number;
-  average: number;
-  weight: number;
-  roleScore: number;
+export interface AssessmentModuleStats {
+  moduleId: string;
   completed: number;
   total: number;
-  percentage?: number; // Optional now if we transition away, or we calculate it here.
 }
 
 interface AssessmentModuleProps {
-  module: Module;
+  module: ModuleState;
   isExpanded: boolean;
-  stats: ModuleStats | undefined;
+  stats: AssessmentModuleStats;
   onToggle: (id: string) => void;
   selectedStack: string;
   scores: Record<string, number>;
@@ -39,6 +33,8 @@ export const AssessmentModule = ({
   onNote,
   isReadOnly,
 }: AssessmentModuleProps) => {
+  const percentage =
+    stats?.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200">
       {/* Module Header */}
@@ -76,27 +72,27 @@ export const AssessmentModule = ({
           <div className="flex flex-col items-end gap-1 flex-shrink-0">
             <span
               className={`text-sm font-bold ${
-                (stats.percentage ?? 0) === 0 ? "text-slate-400" : ""
+                (percentage ?? 0) === 0 ? "text-slate-400" : ""
               }`}
               style={
-                (stats.percentage ?? 0) > 0
+                (percentage ?? 0) > 0
                   ? {
                       color: `hsl(${Math.round(
-                        ((stats.percentage ?? 0) * 120) / 100,
+                        ((percentage ?? 0) * 120) / 100,
                       )}, 70%, 45%)`,
                     }
                   : undefined
               }
             >
-              {stats.percentage ?? 0}%
+              {percentage ?? 0}%
             </span>
             <div className="w-16 md:w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
               <div
                 className="h-full transition-all duration-500"
                 style={{
-                  width: `${stats.percentage ?? 0}%`,
+                  width: `${percentage ?? 0}%`,
                   backgroundColor: `hsl(${Math.round(
-                    ((stats.percentage ?? 0) * 120) / 100,
+                    ((percentage ?? 0) * 120) / 100,
                   )}, 70%, 50%)`,
                 }}
               />
@@ -119,7 +115,7 @@ export const AssessmentModule = ({
                 topic={topic}
                 selectedStack={selectedStack}
                 score={scores[topic.id]}
-                note={notes[topic.id] || ""}
+                note={notes[topic.id]}
                 onScore={onScore}
                 onNote={onNote}
                 isReadOnly={isReadOnly}

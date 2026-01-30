@@ -1,5 +1,5 @@
 import { User, ArrowRight, Layers, Users } from "lucide-react";
-import type { Profile } from "../../types";
+import type { ProfileState } from "../../types";
 
 interface SessionFormProps {
   name: string;
@@ -9,7 +9,7 @@ interface SessionFormProps {
   selectedProfileId: string;
   setSelectedProfileId: (id: string) => void;
   currentStacks: string[];
-  currentProfiles: Profile[];
+  currentProfiles: ProfileState[];
   handleStart: (e: React.FormEvent) => void;
   isFormValid: boolean;
 }

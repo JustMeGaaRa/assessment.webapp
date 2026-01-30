@@ -7,10 +7,10 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
-import type { AssessorEvaluation } from "../../types";
+import type { AssessorEvaluationState } from "../../types";
 
 interface AssessmentSessionCardProps {
-  session: AssessorEvaluation;
+  session: AssessorEvaluationState;
 }
 
 export const AssessmentSessionCard = ({
@@ -18,7 +18,7 @@ export const AssessmentSessionCard = ({
 }: AssessmentSessionCardProps) => {
   const navigate = useNavigate();
 
-  const getStatusColor = (status: AssessorEvaluation["status"]) => {
+  const getStatusColor = (status: AssessorEvaluationState["status"]) => {
     switch (status) {
       case "completed":
         return "text-emerald-600 bg-emerald-50";
@@ -29,7 +29,7 @@ export const AssessmentSessionCard = ({
     }
   };
 
-  const getStatusIcon = (status: AssessorEvaluation["status"]) => {
+  const getStatusIcon = (status: AssessorEvaluationState["status"]) => {
     switch (status) {
       case "completed":
         return <CheckCircle2 size={16} />;

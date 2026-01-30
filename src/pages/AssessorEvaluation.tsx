@@ -7,8 +7,12 @@ import {
   Download,
   FileSpreadsheet,
 } from "lucide-react";
-import type { Module, AssessorEvaluation, Profile } from "../types";
-import { AssessmentStats } from "../components/assessment/AssessmentStats";
+import type {
+  ModuleState,
+  AssessorEvaluationState,
+  ProfileState,
+} from "../types";
+import { AssessmentEvaluationStats } from "../components/assessment/AssessmentStats";
 import { AssessmentModule } from "../components/assessment/AssessmentModule";
 import { PageHeader } from "../components/ui/PageHeader";
 import { useNavigate } from "react-router-dom";
@@ -17,12 +21,13 @@ import {
   exportAssessmentToCSV,
 } from "../utils/fileHelpers";
 import { AssessmentHelper } from "../utils/assessmentHelper";
+import { EvaluationStateHelper } from "../utils/evaluationStateHelper";
 
 interface AssessorEvaluationPageProps {
-  evaluation: AssessorEvaluation;
-  modules: Module[];
-  profile: Profile;
-  onUpdate: (data: Partial<AssessorEvaluation>) => void;
+  evaluation: AssessorEvaluationState;
+  modules: ModuleState[];
+  profile: ProfileState;
+  onUpdate: (data: Partial<AssessorEvaluationState>) => void;
 }
 
 export const AssessorEvaluationPage = ({
@@ -70,7 +75,7 @@ export const AssessorEvaluationPage = ({
     if (window.confirm("Mark this assessment as completed?")) {
       onUpdate({
         status: "completed",
-        finalScore: stats.totalScore,
+        finalScore: evaluationStats.totalScore,
       });
     }
   };
@@ -86,33 +91,31 @@ export const AssessorEvaluationPage = ({
   };
 
   // Calculations
-  const calculator = new AssessmentHelper(evaluation, modules, profile);
-  const result = calculator.calculate();
+  const getScoredTopicsInModule = (module: ModuleState) => {
+    return module.topics.filter((topic) => evaluation.scores[topic.id] > 0)
+      .length;
+  };
 
-  const moduleStats = modules.map((mod) => {
-    const s = result.moduleScores[mod.id];
-    return {
-      id: mod.id,
-      score: s.rawSum,
-      max: s.totalTopics * 5, // Keep for legacy usage if needed
-      average: s.averageScore,
-      weight: s.weight,
-      roleScore: s.weightedScore,
-      completed: s.completedTopics,
-      total: s.totalTopics,
-      // Calculate a percentage for the UI progress bar (coverage of topics scored)
-      percentage:
-        s.totalTopics > 0
-          ? Math.round((s.completedTopics / s.totalTopics) * 100)
-          : 0,
-    };
-  });
-
-  const stats = {
-    totalScore: result.totalScore,
-    completedCount: result.completedCount,
-    totalTopics: result.totalTopics,
-    moduleStats,
+  const moduleScores = EvaluationStateHelper.mapEvaluationToModuleScore(
+    modules,
+    evaluation,
+  );
+  const evaluationScore =
+    AssessmentHelper.calculateEvaluationStatisticsPerAssessor(
+      profile,
+      evaluation.id,
+      moduleScores,
+    );
+  const evaluationStats = {
+    totalScore: evaluationScore.weightedScore,
+    completedTopics: modules.reduce(
+      (total, module) => total + getScoredTopicsInModule(module),
+      0,
+    ),
+    totalTopics: modules.reduce(
+      (total, module) => total + module.topics.length,
+      0,
+    ),
   };
 
   return (
@@ -171,11 +174,11 @@ export const AssessorEvaluationPage = ({
           description="Evaluate candidate technical competencies."
         />
 
-        <AssessmentStats
-          candidateName={evaluation.candidateName}
-          selectedProfileTitle={evaluation.profileTitle}
-          selectedStack={evaluation.stack}
-          stats={stats}
+        <AssessmentEvaluationStats
+          candidate={evaluation.candidateName}
+          profile={evaluation.profileTitle}
+          stack={evaluation.stack}
+          stats={evaluationStats}
           onReset={resetAssessment}
         />
 
@@ -183,9 +186,13 @@ export const AssessorEvaluationPage = ({
         <div className="space-y-4">
           {modules.map((module) => {
             const isExpanded = expandedModules.has(module.id);
-            const moduleStats = stats.moduleStats.find(
-              (stats) => stats.id === module.id,
-            );
+            const completedTopics = getScoredTopicsInModule(module);
+            const totalTopics = module.topics.length;
+            const moduleStats = {
+              moduleId: module.id,
+              completed: completedTopics,
+              total: totalTopics,
+            };
 
             return (
               <AssessmentModule
@@ -215,9 +222,9 @@ export const AssessorEvaluationPage = ({
               Final Evaluation Status
             </p>
             <h3 className="text-xl font-bold">
-              {stats.completedCount === stats.totalTopics
+              {evaluationStats.completedTopics === evaluationStats.totalTopics
                 ? "Assessment Ready for Submission"
-                : `${stats.totalTopics - stats.completedCount} Topics Remaining`}
+                : `${evaluationStats.totalTopics - evaluationStats.completedTopics} Topics Remaining`}
             </h3>
           </div>
           <div className="flex gap-4 w-full md:w-auto">
@@ -235,18 +242,6 @@ export const AssessorEvaluationPage = ({
           </div>
         </footer>
       </div>
-
-      {/* Styles for print */}
-      <style>{`
-        @media print {
-          body { background: white; }
-          .max-w-5xl { max-width: 100%; }
-          button, footer { display: none !important; }
-          .bg-slate-50 { background-color: transparent !important; }
-          .rounded-2xl { border: 1px solid #e2e8f0; border-radius: 4px; }
-          .shadow-sm, .shadow-xl { box-shadow: none !important; }
-        }
-      `}</style>
     </div>
   );
 };

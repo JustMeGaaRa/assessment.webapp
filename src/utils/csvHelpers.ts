@@ -1,4 +1,4 @@
-import type { Module, Profile, Topic, AppData } from "../types";
+import type { ModuleState, ProfileState, Topic, AppDataState } from "../types";
 
 import Papa from "papaparse";
 
@@ -51,14 +51,14 @@ export const validateCsvContent = (content: string, type: "profiles" | "topics" 
 
 export const parseAssessmentData = (
   files: { name: string; content: string; type: "profiles" | "topics" | "modules" }[]
-): AppData => {
-  let matrix: Module[] = [];
-  const profiles: Profile[] = [];
+): AppDataState => {
+  let matrix: ModuleState[] = [];
+  const profiles: ProfileState[] = [];
   // stacks is Record<KEY, Label> e.g. { DOTNET: ".NET" }
   const stacks: Record<string, string> = {}; 
   
   // Temporary storage
-  const modulesMap = new Map<string, Module>(); // Map<Code, Module>
+  const modulesMap = new Map<string, ModuleState>(); // Map<Code, Module>
   // Profile logic doesn't use profileWeightsMap currently, it writes directly to profiles array, so removing unused map.
   const stackKeys: string[] = [];
 

@@ -4,29 +4,30 @@ import { ArrowLeft, User, Lock, Unlock } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Modal } from "../components/ui/Modal";
 import type {
-  AssessmentSession,
-  AssessorEvaluation,
-  Module,
-  Profile,
+  AssessmentScores,
+  AssessmentSessionState,
+  AssessorEvaluationState,
+  ModuleState,
+  ProfileState,
 } from "../types";
 import { importSessionFromJSON } from "../utils/fileHelpers";
 import { NewAssessmentCard } from "../components/dashboard/NewAssessmentCard";
 import { ImportAssessmentCard } from "../components/dashboard/ImportAssessmentCard";
 import { AssessmentEvaluationCard } from "../components/dashboard/AssessmentEvaluationCard";
-import {
-  AssessmentSummaryCard,
-  type AssessmentResult,
-} from "../components/assessment/AssessmentSummaryCard";
-import { AssessmentHelper } from "../utils/assessmentHelper";
+import { AssessmentSummaryCard } from "../components/assessment/AssessmentSummaryCard";
+import { EvaluationStateHelper } from "../utils/evaluationStateHelper";
 
 interface AssessmentSessionPageProps {
-  assessment?: AssessmentSession; // The group object
-  evaluations: AssessorEvaluation[]; // The evaluations
-  onCreateSession: (session: AssessorEvaluation) => void;
-  onUpdateAssessment: (id: string, data: Partial<AssessmentSession>) => void;
-  onUpdateSession: (id: string, data: Partial<AssessorEvaluation>) => void; // Keeping for potential future use or cleanup
-  matrix: Module[];
-  profile: Profile;
+  assessment: AssessmentSessionState;
+  evaluations: AssessorEvaluationState[];
+  onCreateSession: (session: AssessorEvaluationState) => void;
+  onUpdateAssessment: (
+    id: string,
+    data: Partial<AssessmentSessionState>,
+  ) => void;
+  onUpdateSession: (id: string, data: Partial<AssessorEvaluationState>) => void;
+  matrix: ModuleState[];
+  profile: ProfileState;
   assessorName: string;
 }
 
@@ -41,11 +42,6 @@ export const AssessmentSessionPage = ({
 }: AssessmentSessionPageProps) => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
-
-  // Filter evaluations for this assessment
-  const assessmentEvaluations = evaluations.filter(
-    (evaluation) => evaluation.assessmentId === assessmentId,
-  );
 
   const candidateName = assessment?.candidateName || "Unknown Candidate";
   const isLocked = assessment?.locked || false;
@@ -77,6 +73,24 @@ export const AssessmentSessionPage = ({
     },
   ];
 
+  const assessors = evaluations.map((ev, idx) => {
+    const style = colors[idx % colors.length];
+    return {
+      id: ev.id,
+      name: ev.assessorName || `Assessor ${idx + 1}`,
+      color: style.color,
+      text: style.text,
+      light: style.light,
+    };
+  });
+
+  const assessmentProps: AssessmentScores =
+    EvaluationStateHelper.mapEvaluationStateToAssessmentFeedback(
+      assessment.id,
+      evaluations,
+      matrix,
+    );
+
   const handleToggleLock = () => {
     if (!assessment) return;
     const newLockState = !isLocked;
@@ -107,7 +121,7 @@ export const AssessmentSessionPage = ({
     }
 
     const newEvaluationId = crypto.randomUUID();
-    const newSession: AssessorEvaluation = {
+    const newSession: AssessorEvaluationState = {
       id: newEvaluationId,
       assessmentId: assessment.id,
       candidateName: assessment.candidateName,
@@ -135,7 +149,7 @@ export const AssessmentSessionPage = ({
     importSessionFromJSON(file)
       .then((importedSession) => {
         // Ensure imported session links to this assessment
-        const newSession: AssessorEvaluation = {
+        const newSession: AssessorEvaluationState = {
           ...importedSession,
           id: crypto.randomUUID(),
           assessmentId: assessmentId || "",
@@ -199,95 +213,18 @@ export const AssessmentSessionPage = ({
         />
 
         {/* Assessment Summary Section */}
-        {assessment && assessmentEvaluations.length > 0 && (
+        {evaluations.length > 0 && (
           <div className="grid grid-cols-1 gap-10 mb-10">
-            {(() => {
-              // Prepare assessors data
-              const assessors = assessmentEvaluations.map((ev, idx) => {
-                const style = colors[idx % colors.length];
-                return {
-                  id: ev.id,
-                  name: ev.assessorName || `Assessor ${idx + 1}`,
-                  color: style.color,
-                  text: style.text,
-                  light: style.light,
-                };
-              });
-
-              // Prepare scores: [ModuleID] -> { [EvaluationId] -> Score }
-              const resultScores: Record<string, Record<string, number>> = {};
-
-              // Helper to calculate module average for a session
-              const getModuleScore = (
-                session: AssessorEvaluation,
-                moduleId: string,
-              ) => {
-                if (!profile) return 0;
-                const helper = new AssessmentHelper(session, matrix, profile);
-                const summary = helper.calculate();
-                const moduleScores = summary.moduleScores[moduleId];
-                return moduleScores ? moduleScores.averageScore : 0;
-              };
-
-              matrix.forEach((module) => {
-                resultScores[module.id] = {};
-                assessmentEvaluations.forEach((evaluation) => {
-                  resultScores[module.id][evaluation.id] = getModuleScore(
-                    evaluation,
-                    module.id,
-                  );
-                });
-              });
-
-              // Prepare notes: Just aggregating or taking first (Logic can be improved)
-              // Currently AssessmentResult expects one note per module.
-              // We'll join notes from different assessors if available.
-              const resultNotes: Record<string, string> = {};
-              matrix.forEach((module) => {
-                const notesList: string[] = [];
-                assessmentEvaluations.forEach((evaluation) => {
-                  // Find if there is a note for this module or topics within?
-                  // Current AssessorEvaluation stores notes by TopicID.
-                  // We need to see if we aggregate topic notes or if we change UI to support module notes.
-                  // For now, let's look for any topic note in this module.
-                  const moduleTopicIds = module.topics.map((topic) => topic.id);
-                  const relevantNotes = Object.entries(evaluation.notes)
-                    .filter(([k, v]) => moduleTopicIds.includes(k) && v)
-                    .map(([, v]) => v);
-
-                  if (relevantNotes.length > 0) {
-                    notesList.push(
-                      `${evaluation.assessorName}: ${relevantNotes.join(". ")}`,
-                    );
-                  }
-                });
-                if (notesList.length > 0) {
-                  resultNotes[module.id] = notesList.join("\n\n");
-                }
-              });
-
-              const assessmentResult: AssessmentResult = {
-                id: assessment.id,
-                candidateName: assessment.candidateName,
-                profileId: assessment.profileId,
-                profileName: assessment.profileTitle,
-                stack: assessment.stack,
-                date: new Date(assessment.date).toLocaleDateString(),
-                assessors,
-                evaluations: assessmentEvaluations,
-                scores: resultScores,
-                notes: resultNotes,
-              };
-
-              return (
-                <AssessmentSummaryCard
-                  key={assessmentResult.id}
-                  result={assessmentResult}
-                  profile={profile}
-                  matrix={matrix}
-                />
-              );
-            })()}
+            <AssessmentSummaryCard
+              key={assessment.id}
+              candidate={candidateName}
+              stack={assessment.stack}
+              date={new Date(assessment.date)}
+              assessors={assessors}
+              assessment={assessmentProps}
+              profile={profile}
+              matrix={matrix}
+            />
           </div>
         )}
 
@@ -308,7 +245,7 @@ export const AssessmentSessionPage = ({
             </>
           )}
           {/* Existing Evaluations */}
-          {assessmentEvaluations.map((evalSession) => (
+          {evaluations.map((evalSession) => (
             <AssessmentEvaluationCard
               key={evalSession.id}
               evalSession={evalSession}

@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Clock, CheckCircle2, Calendar } from "lucide-react";
-import type { AssessorEvaluation } from "../../types";
+import type { AssessorEvaluationState } from "../../types";
 
 interface AssessmentEvaluationCardProps {
-  evalSession: AssessorEvaluation;
+  evalSession: AssessorEvaluationState;
   assessmentId?: string;
 }
 

@@ -1,8 +1,8 @@
-import type { Module } from "../../types";
+import type { ModuleState } from "../../types";
 import { LibraryModuleTopic } from "./LibraryModuleTopic";
 
 interface LibraryModuleProps {
-  module: Module;
+  module: ModuleState;
   activeStack: string;
 }
 

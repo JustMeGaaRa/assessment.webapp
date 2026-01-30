@@ -11,10 +11,10 @@ import { AssessmentLibraryPage } from "./pages/AssessmentLibrary";
 import { AssessmentSessionPage } from "./pages/AssessmentSession";
 import { HomePage } from "./pages/Home";
 import type {
-  Module,
-  Profile,
-  AssessorEvaluation,
-  AssessmentSession,
+  ModuleState,
+  ProfileState,
+  AssessorEvaluationState,
+  AssessmentSessionState,
 } from "./types";
 
 const ASSESSMENT_LIBRARY_KEY = "assessment_matrix_data";
@@ -23,12 +23,12 @@ const ASSESSMENT_SESSIONS_KEY = "assessment_groups";
 
 const App = () => {
   // Master Data State with Persistence
-  const [matrix, setMatrix] = useState<Module[]>(() => {
+  const [matrix, setMatrix] = useState<ModuleState[]>(() => {
     const saved = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
     return saved ? JSON.parse(saved).matrix : [];
   });
 
-  const [profiles, setProfiles] = useState<Profile[]>(() => {
+  const [profiles, setProfiles] = useState<ProfileState[]>(() => {
     const saved = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
     return saved ? JSON.parse(saved).profiles : [];
   });
@@ -49,20 +49,24 @@ const App = () => {
   }, [matrix, profiles, stacks]);
 
   // Assessment Groups State
-  const [assessments, setAssessments] = useState<AssessmentSession[]>(() => {
-    const saved = localStorage.getItem(ASSESSMENT_SESSIONS_KEY);
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [assessments, setAssessments] = useState<AssessmentSessionState[]>(
+    () => {
+      const saved = localStorage.getItem(ASSESSMENT_SESSIONS_KEY);
+      return saved ? JSON.parse(saved) : [];
+    },
+  );
 
   useEffect(() => {
     localStorage.setItem(ASSESSMENT_SESSIONS_KEY, JSON.stringify(assessments));
   }, [assessments]);
 
   // Assessment Evaluations State
-  const [evaluations, setEvaluations] = useState<AssessorEvaluation[]>(() => {
-    const saved = localStorage.getItem(ASSESSOR_EVALUATIONS_KEY);
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [evaluations, setEvaluations] = useState<AssessorEvaluationState[]>(
+    () => {
+      const saved = localStorage.getItem(ASSESSOR_EVALUATIONS_KEY);
+      return saved ? JSON.parse(saved) : [];
+    },
+  );
 
   useEffect(() => {
     localStorage.setItem(ASSESSOR_EVALUATIONS_KEY, JSON.stringify(evaluations));
@@ -79,8 +83,8 @@ const App = () => {
   }, [assessorName]);
 
   const handleDataLoad = (
-    m: Module[],
-    p: Profile[],
+    m: ModuleState[],
+    p: ProfileState[],
     s: Record<string, string>,
   ) => {
     setMatrix(m);
@@ -92,21 +96,27 @@ const App = () => {
     );
   };
 
-  const createAssessment = (assessment: AssessmentSession) => {
+  const createAssessment = (assessment: AssessmentSessionState) => {
     setAssessments((prev) => [assessment, ...prev]);
   };
 
-  const createEvaluation = (evaluation: AssessorEvaluation) => {
+  const createEvaluation = (evaluation: AssessorEvaluationState) => {
     setEvaluations((prev) => [evaluation, ...prev]);
   };
 
-  const updateAssessment = (id: string, data: Partial<AssessmentSession>) => {
+  const updateAssessment = (
+    id: string,
+    data: Partial<AssessmentSessionState>,
+  ) => {
     setAssessments((prev) =>
       prev.map((a) => (a.id === id ? { ...a, ...data } : a)),
     );
   };
 
-  const updateEvaluation = (id: string, data: Partial<AssessorEvaluation>) => {
+  const updateEvaluation = (
+    id: string,
+    data: Partial<AssessorEvaluationState>,
+  ) => {
     setEvaluations((prev) =>
       prev.map((s) => (s.id === id ? { ...s, ...data } : s)),
     );
@@ -188,13 +198,16 @@ const AssessmentSessionRoute = ({
   profiles,
   assessorName,
 }: {
-  assessments: AssessmentSession[];
-  evaluations: AssessorEvaluation[];
-  onCreateSession: (session: AssessorEvaluation) => void;
-  onUpdateAssessment: (id: string, data: Partial<AssessmentSession>) => void;
-  onUpdateSession: (id: string, data: Partial<AssessorEvaluation>) => void;
-  matrix: Module[];
-  profiles: Profile[];
+  assessments: AssessmentSessionState[];
+  evaluations: AssessorEvaluationState[];
+  onCreateSession: (session: AssessorEvaluationState) => void;
+  onUpdateAssessment: (
+    id: string,
+    data: Partial<AssessmentSessionState>,
+  ) => void;
+  onUpdateSession: (id: string, data: Partial<AssessorEvaluationState>) => void;
+  matrix: ModuleState[];
+  profiles: ProfileState[];
   assessorName: string;
 }) => {
   const { assessmentId } = useParams();
@@ -210,14 +223,19 @@ const AssessmentSessionRoute = ({
     return <Navigate to="/" replace />;
   }
 
+  const profileModules = matrix.filter((m) => profile.weights[m.id] > 0);
+  const assessmentEvaluations = evaluations.filter(
+    (evaluation) => evaluation.assessmentId === assessmentId,
+  );
+
   return (
     <AssessmentSessionPage
       assessment={assessment}
-      evaluations={evaluations}
+      evaluations={assessmentEvaluations}
       onCreateSession={onCreateSession}
       onUpdateAssessment={onUpdateAssessment}
       onUpdateSession={onUpdateSession}
-      matrix={matrix}
+      matrix={profileModules}
       profile={profile}
       assessorName={assessorName}
     />
@@ -230,10 +248,10 @@ const AssessmentEvaluationRoute = ({
   profiles,
   updateSession,
 }: {
-  evaluations: AssessorEvaluation[];
-  matrix: Module[];
-  profiles: Profile[];
-  updateSession: (id: string, data: Partial<AssessorEvaluation>) => void;
+  evaluations: AssessorEvaluationState[];
+  matrix: ModuleState[];
+  profiles: ProfileState[];
+  updateSession: (id: string, data: Partial<AssessorEvaluationState>) => void;
 }) => {
   const { evaluationId } = useParams();
   const evaluation = evaluations.find((s) => s.id === evaluationId);

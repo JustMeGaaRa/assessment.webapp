@@ -6,7 +6,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-import type { AssessorEvaluation, Module, Profile } from "../../types";
+import type { AssessmentScores, ModuleState, ProfileState } from "../../types";
 import { AssessmentHelper } from "../../utils/assessmentHelper";
 
 export interface Assessor {
@@ -17,81 +17,34 @@ export interface Assessor {
   light: string;
 }
 
-export interface AssessmentResult {
-  id: string;
-  candidateName: string;
-  profileId: string;
-  profileName: string;
-  stack: string;
-  date: string;
-  assessors: Assessor[];
-  evaluations: AssessorEvaluation[];
-  scores: {
-    [moduleId: string]: {
-      [evaluationId: string]: number;
-    };
-  };
-  notes: {
-    [key: string]: string;
-  };
-}
-
 export const AssessmentSummaryCard = ({
-  result,
+  candidate,
+  stack,
+  date,
+  assessors,
+  assessment,
   profile,
   matrix,
 }: {
-  result: AssessmentResult;
-  profile: Profile;
-  matrix: Module[];
+  candidate: string;
+  stack: string;
+  date: Date;
+  assessors: Assessor[];
+  assessment: AssessmentScores;
+  profile: ProfileState;
+  matrix: ModuleState[];
 }) => {
-  const profileModules = matrix.filter(
-    (module) => profile.weights[module.id] > 0,
-  );
-  const assessment = {
-    assessmentId: result.id,
-    evaluations: result.evaluations.reduce(
-      (ee, evaluation) => ({
-        ...ee,
-        [evaluation.id]: {
-          evaluationId: evaluation.id,
-          modules: profileModules.reduce(
-            (mm, module) => ({
-              ...mm,
-              [module.id]: {
-                moduleId: module.id,
-                topics: module.topics.reduce(
-                  (tt, topic) => ({
-                    ...tt,
-                    [topic.id]: {
-                      topicId: topic.id,
-                      score: evaluation.scores[topic.id],
-                      notes: evaluation.notes,
-                    },
-                  }),
-                  {},
-                ),
-              },
-            }),
-            {},
-          ),
-        },
-      }),
-      {},
-    ),
-  };
-
+  // TODO: move state calculation outside of this component and just pass the result as props
   const restructuredAssessment = AssessmentHelper.changeAssessmentStructure(
     matrix,
     profile,
     assessment,
   );
-  const assessmentSummary =
-    AssessmentHelper.calculateAssessmentScoreAcrossAssessors(
-      profile,
-      matrix,
-      restructuredAssessment,
-    );
+  const assessmentSummary = AssessmentHelper.calculateAssessmentStatistics(
+    profile,
+    matrix,
+    restructuredAssessment,
+  );
 
   return (
     <div
@@ -105,21 +58,21 @@ export const AssessmentSummaryCard = ({
       <div className="flex justify-between items-start mb-8 relative z-10">
         <div>
           <h2 className="text-4xl font-black text-slate-800 tracking-tight leading-none mb-4">
-            {result.candidateName}
+            {candidate}
           </h2>
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-bold text-indigo-600 bg-indigo-50 w-fit px-3 py-1 rounded-lg">
               <ShieldCheck size={16} />
-              {result.profileName}
+              {profile.title}
             </div>
             <div className="flex flex-wrap items-center gap-x-4 text-slate-400 text-xs font-bold uppercase tracking-widest">
               <span className="flex items-center gap-1.5">
                 <Box size={14} />
-                {result.stack}
+                {stack}
               </span>
               <span className="flex items-center gap-1.5">
                 <Calendar size={14} />
-                {result.date}
+                {date.toLocaleDateString()}
               </span>
             </div>
           </div>
@@ -140,7 +93,7 @@ export const AssessmentSummaryCard = ({
           Interview Panel
         </div>
         <div className="flex flex-wrap gap-2">
-          {result.assessors.map((assessor) => (
+          {assessors.map((assessor) => (
             <div
               key={assessor.id}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${assessor.light} ${assessor.text} border border-transparent shadow-sm`}
@@ -154,28 +107,40 @@ export const AssessmentSummaryCard = ({
 
       {/* Modules Performance List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 items-start">
-        {matrix.map((mod) => {
-          const averagePoints = (
-            assessmentSummary.moduleScores[mod.id]?.averageScore ?? 0
-          ).toFixed(1);
-          const weight = assessmentSummary.moduleScores[mod.id]?.weight ?? 0;
-          const weightedPoints = (
-            assessmentSummary.moduleScores[mod.id]?.weightedScore ?? 0
-          ).toFixed(2);
+        {matrix.map((module) => {
+          const averagePoints =
+            assessmentSummary.moduleStatistics[module.id].averageScore.toFixed(
+              1,
+            );
+          const weight = assessmentSummary.moduleStatistics[module.id].weight;
+          const weightedPoints =
+            assessmentSummary.moduleStatistics[module.id].weightedScore.toFixed(
+              2,
+            );
+          const notes = Object.entries(
+            assessmentSummary.moduleStatistics[module.id]
+              .assessorEvaluationStatistics,
+          )
+            .filter(([, score]) => score.notes.length > 0)
+            .map(([assessorId, score]) => {
+              const assessor = assessors.find((a) => a.id === assessorId);
+              const aggregatedNotes = `${assessor?.name}: ${score.notes.join(". ")}`;
+              return aggregatedNotes;
+            });
 
           return (
             <div
-              key={mod.id}
+              key={module.id}
               className="relative group bg-slate-50/50 p-6 rounded-3xl border border-slate-100 hover:bg-slate-50 hover:shadow-md transition-all duration-300"
             >
               {/* Module Header Inside Box */}
               <div className="flex justify-between items-start mb-6">
                 <div className="flex-1 pr-4">
                   <h4 className="font-black text-slate-800 text-base tracking-tight mb-1.5">
-                    {mod.title}
+                    {module.title}
                   </h4>
                   <p className="text-xs text-slate-400 font-medium leading-relaxed">
-                    {mod.description}
+                    {module.description}
                   </p>
                 </div>
                 <div className="text-right shrink-0">
@@ -195,11 +160,11 @@ export const AssessmentSummaryCard = ({
 
               {/* Stacked Assessor Bars */}
               <div className="space-y-4 mb-4">
-                {result.assessors.map((assessor) => {
+                {assessors.map((assessor) => {
                   const score =
-                    assessmentSummary.moduleScores[mod.id]?.evaluationScores[
-                      assessor.id
-                    ]?.averageScore ?? 0;
+                    assessmentSummary.moduleStatistics[module.id]
+                      ?.assessorEvaluationStatistics[assessor.id]
+                      ?.averageScore ?? 0;
                   const percentage = (score / 5) * 100;
 
                   return (
@@ -226,15 +191,22 @@ export const AssessmentSummaryCard = ({
               </div>
 
               {/* Module Notes */}
-              {result.notes[mod.id] && (
+              {notes.length > 0 && (
                 <div className="mt-6 flex gap-3 px-4 py-3 bg-white border border-slate-100 rounded-2xl shadow-sm">
                   <MessageSquareQuote
                     size={16}
                     className="text-slate-300 shrink-0 mt-0.5"
                   />
-                  <p className="text-[11px] text-slate-500 italic font-medium leading-relaxed">
-                    "{result.notes[mod.id]}"
-                  </p>
+                  <div className="flex flex-col gap-1">
+                    {notes.map((note, idx) => (
+                      <p
+                        key={idx}
+                        className="text-[11px] text-slate-500 italic font-medium leading-relaxed"
+                      >
+                        "{note}"
+                      </p>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

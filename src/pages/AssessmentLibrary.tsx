@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, Box, Check } from "lucide-react";
-import type { Module, Profile } from "../types";
+import type { ModuleState, ProfileState } from "../types";
 import { LibraryTabs } from "../components/library/LibraryTabs";
 import { LibraryModule } from "../components/library/LibraryModule";
 import { LibraryProfile } from "../components/library/LibraryProfile";
@@ -8,8 +8,8 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { useNavigate } from "react-router-dom";
 
 interface AssessmentLibraryPageProps {
-  matrix: Module[];
-  profiles: Profile[];
+  matrix: ModuleState[];
+  profiles: ProfileState[];
   stacks: Record<string, string>;
 }
 
