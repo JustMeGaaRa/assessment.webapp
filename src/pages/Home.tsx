@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { parseAssessmentData, validateCsvContent } from "../utils/csvHelpers";
+import { parseBackup, type BackupData } from "../utils/backupHelper";
 import type {
   ModuleState,
   ProfileState,
@@ -31,6 +32,8 @@ interface HomePageProps {
   hasData: boolean;
   assessorName: string;
   setAssessorName: (name: string) => void;
+  onBackup: () => void;
+  onRestore: (data: BackupData) => void;
 }
 
 export const HomePage = ({
@@ -43,6 +46,8 @@ export const HomePage = ({
   hasData,
   assessorName,
   setAssessorName,
+  onBackup,
+  onRestore,
 }: HomePageProps) => {
   const navigate = useNavigate();
 
@@ -153,6 +158,36 @@ export const HomePage = ({
       }
       setProgress(p);
     }, 200);
+  };
+
+  const handleRestoreFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (
+      !window.confirm(
+        "Restoring will overwrite current data. Are you sure you want to proceed?",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const content = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = reject;
+        reader.readAsText(file);
+      });
+
+      const backupData = parseBackup(content);
+      onRestore(backupData);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to restore backup: " + (error as Error).message);
+    }
   };
 
   // Event Handlers for File/URL changes
@@ -358,12 +393,23 @@ export const HomePage = ({
           <div></div>
           <div className="flex gap-3">
             <button
-              onClick={() => navigate("/library")}
+              onClick={onBackup}
               className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
             >
-              <Library size={18} />
-              <span>View Library</span>
+              <UploadCloud size={18} className="rotate-180" />
+              <span>Backup</span>
             </button>
+
+            <label className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm cursor-pointer">
+              <UploadCloud size={18} />
+              <span>Restore</span>
+              <input
+                type="file"
+                accept=".json"
+                className="hidden"
+                onChange={handleRestoreFileChange}
+              />
+            </label>
 
             <button
               onClick={() => setManualImportOpen(true)}
@@ -371,6 +417,14 @@ export const HomePage = ({
             >
               <UploadCloud size={18} />
               <span>Import Data</span>
+            </button>
+
+            <button
+              onClick={() => navigate("/library")}
+              className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
+            >
+              <Library size={18} />
+              <span>View Library</span>
             </button>
           </div>
         </div>

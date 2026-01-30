@@ -16,6 +16,7 @@ import type {
   AssessorEvaluationState,
   AssessmentSessionState,
 } from "./types";
+import { createBackup, type BackupData } from "./utils/backupHelper";
 
 const ASSESSMENT_LIBRARY_KEY = "assessment_matrix_data";
 const ASSESSOR_EVALUATIONS_KEY = "assessment_evaluations";
@@ -122,6 +123,35 @@ const App = () => {
     );
   };
 
+  const backupApplicationState = () => {
+    const backup = createBackup(
+      { matrix, profiles, stacks },
+      assessments,
+      evaluations,
+      assessorName,
+    );
+    const blob = new Blob([JSON.stringify(backup, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `assessment_backup_${
+      new Date().toISOString().split("T")[0]
+    }.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const restoreApplicationState = (data: BackupData) => {
+    setMatrix(data.library.matrix);
+    setProfiles(data.library.profiles);
+    setStacks(data.library.stacks);
+    setAssessments(data.assessments);
+    setEvaluations(data.evaluations);
+    setAssessorName(data.assessorName || "");
+  };
+
   return (
     <BrowserRouter>
       <Routes>
@@ -143,6 +173,8 @@ const App = () => {
               }
               assessorName={assessorName}
               setAssessorName={setAssessorName}
+              onRestore={restoreApplicationState}
+              onBackup={backupApplicationState}
             />
           }
         />
