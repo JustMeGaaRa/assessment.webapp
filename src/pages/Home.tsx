@@ -397,12 +397,12 @@ export const HomePage = ({
               className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
             >
               <UploadCloud size={18} className="rotate-180" />
-              <span>Backup</span>
+              <span className="hidden sm:inline">Backup</span>
             </button>
 
             <label className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm cursor-pointer">
               <UploadCloud size={18} />
-              <span>Restore</span>
+              <span className="hidden sm:inline">Restore</span>
               <input
                 type="file"
                 accept=".json"
@@ -418,6 +418,8 @@ export const HomePage = ({
               <UploadCloud size={18} />
               <span>Import Data</span>
             </button>
+
+            <div className="w-px h-8 bg-slate-300 mx-1 hidden sm:block"></div>
 
             <button
               onClick={() => navigate("/library")}

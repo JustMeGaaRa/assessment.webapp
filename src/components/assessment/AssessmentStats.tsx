@@ -1,8 +1,10 @@
-import { User, Layers, CheckCircle2, Trophy, RotateCcw } from "lucide-react";
+import { User, Layers, Trophy, UserCheck, Calendar } from "lucide-react";
 import { StatCard } from "../ui/StatCard";
 
 interface AssessmentEvaluationStatsProps {
   candidate: string;
+  assessorName: string;
+  date: string;
   profile: string;
   stack: string;
   stats: {
@@ -10,21 +12,26 @@ interface AssessmentEvaluationStatsProps {
     totalTopics: number;
     totalScore: number;
   };
-  onReset: () => void;
 }
 
 export const AssessmentEvaluationStats = ({
   candidate,
+  assessorName,
+  date,
   profile,
   stack,
   stats,
-  onReset,
 }: AssessmentEvaluationStatsProps) => {
   const statItems = [
     {
       icon: <User size={20} className="text-slate-400" />,
       label: "Candidate",
       value: candidate,
+    },
+    {
+      icon: <UserCheck size={20} className="text-emerald-500" />,
+      label: "Assessor",
+      value: assessorName,
     },
     {
       icon: <Layers size={20} className="text-indigo-500" />,
@@ -37,9 +44,9 @@ export const AssessmentEvaluationStats = ({
       value: stack,
     },
     {
-      icon: <CheckCircle2 className="text-emerald-500" size={20} />,
-      label: "Progress",
-      value: `${stats.completedTopics} / ${stats.totalTopics}`,
+      icon: <Calendar size={20} className="text-slate-400" />,
+      label: "Date",
+      value: new Date(date).toLocaleDateString(),
     },
     {
       icon: <Trophy className="text-amber-500" size={20} />,
@@ -69,17 +76,6 @@ export const AssessmentEvaluationStats = ({
             </div>
           ))}
         </div>
-
-        <button
-          onClick={onReset}
-          className="flex items-center justify-center gap-2 p-3 bg-white rounded-xl border border-slate-200 hover:bg-red-50 hover:border-red-200 text-slate-600 hover:text-red-600 transition-all shadow-sm group w-full"
-        >
-          <RotateCcw
-            size={18}
-            className="text-slate-400 group-hover:text-red-500 transition-colors"
-          />
-          <span className="font-semibold text-sm">Reset Assessment</span>
-        </button>
       </div>
 
       {/* Desktop/Tablet View: Grid */}
@@ -92,17 +88,6 @@ export const AssessmentEvaluationStats = ({
             value={item.value}
           />
         ))}
-
-        <button
-          onClick={onReset}
-          className="flex items-center justify-center gap-2 p-3 bg-white rounded-xl border border-slate-200 hover:bg-red-50 hover:border-red-200 text-slate-600 hover:text-red-600 transition-all shadow-sm group"
-        >
-          <RotateCcw
-            size={18}
-            className="text-slate-400 group-hover:text-red-500 transition-colors"
-          />
-          <span className="font-semibold text-sm">Reset</span>
-        </button>
       </div>
     </>
   );

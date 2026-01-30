@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   Download,
   FileSpreadsheet,
+  RotateCcw,
 } from "lucide-react";
 import type {
   ModuleState,
@@ -119,7 +120,7 @@ export const AssessorEvaluationPage = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8 pb-32 md:pb-40">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div className="flex gap-3">
@@ -176,10 +177,11 @@ export const AssessorEvaluationPage = ({
 
         <AssessmentEvaluationStats
           candidate={evaluation.candidateName}
+          assessorName={evaluation.assessorName ?? "Unknown"}
+          date={evaluation.date}
           profile={evaluation.profileTitle}
           stack={evaluation.stack}
           stats={evaluationStats}
-          onReset={resetAssessment}
         />
 
         {/* Modules List */}
@@ -215,32 +217,59 @@ export const AssessorEvaluationPage = ({
           })}
         </div>
 
-        {/* Action Bar */}
-        <footer className="mt-12 mb-20 flex flex-col md:flex-row items-center justify-between p-6 bg-slate-800 rounded-2xl text-white shadow-xl">
-          <div className="mb-4 md:mb-0">
-            <p className="text-slate-400 text-sm font-medium">
-              Final Evaluation Status
-            </p>
-            <h3 className="text-xl font-bold">
-              {evaluationStats.completedTopics === evaluationStats.totalTopics
-                ? "Assessment Ready for Submission"
-                : `${evaluationStats.totalTopics - evaluationStats.completedTopics} Topics Remaining`}
-            </h3>
+        {/* Action Bar - Floating */}
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-8 pointer-events-none">
+          <div className="max-w-7xl mx-auto pointer-events-auto">
+            <footer className="flex justify-between p-6 bg-slate-800 rounded-2xl text-white shadow-2xl border border-slate-700/50 backdrop-blur-sm bg-slate-800/95">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-3">
+                  <p className="text-slate-400 text-sm font-medium">
+                    Final Evaluation Status
+                  </p>
+                </div>
+                <h3 className="text-xl font-bold">
+                  {evaluationStats.completedTopics ===
+                  evaluationStats.totalTopics
+                    ? "Assessment Ready for Submission"
+                    : `${
+                        evaluationStats.totalTopics -
+                        evaluationStats.completedTopics
+                      } Topics Remaining`}
+                </h3>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  disabled={
+                    evaluation.status === "completed" ||
+                    evaluation.status === "rejected"
+                  }
+                  onClick={resetAssessment}
+                  className="px-4 py-3 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-slate-200 rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100 border border-slate-600 flex items-center gap-2"
+                  title="Reset Assessment"
+                >
+                  <RotateCcw size={18} />
+                  <span className="hidden sm:inline">Reset</span>
+                </button>
+
+                <button
+                  disabled={
+                    evaluation.status === "completed" ||
+                    evaluation.status === "rejected"
+                  }
+                  onClick={finishAssessment}
+                  className="px-4 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100 flex items-center gap-2"
+                >
+                  <CheckCircle size={20} />
+                  <span className="hidden sm:inline">
+                    {evaluation.status === "completed"
+                      ? "Completed"
+                      : "Complete"}
+                  </span>
+                </button>
+              </div>
+            </footer>
           </div>
-          <div className="flex gap-4 w-full md:w-auto">
-            <button
-              disabled={
-                evaluation.status === "completed" ||
-                evaluation.status === "rejected"
-              }
-              onClick={finishAssessment}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100"
-            >
-              <CheckCircle size={20} />
-              {evaluation.status === "completed" ? "Completed" : "Complete"}
-            </button>
-          </div>
-        </footer>
+        </div>
       </div>
     </div>
   );
