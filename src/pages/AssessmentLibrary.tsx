@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Box, Check } from "lucide-react";
+import { ArrowLeft, Book, Check } from "lucide-react";
 import type { ModuleState, ProfileState } from "../types";
 import { LibraryTabs } from "../components/library/LibraryTabs";
 import { LibraryModule } from "../components/library/LibraryModule";
@@ -38,7 +38,7 @@ export const AssessmentLibraryPage = ({
           </button>
         </div>
         <PageHeader
-          icon={<Box className="text-indigo-600 w-8 h-8" />}
+          icon={<Book className="text-indigo-600 w-8 h-8" />}
           title="Assessment Library"
           description="Standard technical competencies defined for each technology stack."
         />
@@ -53,23 +53,35 @@ export const AssessmentLibraryPage = ({
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-4">
                 Select Technology Stack
               </span>
-              <div className="flex flex-wrap gap-2">
-                {Object.values(stacks).map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setActiveStack(s)}
-                    className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border flex items-center gap-2 ${
-                      activeStack === s
-                        ? "bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105"
-                        : "bg-white border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50/30"
-                    }`}
-                  >
-                    {activeStack === s && (
-                      <Check size={16} strokeWidth={3} className="text-white" />
-                    )}
-                    {s}
-                  </button>
-                ))}
+              <div className="relative">
+                <div
+                  className="flex overflow-x-auto gap-2 py-4 -mx-4 px-4 items-center hide-scrollbar"
+                  style={{
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
+                  }}
+                >
+                  {Object.values(stacks).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setActiveStack(s)}
+                      className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all border flex items-center gap-2 whitespace-nowrap flex-shrink-0 ${
+                        activeStack === s
+                          ? "bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105"
+                          : "bg-white border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50/30"
+                      }`}
+                    >
+                      {activeStack === s && (
+                        <Check
+                          size={16}
+                          strokeWidth={3}
+                          className="text-white"
+                        />
+                      )}
+                      {s}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
