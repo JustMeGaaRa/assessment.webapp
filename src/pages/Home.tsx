@@ -14,7 +14,7 @@ import { SessionForm } from "../components/home/SessionForm";
 import { AssessmentSessionCard } from "../components/dashboard/AssessmentSessionCard";
 import { NewAssessmentCard } from "../components/dashboard/NewAssessmentCard";
 import { Modal } from "../components/ui/Modal";
-import { Box, Library, UploadCloud } from "lucide-react";
+import { Box, Library, UploadCloud, Radio } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 
 interface HomePageProps {
@@ -34,6 +34,7 @@ interface HomePageProps {
   setAssessorName: (name: string) => void;
   onBackup: () => void;
   onRestore: (data: BackupData) => void;
+  hostedSessionId?: string | null;
 }
 
 export const HomePage = ({
@@ -48,6 +49,7 @@ export const HomePage = ({
   setAssessorName,
   onBackup,
   onRestore,
+  hostedSessionId,
 }: HomePageProps) => {
   const navigate = useNavigate();
 
@@ -459,6 +461,44 @@ export const HomePage = ({
             </div>
           ) : (
             <>
+              {/* Active / Ongoing Session */}
+              {hostedSessionId &&
+                assessments.find((a) => a.id === hostedSessionId) && (
+                  <div className="mb-10">
+                    <div className="flex items-center gap-3 mb-6">
+                      <h2 className="text-2xl font-bold text-slate-800">
+                        Ongoing Assessment
+                      </h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      {assessments
+                        .filter((a) => a.id === hostedSessionId)
+                        .map((assessment) => {
+                          const displaySession: AssessorEvaluationState = {
+                            id: assessment.id,
+                            assessmentId: assessment.id,
+                            candidateName: assessment.candidateName,
+                            profileTitle: assessment.profileTitle,
+                            profileId: assessment.profileId,
+                            stack: assessment.stack,
+                            date: assessment.date,
+                            status: "ongoing", // Force ongoing for active session
+                            scores: {},
+                            notes: {},
+                            finalScore: undefined,
+                            assessorName: "Group",
+                          };
+                          return (
+                            <AssessmentSessionCard
+                              key={assessment.id}
+                              session={displaySession}
+                            />
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+
               <h2 className="text-2xl font-bold text-slate-800 mb-6">
                 Recent Assessments
               </h2>
@@ -468,55 +508,58 @@ export const HomePage = ({
                   description="Start a new evaluation session for a candidate"
                   onClick={handleOpenSessionModal}
                 />
-                {assessments.slice(0, 10).map((assessment) => {
-                  // Find evaluations for this assessment to compute status/score
-                  const relatedEvals = evaluations.filter(
-                    (e) => e.assessmentId === assessment.id,
-                  );
-                  const completed = relatedEvals.filter(
-                    (e) => e.status === "completed",
-                  );
-                  const isCompleted =
-                    relatedEvals.length > 0 &&
-                    relatedEvals.every((e) => e.status === "completed");
-                  // Compute average score
-                  const totalScore = completed.reduce(
-                    (acc, curr) => acc + (curr.finalScore || 0),
-                    0,
-                  );
-                  const avgScore =
-                    completed.length > 0
-                      ? totalScore / completed.length
-                      : undefined;
+                {assessments
+                  .filter((a) => a.id !== hostedSessionId)
+                  .slice(0, 10)
+                  .map((assessment) => {
+                    // Find evaluations for this assessment to compute status/score
+                    const relatedEvals = evaluations.filter(
+                      (e) => e.assessmentId === assessment.id,
+                    );
+                    const completed = relatedEvals.filter(
+                      (e) => e.status === "completed",
+                    );
+                    const isCompleted =
+                      relatedEvals.length > 0 &&
+                      relatedEvals.every((e) => e.status === "completed");
+                    // Compute average score
+                    const totalScore = completed.reduce(
+                      (acc, curr) => acc + (curr.finalScore || 0),
+                      0,
+                    );
+                    const avgScore =
+                      completed.length > 0
+                        ? totalScore / completed.length
+                        : undefined;
 
-                  // Construct a display object compatible with AssessmentSessionCard
-                  // We treat 'locked' as a pseudo-status or just use ongoing/completed
-                  const displaySession: AssessorEvaluationState = {
-                    id: assessment.id, // Use Group ID as ID for navigation
-                    assessmentId: assessment.id, // It IS the assessment
-                    candidateName: assessment.candidateName,
-                    profileTitle: assessment.profileTitle,
-                    profileId: assessment.profileId,
-                    stack: assessment.stack,
-                    date: assessment.date,
-                    status: assessment.locked
-                      ? "completed"
-                      : isCompleted
+                    // Construct a display object compatible with AssessmentSessionCard
+                    // We treat 'locked' as a pseudo-status or just use ongoing/completed
+                    const displaySession: AssessorEvaluationState = {
+                      id: assessment.id, // Use Group ID as ID for navigation
+                      assessmentId: assessment.id, // It IS the assessment
+                      candidateName: assessment.candidateName,
+                      profileTitle: assessment.profileTitle,
+                      profileId: assessment.profileId,
+                      stack: assessment.stack,
+                      date: assessment.date,
+                      status: assessment.locked
                         ? "completed"
-                        : "ongoing",
-                    scores: {},
-                    notes: {},
-                    finalScore: avgScore,
-                    assessorName: "Group", // Placeholder
-                  };
+                        : isCompleted
+                          ? "completed"
+                          : "ongoing",
+                      scores: {},
+                      notes: {},
+                      finalScore: avgScore,
+                      assessorName: "Group", // Placeholder
+                    };
 
-                  return (
-                    <AssessmentSessionCard
-                      key={assessment.id}
-                      session={displaySession}
-                    />
-                  );
-                })}
+                    return (
+                      <AssessmentSessionCard
+                        key={assessment.id}
+                        session={displaySession}
+                      />
+                    );
+                  })}
               </div>
             </>
           )}

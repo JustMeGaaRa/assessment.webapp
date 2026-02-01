@@ -216,6 +216,7 @@ const App = () => {
               setAssessorName={setAssessorName}
               onRestore={restoreApplicationState}
               onBackup={backupApplicationState}
+              hostedSessionId={hostedSessionId}
             />
           }
         />
