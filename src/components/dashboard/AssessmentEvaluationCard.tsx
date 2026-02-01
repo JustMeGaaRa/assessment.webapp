@@ -64,7 +64,7 @@ export const AssessmentEvaluationCard = ({
             Score
           </span>
           <span className="text-xl font-black text-indigo-600">
-            {evalSession.finalScore.toFixed(1)}
+            {evalSession.finalScore?.toFixed(1)}
           </span>
         </div>
       )}

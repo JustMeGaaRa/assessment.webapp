@@ -98,28 +98,46 @@ const App = () => {
   };
 
   const createAssessment = (assessment: AssessmentSessionState) => {
-    setAssessments((prev) => [assessment, ...prev]);
+    setAssessments((prev) => {
+      if (prev.some((a) => a.id === assessment.id)) {
+        return prev.map((a) => (a.id === assessment.id ? assessment : a));
+      }
+      return [assessment, ...prev];
+    });
   };
 
   const createEvaluation = (evaluation: AssessorEvaluationState) => {
-    setEvaluations((prev) => [evaluation, ...prev]);
+    setEvaluations((prev) => {
+      if (prev.some((e) => e.id === evaluation.id)) {
+        return prev.map((e) => (e.id === evaluation.id ? evaluation : e));
+      }
+      return [evaluation, ...prev];
+    });
   };
 
   const updateAssessment = (
-    id: string,
-    data: Partial<AssessmentSessionState>,
+    assessmentId: string,
+    assessmentUpdate: Partial<AssessmentSessionState>,
   ) => {
     setAssessments((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, ...data } : a)),
+      prev.map((assessment) =>
+        assessment.id === assessmentId
+          ? { ...assessment, ...assessmentUpdate }
+          : assessment,
+      ),
     );
   };
 
   const updateEvaluation = (
-    id: string,
-    data: Partial<AssessorEvaluationState>,
+    evaluationId: string,
+    evaluationUpdate: Partial<AssessorEvaluationState>,
   ) => {
     setEvaluations((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, ...data } : s)),
+      prev.map((evaluation) =>
+        evaluation.id === evaluationId
+          ? { ...evaluation, ...evaluationUpdate }
+          : evaluation,
+      ),
     );
   };
 
@@ -185,7 +203,9 @@ const App = () => {
               evaluations={evaluations}
               matrix={matrix}
               profiles={profiles}
-              updateSession={updateEvaluation}
+              onUpdateEvaluation={updateEvaluation}
+              onCreateEvaluation={createEvaluation}
+              assessorName={assessorName}
             />
           }
         />
@@ -195,12 +215,13 @@ const App = () => {
             <AssessmentSessionRoute
               assessments={assessments}
               evaluations={evaluations}
-              onCreateSession={createEvaluation}
+              onCreateAssessment={createAssessment}
+              onCreateEvaluation={createEvaluation}
               onUpdateAssessment={updateAssessment}
               matrix={matrix}
               profiles={profiles}
+              stacks={stacks}
               assessorName={assessorName}
-              onUpdateSession={updateEvaluation}
             />
           }
         />
@@ -223,39 +244,37 @@ const App = () => {
 const AssessmentSessionRoute = ({
   assessments,
   evaluations,
-  onCreateSession,
+  onCreateAssessment,
+  onCreateEvaluation,
   onUpdateAssessment,
-  onUpdateSession,
   matrix,
   profiles,
   assessorName,
 }: {
   assessments: AssessmentSessionState[];
   evaluations: AssessorEvaluationState[];
-  onCreateSession: (session: AssessorEvaluationState) => void;
+  onCreateAssessment: (assessment: AssessmentSessionState) => void;
+  onCreateEvaluation: (evaluation: AssessorEvaluationState) => void;
   onUpdateAssessment: (
     id: string,
     data: Partial<AssessmentSessionState>,
   ) => void;
-  onUpdateSession: (id: string, data: Partial<AssessorEvaluationState>) => void;
   matrix: ModuleState[];
   profiles: ProfileState[];
+  stacks: Record<string, string>;
   assessorName: string;
 }) => {
   const { assessmentId } = useParams();
   const assessment = assessments.find((a) => a.id === assessmentId);
 
-  if (!assessment) {
-    return <Navigate to="/" replace />;
-  }
+  const profile = assessment
+    ? profiles.find((p) => p.id === assessment.profileId)
+    : undefined;
 
-  const profile = profiles.find((p) => p.id === assessment.profileId);
+  const profileModules = profile
+    ? matrix.filter((m) => profile.weights[m.id] > 0)
+    : [];
 
-  if (!profile) {
-    return <Navigate to="/" replace />;
-  }
-
-  const profileModules = matrix.filter((m) => profile.weights[m.id] > 0);
   const assessmentEvaluations = evaluations.filter(
     (evaluation) => evaluation.assessmentId === assessmentId,
   );
@@ -264,9 +283,9 @@ const AssessmentSessionRoute = ({
     <AssessmentSessionPage
       assessment={assessment}
       evaluations={assessmentEvaluations}
-      onCreateSession={onCreateSession}
+      onCreateAssessment={onCreateAssessment}
+      onCreateEvaluation={onCreateEvaluation}
       onUpdateAssessment={onUpdateAssessment}
-      onUpdateSession={onUpdateSession}
       matrix={profileModules}
       profile={profile}
       assessorName={assessorName}
@@ -278,15 +297,41 @@ const AssessmentEvaluationRoute = ({
   evaluations,
   matrix,
   profiles,
-  updateSession,
+  onUpdateEvaluation,
+  onCreateEvaluation,
+  assessorName,
 }: {
   evaluations: AssessorEvaluationState[];
   matrix: ModuleState[];
   profiles: ProfileState[];
-  updateSession: (id: string, data: Partial<AssessorEvaluationState>) => void;
+  onUpdateEvaluation: (
+    id: string,
+    data: Partial<AssessorEvaluationState>,
+  ) => void;
+  onCreateEvaluation: (evaluation: AssessorEvaluationState) => void;
+  assessorName: string;
 }) => {
   const { evaluationId } = useParams();
   const evaluation = evaluations.find((s) => s.id === evaluationId);
+
+  const { sendUpdateEvaluation } = usePeerSession({
+    sessionId: evaluation?.assessmentId || "",
+    currentEvaluations: evaluations,
+    onSyncReceived: (
+      _syncAssessment: AssessmentSessionState,
+      syncEvaluations: AssessorEvaluationState[],
+    ) => {
+      // Upsert synced evaluations
+      syncEvaluations.forEach((ev) => onCreateEvaluation(ev));
+    },
+    onEvaluationReceived: (ev: AssessorEvaluationState) => {
+      onCreateEvaluation(ev);
+    },
+    onAssessmentUpdateReceived: () => {
+      // Do nothing for assessment props updates here
+    },
+    assessorName,
+  });
 
   if (!evaluation) {
     return <Navigate to="/" replace />;
@@ -305,7 +350,10 @@ const AssessmentEvaluationRoute = ({
       evaluation={evaluation}
       modules={profileModules}
       profile={profile}
-      onUpdate={(data) => updateSession(evaluation.id, data)}
+      onUpdate={(data) => {
+        onUpdateEvaluation(evaluation.id, data);
+        sendUpdateEvaluation({ ...evaluation, ...data });
+      }}
     />
   );
 };

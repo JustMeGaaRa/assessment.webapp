@@ -1,0 +1,47 @@
+Requirement #1: Tech assessment matrix structure
+
+The technical assessment relies on the "assessment matrix". The "assessment matrix" has the following structure.
+
+A "module" is a set of topics mapped to a certain technology stack. Module might have mappings to multiple stacks. A module contains a set of topics. A set of "modules" and stacks makes a "Library". The topics between modules do not overlap. The "Library" also has a set of "Profiles". Each profile is set of modules weights and a technology stack.
+
+For example, the module "Core Coding" has a topic "Programming Language" that maps to ".NET" stack as "C#" and to "Angular" stack as "Typescript". Or in module "Code Quality" the topic "Testing Framework" maps to ".NET" as "xUnit" and for "Angular" it maps as "Vitest".
+
+Adjust the Matrix Library page so that user can select a stack and each module from a list shows the topic and it's mapping to the selected technology stack.
+
+
+
+Requirement #2: Importing csv files with matrix library
+
+Refine the "assessment evaluation initiation" page modal to act as a wizard. The wizard should show the drop zones for profiles, topics, and modules first. When dropping a csv file or uploading or pasting a link, the file should show a progress bar that the file is uploading and then parsing until it's done. The parsed data is the source of truth for the "Assessment Matrix L:ibrary". When this is done, the next step is to enter candidate name and select the stackand profile for previously parsed data.
+
+The fields for profiles csv file are "Module Code", "Module Name", "<Profile 1 Name> %", "<Profile 2 Name> %" and so on for multiple profiles (the profile % column might have different names between imports). This file is required for import. Profile names can be inferred from this file.
+
+The fields for topics csv file are "Module Code", "Module Name", "Topic", "<Stack 1 Mapping>", "<Stack 2 Mapping>", and so one for multiple stacks (the stack mapping column might have different names between imports). This file is required for import., Module names and stacks can be inferred from this file.
+
+The fields for modules csv file are "Module Code", "Module Name", "Module Summary" (this structure should remain the same between imports). This file is optional and only provides summariy for each module.
+
+
+
+Requirement #3: Assessment Session for multiple feedbacks
+
+The Assessment Portal is a website that shows a list of "Assessment Sessions". Each "Assessment Sessions" is composed of list of "Assessment Evaluation" and "Assessment Summary". The "Assessment Evaluation" is a set of scores set by the assessor for each topic for a set of modules for a given profile. The "Assessment Summary" is the calculated and aggregated result of multiple evaluations.
+
+The "Assessment Evaluation" lifecycle is managed by a single assessor on a dedicated page. The assessor can set scores and in the end "complete" the evaluation. After that, this exact evaluation is no loger editable. It can be viewed when selected from the l;ist of all eval;uation within single "Assessment Session"..
+
+The "Assessment Session" lifecycle is managed by a single user that currently is working with this data. The "Assessment Session" can be locked at any time. When "Locked", no more "Assessment Evaluation" can be added or imported, so the controls have to be hidden. The session can be unlocked at any time and make it editable again. It's just a safety mechanism for accidental edits.
+
+The "Assessment Summary" is always recalculated on the fly based on all the evaluations added or imported.
+
+
+
+Requirement #4: Peer-to-peer collaboration on assessment
+
+The peer-to-peer collaboration should have the following behavior:
+- When user creates a new assessment or opens existing one, they are connected to session and are ready to collaborate by adding their evaluations
+- Anyone with the url for the assessment session can connect and collaborate
+- It doesn't matter who opens the assessment first or at which time, they should be connected to a session, wherther it's a new host session or connected as a peer
+- The session is NOT broken if the user refreshes the page, all connected users should be able to continue collaborating
+- All peers thast open an assessment with the same assessmentId should connect to the same session
+- Opening same assessment in multiple tabs should not be treated as a separate peer, but the same peer
+- If a user opens a shared link and the assessment does not exist on their machine/browser/instance then this assessment get created and synchronized with the other peers (assessment needs to be created once, all the calculations should be done based onh evaluations locally in the browser, so post first create sync we need to synchronize the evaluations created by peers)
+- All the other assessments from each peer that were not shared and connected to should NOT be synchronized unless explicitlyshared and connected

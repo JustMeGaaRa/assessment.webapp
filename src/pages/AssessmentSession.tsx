@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, User, Lock, Unlock } from "lucide-react";
+import {
+  ArrowLeft,
+  User,
+  Lock,
+  Unlock,
+  Link as LinkIcon,
+  Check,
+} from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Modal } from "../components/ui/Modal";
 import type {
@@ -16,25 +23,28 @@ import { ImportAssessmentCard } from "../components/dashboard/ImportAssessmentCa
 import { AssessmentEvaluationCard } from "../components/dashboard/AssessmentEvaluationCard";
 import { AssessmentSummaryCard } from "../components/assessment/AssessmentSummaryCard";
 import { EvaluationStateHelper } from "../utils/evaluationStateHelper";
+import { AvatarGroup } from "../components/ui/AvatarGroup";
+import { usePeerSession } from "../hooks/usePeerSession";
 
 interface AssessmentSessionPageProps {
-  assessment: AssessmentSessionState;
+  assessment?: AssessmentSessionState;
   evaluations: AssessorEvaluationState[];
-  onCreateSession: (session: AssessorEvaluationState) => void;
+  onCreateAssessment: (assessment: AssessmentSessionState) => void;
+  onCreateEvaluation: (session: AssessorEvaluationState) => void;
   onUpdateAssessment: (
     id: string,
     data: Partial<AssessmentSessionState>,
   ) => void;
-  onUpdateSession: (id: string, data: Partial<AssessorEvaluationState>) => void;
   matrix: ModuleState[];
-  profile: ProfileState;
+  profile?: ProfileState;
   assessorName: string;
 }
 
 export const AssessmentSessionPage = ({
   assessment,
   evaluations,
-  onCreateSession,
+  onCreateAssessment,
+  onCreateEvaluation,
   onUpdateAssessment,
   assessorName,
   matrix,
@@ -42,6 +52,45 @@ export const AssessmentSessionPage = ({
 }: AssessmentSessionPageProps) => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
+  const [copied, setCopied] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const handleCopyLink = () => {
+    const url = `${window.location.origin}/assessment/${assessmentId}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const { peerId, isConnected, sendUpdateEvaluation, sendUpdateAssessment } =
+    usePeerSession({
+      sessionId: assessmentId || "",
+      assessorName,
+      currentAssessment: assessment,
+      currentEvaluations: evaluations,
+      onSyncReceived: (syncedAssessment, syncedEvaluations) => {
+        // Update assessment if ID matches or if we are initializing
+        if (syncedAssessment) {
+          if (assessment === undefined) {
+            onCreateAssessment(syncedAssessment);
+          } else if (syncedAssessment.id === assessment.id) {
+            onUpdateAssessment(syncedAssessment.id, syncedAssessment);
+          }
+        }
+        // Update evaluations
+        syncedEvaluations.forEach((ev) => {
+          onCreateEvaluation(ev);
+        });
+      },
+      onEvaluationReceived: (evaluation) => {
+        onCreateEvaluation(evaluation);
+      },
+      onAssessmentUpdateReceived: (update) => {
+        if (assessment) {
+          onUpdateAssessment(assessment.id, update);
+        }
+      },
+    });
 
   const candidateName = assessment?.candidateName || "Unknown Candidate";
   const isLocked = assessment?.locked || false;
@@ -73,6 +122,40 @@ export const AssessmentSessionPage = ({
     },
   ];
 
+  // Loading State for Guest
+  if (!assessment || !profile) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center space-y-4">
+          <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <LinkIcon size={32} />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-800">
+            Joining Session...
+          </h2>
+          <p className="text-slate-500">
+            Connecting to peer to synchronize assessment data.
+          </p>
+          {isConnected ? (
+            <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold bg-emerald-50 py-2 px-4 rounded-full mx-auto w-fit">
+              <Check size={18} /> Connected! Syncing...
+            </div>
+          ) : (
+            <div className="text-slate-400 text-sm">
+              Waiting for connection...
+            </div>
+          )}
+          <button
+            onClick={() => navigate("/")}
+            className="text-indigo-600 font-bold hover:underline mt-4 block"
+          >
+            Return to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const assessors = evaluations.map((ev, idx) => {
     const style = colors[idx % colors.length];
     return {
@@ -100,11 +183,9 @@ export const AssessmentSessionPage = ({
 
     if (window.confirm(confirmMsg)) {
       onUpdateAssessment(assessment.id, { locked: newLockState });
+      sendUpdateAssessment({ locked: newLockState });
     }
   };
-
-  // Modal State
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleAddEvaluation = (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,7 +202,7 @@ export const AssessmentSessionPage = ({
     }
 
     const newEvaluationId = crypto.randomUUID();
-    const newSession: AssessorEvaluationState = {
+    const newEvaluation: AssessorEvaluationState = {
       id: newEvaluationId,
       assessmentId: assessment.id,
       candidateName: assessment.candidateName,
@@ -136,7 +217,8 @@ export const AssessmentSessionPage = ({
       finalScore: undefined,
     };
 
-    onCreateSession(newSession);
+    onCreateEvaluation(newEvaluation);
+    sendUpdateEvaluation(newEvaluation);
     setIsAddModalOpen(false);
     navigate(`/assessment/${assessmentId}/evaluation/${newEvaluationId}`);
   };
@@ -161,7 +243,8 @@ export const AssessmentSessionPage = ({
             assessment?.profileTitle || importedSession.profileTitle,
           stack: assessment?.stack || importedSession.stack,
         };
-        onCreateSession(newSession);
+        onCreateEvaluation(newSession);
+        sendUpdateEvaluation(newSession);
         alert("Evaluation imported successfully.");
       })
       .catch((err) => {
@@ -189,7 +272,23 @@ export const AssessmentSessionPage = ({
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-4">
+            <AvatarGroup users={assessors} />
+
+            {assessment && (
+              <div className="h-6 w-px bg-slate-300 hidden sm:block"></div>
+            )}
+
+            <button
+              onClick={handleCopyLink}
+              disabled={!peerId}
+              className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 rounded-xl font-bold transition-all shadow-sm text-sm"
+              title="Copy Session Link"
+            >
+              {copied ? <Check size={18} /> : <LinkIcon size={18} />}
+              <span>{copied ? "Copied" : "Share"}</span>
+            </button>
+
             {assessment && (
               <button
                 onClick={handleToggleLock}
