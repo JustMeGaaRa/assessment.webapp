@@ -17,6 +17,7 @@ import type {
   AssessmentSessionState,
 } from "./types";
 import { createBackup, type BackupData } from "./utils/backupHelper";
+import { usePeerSession } from "./hooks/usePeerSession";
 
 const ASSESSMENT_LIBRARY_KEY = "assessment_matrix_data";
 const ASSESSOR_EVALUATIONS_KEY = "assessment_evaluations";
@@ -82,6 +83,28 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem("assessor_name", assessorName);
   }, [assessorName]);
+
+  const [hostedSessionId, setHostedSessionId] = useState<string | null>(null);
+
+  // Host Session Hook (Persists across navigation)
+  const hostSession = usePeerSession({
+    sessionId: hostedSessionId || "",
+    assessorName,
+    currentAssessment: assessments.find((a) => a.id === hostedSessionId),
+    currentEvaluations: evaluations.filter(
+      (e) => e.assessmentId === hostedSessionId,
+    ),
+    onSyncReceived: (
+      _a: AssessmentSessionState,
+      evs: AssessorEvaluationState[],
+    ) => {
+      evs.forEach((ev) => createEvaluation(ev));
+    },
+    onEvaluationReceived: (ev: AssessorEvaluationState) => createEvaluation(ev),
+    onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => {
+      if (hostedSessionId) updateAssessment(hostedSessionId, update);
+    },
+  });
 
   const handleDataLoad = (
     m: ModuleState[],
@@ -222,6 +245,9 @@ const App = () => {
               profiles={profiles}
               stacks={stacks}
               assessorName={assessorName}
+              hostedSessionId={hostedSessionId}
+              setHostedSessionId={setHostedSessionId}
+              hostSession={hostSession}
             />
           }
         />
@@ -250,6 +276,9 @@ const AssessmentSessionRoute = ({
   matrix,
   profiles,
   assessorName,
+  hostedSessionId,
+  setHostedSessionId,
+  hostSession,
 }: {
   assessments: AssessmentSessionState[];
   evaluations: AssessorEvaluationState[];
@@ -263,9 +292,55 @@ const AssessmentSessionRoute = ({
   profiles: ProfileState[];
   stacks: Record<string, string>;
   assessorName: string;
+  hostedSessionId: string | null;
+  setHostedSessionId: (id: string | null) => void;
+  hostSession: any;
 }) => {
   const { assessmentId } = useParams();
   const assessment = assessments.find((a) => a.id === assessmentId);
+
+  const isHosting = hostedSessionId === assessmentId;
+
+  // Guest Session Hook
+  // Only connect if we are NOT hosting this session.
+  const guestSession = usePeerSession({
+    sessionId: isHosting ? "" : assessmentId || "",
+    assessorName,
+    currentAssessment: assessment,
+    currentEvaluations: evaluations.filter(
+      (e) => e.assessmentId === assessmentId,
+    ),
+    onSyncReceived: (
+      syncedAssessment: AssessmentSessionState,
+      syncedEvaluations: AssessorEvaluationState[],
+    ) => {
+      if (syncedAssessment && !assessment) {
+        onCreateAssessment(syncedAssessment);
+      }
+      syncedEvaluations.forEach((ev) => onCreateEvaluation(ev));
+    },
+    onEvaluationReceived: (ev: AssessorEvaluationState) =>
+      onCreateEvaluation(ev),
+    onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => {
+      if (assessmentId) onUpdateAssessment(assessmentId, update);
+    },
+  });
+
+  // Decide which session interface to use
+  const activeSession = isHosting ? hostSession : guestSession;
+
+  const handleCreateEvaluation = (ev: AssessorEvaluationState) => {
+    onCreateEvaluation(ev);
+    activeSession.sendUpdateEvaluation(ev);
+  };
+
+  const handleUpdateAssessment = (
+    id: string,
+    data: Partial<AssessmentSessionState>,
+  ) => {
+    onUpdateAssessment(id, data);
+    activeSession.sendUpdateAssessment(data);
+  };
 
   const profile = assessment
     ? profiles.find((p) => p.id === assessment.profileId)
@@ -284,11 +359,16 @@ const AssessmentSessionRoute = ({
       assessment={assessment}
       evaluations={assessmentEvaluations}
       onCreateAssessment={onCreateAssessment}
-      onCreateEvaluation={onCreateEvaluation}
-      onUpdateAssessment={onUpdateAssessment}
+      onCreateEvaluation={handleCreateEvaluation}
+      onUpdateAssessment={handleUpdateAssessment}
       matrix={profileModules}
       profile={profile}
       assessorName={assessorName}
+      isOnline={isHosting}
+      onStartSession={() => setHostedSessionId(assessmentId || null)}
+      onEndSession={() => setHostedSessionId(null)}
+      activePeers={activeSession.activePeers}
+      isConnected={activeSession.isConnected}
     />
   );
 };

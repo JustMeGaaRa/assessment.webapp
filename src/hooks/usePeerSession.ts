@@ -22,6 +22,10 @@ export type PeerMessage =
   | {
       type: "HELLO";
       payload: { peerId: string; nametag: string };
+    }
+  | {
+      type: "UPDATE_PEERS";
+      payload: { id: string; name: string }[];
     };
 
 interface UsePeerSessionProps {
@@ -118,17 +122,69 @@ export const usePeerSession = ({
         case "HELLO":
           console.log("Peer says HELLO:", message.payload);
           setActivePeers((prev) => {
-            if (prev.some((p) => p.id === message.payload.peerId)) return prev;
-            return [
+            const exists = prev.some((p) => p.id === message.payload.peerId);
+            if (exists) return prev;
+            const newPeers = [
               ...prev,
               { id: message.payload.peerId, name: message.payload.nametag },
             ];
+            // Broadcast new peer list to everyone
+            // We need to include OURSELVES (Host) in the list we send to others?
+            // Actually, we should broadcast the FULL list of "Everyone in session".
+            // That is: Me (Host) + All Guests (prev + new).
+            // But we can't access 'broadcast' here easily due to closure?
+            // 'broadcast' depends on 'connections'. 'connections' is state.
+            // We can use 'connections' from ref? No ref for connections.
+            // But 'handleMessage' is re-created if deps change? Currently [].
+
+            // We need to trigger broadcast via useEffect or ref.
+            // Simplified: Just update state here.
+            // Add a useEffect that listens to 'activePeers' changes?
+            // If I am Host (how do I know? 'peerId === sessionId' or I have incoming connections?), broadcast.
+            // Better: 'handleMessage' can call a helper?
+            return newPeers;
           });
+          break;
+
+        case "UPDATE_PEERS":
+          // I am a guest receiving the full list
+          // Filter out myself?
+          setActivePeers(
+            message.payload.filter((p) => p.id !== peerRef.current?.id),
+          );
           break;
       }
     },
     [],
   );
+
+  // Broadcast peers when activePeers changes (only if Host)
+  useEffect(() => {
+    // Basic check: If we have connections and we are the host (peerId === sessionId or we decided we are host?),
+    // Or simpler: If we have any connections, share the knowledge?
+    // In Star topology, only Host broadcasts.
+    // If we are Guest, we receive UPDATE_PEERS. We shouldn't echo it back?
+    // We need to know if we are Host.
+    // heuristic: if sessionId provided and we claimed it?
+    // Or simply: If I have active peers, I share them with everyone I know?
+    // If Guest A knows Host. Guest A sends list to Host? No.
+    // Host sends to Guests.
+
+    // Let's assume only Host broadcasts.
+    // Host ID matches sessionId.
+    if (peerId && sessionId && peerId === sessionId) {
+      const fullList = [
+        { id: peerId, name: assessorName }, // Me (using prop)
+        ...activePeers,
+      ];
+
+      connections.forEach((conn) => {
+        if (conn.open) {
+          conn.send({ type: "UPDATE_PEERS", payload: fullList });
+        }
+      });
+    }
+  }, [activePeers, connections, peerId, sessionId, assessorName]);
 
   const handleConnection = useCallback(
     (connection: DataConnection) => {

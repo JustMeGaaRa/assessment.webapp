@@ -3,10 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   User,
-  Lock,
-  Unlock,
   Link as LinkIcon,
   Check,
+  Play,
+  Square,
+  Share2,
 } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Modal } from "../components/ui/Modal";
@@ -24,7 +25,6 @@ import { AssessmentEvaluationCard } from "../components/dashboard/AssessmentEval
 import { AssessmentSummaryCard } from "../components/assessment/AssessmentSummaryCard";
 import { EvaluationStateHelper } from "../utils/evaluationStateHelper";
 import { AvatarGroup } from "../components/ui/AvatarGroup";
-import { usePeerSession } from "../hooks/usePeerSession";
 
 interface AssessmentSessionPageProps {
   assessment?: AssessmentSessionState;
@@ -38,6 +38,11 @@ interface AssessmentSessionPageProps {
   matrix: ModuleState[];
   profile?: ProfileState;
   assessorName: string;
+  isOnline: boolean;
+  onStartSession: () => void;
+  onEndSession: () => void;
+  activePeers: { id: string; name: string }[];
+  isConnected: boolean;
 }
 
 export const AssessmentSessionPage = ({
@@ -49,6 +54,11 @@ export const AssessmentSessionPage = ({
   assessorName,
   matrix,
   profile,
+  activePeers,
+  isConnected,
+  isOnline,
+  onStartSession,
+  onEndSession,
 }: AssessmentSessionPageProps) => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
@@ -62,38 +72,7 @@ export const AssessmentSessionPage = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const { peerId, isConnected, sendUpdateEvaluation, sendUpdateAssessment } =
-    usePeerSession({
-      sessionId: assessmentId || "",
-      assessorName,
-      currentAssessment: assessment,
-      currentEvaluations: evaluations,
-      onSyncReceived: (syncedAssessment, syncedEvaluations) => {
-        // Update assessment if ID matches or if we are initializing
-        if (syncedAssessment) {
-          if (assessment === undefined) {
-            onCreateAssessment(syncedAssessment);
-          } else if (syncedAssessment.id === assessment.id) {
-            onUpdateAssessment(syncedAssessment.id, syncedAssessment);
-          }
-        }
-        // Update evaluations
-        syncedEvaluations.forEach((ev) => {
-          onCreateEvaluation(ev);
-        });
-      },
-      onEvaluationReceived: (evaluation) => {
-        onCreateEvaluation(evaluation);
-      },
-      onAssessmentUpdateReceived: (update) => {
-        if (assessment) {
-          onUpdateAssessment(assessment.id, update);
-        }
-      },
-    });
-
   const candidateName = assessment?.candidateName || "Unknown Candidate";
-  const isLocked = assessment?.locked || false;
   const colors = [
     {
       color: "bg-indigo-500",
@@ -156,6 +135,19 @@ export const AssessmentSessionPage = ({
     );
   }
 
+  const onlineUsers = [{ name: assessorName, id: "me" }, ...activePeers].map(
+    (p, idx) => {
+      const style = colors[idx % colors.length];
+      return {
+        id: p.id,
+        name: p.name,
+        color: style.color,
+        text: style.text,
+        light: style.light,
+      };
+    },
+  );
+
   const assessors = evaluations.map((ev, idx) => {
     const style = colors[idx % colors.length];
     return {
@@ -174,22 +166,8 @@ export const AssessmentSessionPage = ({
       matrix,
     );
 
-  const handleToggleLock = () => {
-    if (!assessment) return;
-    const newLockState = !isLocked;
-    const confirmMsg = newLockState
-      ? "Are you sure you want to LOCK this assessment session? No further evaluations can be added."
-      : "Are you sure you want to UNLOCK this assessment session?";
-
-    if (window.confirm(confirmMsg)) {
-      onUpdateAssessment(assessment.id, { locked: newLockState });
-      sendUpdateAssessment({ locked: newLockState });
-    }
-  };
-
   const handleAddEvaluation = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLocked) return;
 
     if (!assessorName.trim()) {
       alert("Assessor name is missing.");
@@ -218,13 +196,12 @@ export const AssessmentSessionPage = ({
     };
 
     onCreateEvaluation(newEvaluation);
-    sendUpdateEvaluation(newEvaluation);
+    // sendUpdateEvaluation(newEvaluation); // P2P handled by wrapper
     setIsAddModalOpen(false);
     navigate(`/assessment/${assessmentId}/evaluation/${newEvaluationId}`);
   };
 
   const handleImportJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isLocked) return;
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -244,7 +221,7 @@ export const AssessmentSessionPage = ({
           stack: assessment?.stack || importedSession.stack,
         };
         onCreateEvaluation(newSession);
-        sendUpdateEvaluation(newSession);
+        // sendUpdateEvaluation(newSession); // P2P handled by wrapper
         alert("Evaluation imported successfully.");
       })
       .catch((err) => {
@@ -273,34 +250,37 @@ export const AssessmentSessionPage = ({
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
-            <AvatarGroup users={assessors} />
+            <AvatarGroup users={onlineUsers} />
 
             {assessment && (
               <div className="h-6 w-px bg-slate-300 hidden sm:block"></div>
             )}
 
-            <button
-              onClick={handleCopyLink}
-              disabled={!peerId}
-              className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 rounded-xl font-bold transition-all shadow-sm text-sm"
-              title="Copy Session Link"
-            >
-              {copied ? <Check size={18} /> : <LinkIcon size={18} />}
-              <span>{copied ? "Copied" : "Share"}</span>
-            </button>
-
-            {assessment && (
+            {!isOnline && !isConnected ? (
               <button
-                onClick={handleToggleLock}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all shadow-sm text-sm ${
-                  isLocked
-                    ? "bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
-                    : "bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
-                }`}
+                onClick={onStartSession}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-500 rounded-xl font-bold transition-all shadow-sm text-sm"
               >
-                {isLocked ? <Lock size={18} /> : <Unlock size={18} />}
-                <span>{isLocked ? "Session Locked" : "Session Unlocked"}</span>
+                <Play size={18} />
+                <span>Start Session</span>
               </button>
+            ) : (
+              <>
+                <button
+                  onClick={onEndSession}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-red-300 hover:text-red-600 rounded-xl font-bold transition-all shadow-sm text-sm"
+                >
+                  <Square size={18} />
+                  <span>End Session</span>
+                </button>
+                <button
+                  onClick={handleCopyLink}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 rounded-xl font-bold transition-all shadow-sm text-sm"
+                >
+                  {copied ? <Check size={18} /> : <Share2 size={18} />}
+                  <span>{copied ? "Copied" : "Share Session"}</span>
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -328,21 +308,16 @@ export const AssessmentSessionPage = ({
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {!isLocked && (
-            <>
-              <NewAssessmentCard
-                title="Add Evaluation"
-                description="Create new feedback"
-                onClick={() => setIsAddModalOpen(true)}
-              />
-
-              <ImportAssessmentCard
-                title="Import Evaluation"
-                description="Load feedback from JSON"
-                onImport={handleImportJSON}
-              />
-            </>
-          )}
+          <NewAssessmentCard
+            title="Add Evaluation"
+            description="Create new feedback"
+            onClick={() => setIsAddModalOpen(true)}
+          />
+          <ImportAssessmentCard
+            title="Import Evaluation"
+            description="Load feedback from JSON"
+            onImport={handleImportJSON}
+          />
           {/* Existing Evaluations */}
           {evaluations.map((evalSession) => (
             <AssessmentEvaluationCard
