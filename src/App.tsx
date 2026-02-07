@@ -15,6 +15,7 @@ import type {
   ProfileState,
   AssessorEvaluationState,
   AssessmentSessionState,
+  LevelMapping, // Added
 } from "./types";
 import { createBackup, type BackupData } from "./utils/backupHelper";
 
@@ -39,15 +40,20 @@ const App = () => {
     return saved ? JSON.parse(saved).stacks : {};
   });
 
+  const [levelMappings, setLevelMappings] = useState<LevelMapping[]>(() => {
+    const saved = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
+    return saved ? JSON.parse(saved).levelMappings || [] : [];
+  });
+
   // Persist changes
   useEffect(() => {
     if (matrix.length > 0) {
       localStorage.setItem(
         ASSESSMENT_LIBRARY_KEY,
-        JSON.stringify({ matrix, profiles, stacks }),
+        JSON.stringify({ matrix, profiles, stacks, levelMappings }),
       );
     }
-  }, [matrix, profiles, stacks]);
+  }, [matrix, profiles, stacks, levelMappings]);
 
   // Assessment Groups State
   const [assessments, setAssessments] = useState<AssessmentSessionState[]>(
@@ -87,13 +93,15 @@ const App = () => {
     m: ModuleState[],
     p: ProfileState[],
     s: Record<string, string>,
+    l?: LevelMapping[],
   ) => {
     setMatrix(m);
     setProfiles(p);
     setStacks(s);
+    if (l) setLevelMappings(l);
     localStorage.setItem(
       ASSESSMENT_LIBRARY_KEY,
-      JSON.stringify({ matrix: m, profiles: p, stacks: s }),
+      JSON.stringify({ matrix: m, profiles: p, stacks: s, levelMappings: l || levelMappings }),
     );
   };
 
@@ -147,6 +155,7 @@ const App = () => {
     setMatrix(data.library.matrix);
     setProfiles(data.library.profiles);
     setStacks(data.library.stacks);
+    if (data.library.levelMappings) setLevelMappings(data.library.levelMappings);
     setAssessments(data.assessments);
     setEvaluations(data.evaluations);
     setAssessorName(data.assessorName || "");
