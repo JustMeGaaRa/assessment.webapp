@@ -264,13 +264,15 @@ export const AssessmentSessionPage = ({
               </button>
             ) : (
               <>
-                <button
-                  onClick={onEndSession}
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-red-300 hover:text-red-600 rounded-xl font-bold transition-all shadow-sm text-sm"
-                >
-                  <Square size={18} />
-                  <span>End Session</span>
-                </button>
+                {isOnline && (
+                  <button
+                    onClick={onEndSession}
+                    className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-red-300 hover:text-red-600 rounded-xl font-bold transition-all shadow-sm text-sm"
+                  >
+                    <Square size={18} />
+                    <span>End Session</span>
+                  </button>
+                )}
                 <button
                   onClick={handleCopyLink}
                   className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 rounded-xl font-bold transition-all shadow-sm text-sm"
