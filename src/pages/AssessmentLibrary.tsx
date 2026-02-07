@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 interface AssessmentLibraryPageProps {
   matrix: ModuleState[];
   profiles: ProfileState[];
-  stacks: Record<string, string>;
+  stacks: string[];
   levelMappings?: LevelMapping[];
 }
 
@@ -23,7 +23,7 @@ export const AssessmentLibraryPage = ({
 }: AssessmentLibraryPageProps) => {
   const navigate = useNavigate();
   // Default to first stack available or empty string
-  const [activeStack, setActiveStack] = useState(Object.values(stacks)[0]);
+  const [activeStack, setActiveStack] = useState(stacks.length > 0 ? stacks[0] : "");
   const [activeTab, setActiveTab] = useState<"modules" | "profiles" | "levels">("modules");
 
   return (

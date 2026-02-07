@@ -33,9 +33,12 @@ interface ImportFormProps {
   levelsStatus: FileStatus;
   levelsProgress: number;
   levelsError: string | null;
-
   assessorName: string;
   setAssessorName: (name: string) => void;
+  hasProfiles: boolean;
+  hasTopics: boolean;
+  hasModules: boolean; // Matrix exists, essentially
+  hasLevelMappings: boolean;
 }
 
 export const ImportForm = ({
@@ -69,6 +72,10 @@ export const ImportForm = ({
   levelsError,
   assessorName,
   setAssessorName,
+  hasProfiles,
+  hasTopics,
+  hasModules,
+  hasLevelMappings,
 }: ImportFormProps) => {
   return (
     <div className="space-y-8 animate-in slide-in-from-right-4 fade-in duration-300">
@@ -89,7 +96,8 @@ export const ImportForm = ({
         <div className="h-px bg-slate-200 my-4"></div>
         <DataSourceInput
           label="Profiles"
-          required
+          required={!hasProfiles}
+          isLoaded={hasProfiles}
           file={profFile}
           setFile={setProfFile}
           url={profUrl}
@@ -100,7 +108,8 @@ export const ImportForm = ({
         />
         <DataSourceInput
           label="Topics"
-          required
+          required={!hasTopics}
+          isLoaded={hasTopics}
           file={topFile}
           setFile={setTopFile}
           url={topUrl}
@@ -118,9 +127,10 @@ export const ImportForm = ({
           status={modStatus}
           progress={modProgress}
           error={modError}
+          isLoaded={hasModules}
         />
         <DataSourceInput
-          label="Level Mappings"
+          label="Proficiency Levels"
           file={levelsFile}
           setFile={setLevelsFile}
           url={levelsUrl}
@@ -128,6 +138,7 @@ export const ImportForm = ({
           status={levelsStatus}
           progress={levelsProgress}
           error={levelsError}
+          isLoaded={hasLevelMappings}
         />
       </div>
     </div>

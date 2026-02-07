@@ -21,6 +21,7 @@ interface DataSourceInputProps {
   status: FileStatus;
   progress: number;
   error: string | null;
+  isLoaded?: boolean;
 }
 
 export const DataSourceInput = ({
@@ -33,6 +34,7 @@ export const DataSourceInput = ({
   status,
   progress,
   error,
+  isLoaded,
 }: DataSourceInputProps) => {
   const [mode, setMode] = useState<DataSourceMode>("file");
   const [isDragging, setIsDragging] = useState(false);
@@ -71,6 +73,12 @@ export const DataSourceInput = ({
         <label className="text-sm font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
           <FileSpreadsheet size={16} className="text-slate-400" />
           {label} {required && <span className="text-red-500">*</span>}
+          {isLoaded && !required && (
+            <span className="text-[10px] ml-2 px-2 py-0.5 bg-emerald-50 text-emerald-600 font-bold uppercase tracking-wider rounded-full border border-emerald-100 flex items-center gap-1">
+              <Check size={10} strokeWidth={3} />
+              Loaded
+            </span>
+          )}
         </label>
         {status === "idle" && (
           <div className="flex bg-slate-100 p-0.5 rounded-lg">

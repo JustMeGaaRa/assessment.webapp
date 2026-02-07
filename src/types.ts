@@ -29,7 +29,7 @@ export interface LevelMapping {
 export interface AppDataState {
   matrix: ModuleState[];
   profiles: ProfileState[];
-  stacks: Record<string, string>;
+  stacks: string[];
   levelMappings?: LevelMapping[];
 }
 

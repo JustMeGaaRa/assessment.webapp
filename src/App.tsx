@@ -35,9 +35,9 @@ const App = () => {
     return saved ? JSON.parse(saved).profiles : [];
   });
 
-  const [stacks, setStacks] = useState<Record<string, string>>(() => {
+  const [stacks, setStacks] = useState<string[]>(() => {
     const saved = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
-    return saved ? JSON.parse(saved).stacks : {};
+    return saved ? Object.values(JSON.parse(saved).stacks) : [];
   });
 
   const [levelMappings, setLevelMappings] = useState<LevelMapping[]>(() => {
@@ -92,7 +92,7 @@ const App = () => {
   const handleDataLoad = (
     m: ModuleState[],
     p: ProfileState[],
-    s: Record<string, string>,
+    s: string[],
     l?: LevelMapping[],
   ) => {
     setMatrix(m);
@@ -173,8 +173,10 @@ const App = () => {
               onCreateAssessment={createAssessment}
               onCreateSession={createEvaluation}
               onDataLoad={handleDataLoad}
-              existingStacks={Object.values(stacks)}
+              existingStacks={stacks}
               existingProfiles={profiles}
+              existingMatrix={matrix}
+              existingLevelMappings={levelMappings}
               hasData={
                 matrix.length > 0 &&
                 assessorName !== "" &&

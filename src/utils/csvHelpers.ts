@@ -62,13 +62,10 @@ export const parseAssessmentData = (
 ): AppDataState => {
   let matrix: ModuleState[] = [];
   const profiles: ProfileState[] = [];
-  // stacks is Record<KEY, Label> e.g. { DOTNET: ".NET" }
-  const stacks: Record<string, string> = {}; 
+  const stacks: string[] = []; 
   
   // Temporary storage
   const modulesMap = new Map<string, ModuleState>(); // Map<Code, Module>
-  // Profile logic doesn't use profileWeightsMap currently, it writes directly to profiles array, so removing unused map.
-  const stackKeys: string[] = [];
 
   // 1. Parse Topics (Required for Stacks and Base Modules)
   const topicsFile = files.find(f => f.type === "topics");
@@ -79,11 +76,7 @@ export const parseAssessmentData = (
     // Infer Stacks from index 3 onwards
     for (let i = 3; i < headers.length; i++) {
       const stackName = headers[i];
-      // Create a key, e.g., ".NET" -> "DOTNET", "React" -> "REACT"
-      // For simplicity, we just use the name as key if it's safe, or simple slug
-      const key = stackName.toUpperCase().replace(/[^A-Z0-9]/g, "");
-      stacks[key] = stackName;
-      stackKeys.push(stackName);
+      stacks.push(stackName);
     }
 
     // Process Rows
@@ -107,11 +100,11 @@ export const parseAssessmentData = (
 
         const mappings: Record<string, string> = {};
         // Map stacks
-        for (let s = 0; s < stackKeys.length; s++) {
+        for (let s = 0; s < stacks.length; s++) {
              // row indices for stacks start at 3
              const content = row[3 + s];
              if (content) {
-                 const stackLabel = stackKeys[s]; // e.g., ".NET"
+                 const stackLabel = stacks[s]; // e.g., ".NET"
                  mappings[stackLabel] = content;
              }
         }

@@ -26,11 +26,13 @@ interface HomePageProps {
   onDataLoad: (
     matrix: ModuleState[],
     profiles: ProfileState[],
-    stacks: Record<string, string>,
+    stacks: string[],
     levelMappings?: LevelMapping[],
   ) => void;
   existingStacks: string[];
   existingProfiles: ProfileState[];
+  existingMatrix: ModuleState[];
+  existingLevelMappings: LevelMapping[];
   hasData: boolean;
   assessorName: string;
   setAssessorName: (name: string) => void;
@@ -45,6 +47,8 @@ export const HomePage = ({
   onDataLoad,
   existingStacks,
   existingProfiles,
+  existingMatrix,
+  existingLevelMappings,
   hasData,
   assessorName,
   setAssessorName,
@@ -90,12 +94,12 @@ export const HomePage = ({
   const [parsedContext, setParsedContext] = useState<{
     matrix: ModuleState[];
     profiles: ProfileState[];
-    stacks: Record<string, string>;
+    stacks: string[];
     levelMappings?: LevelMapping[];
   } | null>(null);
 
   const currentStacks = parsedContext
-    ? Object.values(parsedContext.stacks)
+    ? parsedContext.stacks
     : existingStacks;
   const currentProfiles = parsedContext
     ? parsedContext.profiles
@@ -337,12 +341,31 @@ export const HomePage = ({
     }
   };
 
-  useEffect(() => {
-    const requiredDone = profStatus === "done" && topStatus === "done";
-    const modDone = !modFile || modStatus === "done";
-    const levelDone = !levelFile || levelStatus === "done";
+  // Determine what data we have
+  const hasProfiles = existingProfiles.length > 0;
+  const hasTopics = existingMatrix.length > 0;
+  // Check if at least one module has a description, implying modules file was loaded
+  const hasModules = existingMatrix.some((m) => !!m.description);
+  const hasLevelMappings = existingLevelMappings.length > 0;
 
-    if (requiredDone && modDone && levelDone) {
+  useEffect(() => {
+    // If we have data for a specific type, input is optional (idle is fine).
+    // If we don't have data, input is required (must be done).
+    // Note: Modules and Level Mappings are technically optional in the parser but if we want to enforce structure:
+    // Profiles and Topics are usually required for a valid assessment.
+    
+    const profValid = hasProfiles
+      ? profStatus === "idle" || profStatus === "done"
+      : profStatus === "done";
+    const topValid = hasTopics
+      ? topStatus === "idle" || topStatus === "done"
+      : topStatus === "done";
+    
+    // Modules/Levels always optional effectively, but let's stick to pattern
+    const modValid = modStatus === "idle" || modStatus === "done";
+    const levelValid = levelStatus === "idle" || levelStatus === "done";
+
+    if (profValid && topValid && modValid && levelValid) {
       const readAll = async () => {
         const filesToRead: {
           name: string;
@@ -382,8 +405,29 @@ export const HomePage = ({
             type: "levels",
           });
 
+        if (filesToRead.length === 0 && hasData) {
+          // If no files to read and we have data, we explicitly set parsedContext to null
+          // so handleImportComplete does not trigger onDataLoad (unless we want to support "reset"?)
+          // actually, logic is: if parsedContext is null, we don't update data.
+          // So doing nothing is fine.
+          
+          // But wait! If I uploaded a file then removed it (back to idle), filesToRead is empty.
+          // parsedContext should be cleared or reset?
+          setParsedContext(null);
+          return;
+        }
+
         try {
           const data = parseAssessmentData(filesToRead);
+          
+          if (hasData) {
+              if (data.matrix.length === 0) data.matrix = existingMatrix;
+              if (data.profiles.length === 0) data.profiles = existingProfiles;
+              // Stacks is a Record. Check if keys exist.
+              if (Object.keys(data.stacks).length === 0) data.stacks = existingStacks;
+              if (!data.levelMappings || data.levelMappings.length === 0) data.levelMappings = existingLevelMappings;
+          }
+
           setParsedContext(data);
         } catch (e) {
           console.error("Failed to parse", e);
@@ -391,7 +435,23 @@ export const HomePage = ({
       };
       readAll();
     }
-  }, [profStatus, topStatus, modStatus, levelStatus, profFile, topFile, modFile, levelFile]);
+  }, [
+    profStatus,
+    topStatus,
+    modStatus,
+    levelStatus,
+    profFile,
+    topFile,
+    modFile,
+    levelFile,
+    hasData,
+    existingMatrix,
+    existingProfiles,
+    existingStacks,
+    existingLevelMappings,
+    hasProfiles,
+    hasTopics
+  ]);
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
@@ -435,7 +495,15 @@ export const HomePage = ({
     setManualImportOpen(false);
   };
 
-  const canImport = profStatus === "done" && topStatus === "done";
+  const canImport =
+    (hasProfiles
+      ? profStatus === "idle" || profStatus === "done"
+      : profStatus === "done") &&
+    (hasTopics
+      ? topStatus === "idle" || topStatus === "done"
+      : topStatus === "done") &&
+    (modStatus === "idle" || modStatus === "done") &&
+    (levelStatus === "idle" || levelStatus === "done");
   const isFormValid =
     name.trim().length > 0 &&
     selectedStackKey !== "" &&
@@ -471,7 +539,7 @@ export const HomePage = ({
               className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
             >
               <UploadCloud size={18} />
-              <span>Import Data</span>
+              <span>Configuration</span>
             </button>
 
             <div className="w-px h-8 bg-slate-300 mx-1 hidden sm:block"></div>
@@ -602,9 +670,13 @@ export const HomePage = ({
       <Modal
         isOpen={isImportModalOpen}
         onClose={() => hasData && setManualImportOpen(false)}
-        title="Import Assessment Data"
+        title={hasData ? "Configuration & Data Import" : "Import Assessment Data"}
       >
         <ImportForm
+          hasProfiles={hasProfiles}
+          hasTopics={hasTopics}
+          hasModules={hasModules}
+          hasLevelMappings={hasLevelMappings}
           profFile={profFile}
           setProfFile={handleProfFileChange}
           profUrl={profUrl}
