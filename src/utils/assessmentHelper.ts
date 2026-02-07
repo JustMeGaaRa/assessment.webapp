@@ -139,10 +139,11 @@ export class AssessmentHelper {
       (total, moduleScore) => total + moduleScore.weightedScore,
       0,
     );
+    const factor = Math.pow(10, 2);
 
     return {
       assessmentId: assessment.assessmentId,
-      totalScore,
+      totalScore: Math.ceil(totalScore * factor) / factor,
       moduleStatistics: moduleScores,
     };
   }
