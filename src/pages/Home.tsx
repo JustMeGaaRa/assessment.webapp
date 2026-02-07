@@ -14,7 +14,7 @@ import { SessionForm } from "../components/home/SessionForm";
 import { AssessmentSessionCard } from "../components/dashboard/AssessmentSessionCard";
 import { NewAssessmentCard } from "../components/dashboard/NewAssessmentCard";
 import { Modal } from "../components/ui/Modal";
-import { Box, Library, UploadCloud, Radio } from "lucide-react";
+import { Box, Library, UploadCloud } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 
 interface HomePageProps {

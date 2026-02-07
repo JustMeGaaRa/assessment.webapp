@@ -48,9 +48,7 @@ interface AssessmentSessionPageProps {
 export const AssessmentSessionPage = ({
   assessment,
   evaluations,
-  onCreateAssessment,
   onCreateEvaluation,
-  onUpdateAssessment,
   assessorName,
   matrix,
   profile,
