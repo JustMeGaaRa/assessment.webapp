@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { ArrowLeft, Box, Check } from "lucide-react";
-import type { ModuleState, ProfileState } from "../types";
+import type { ModuleState, ProfileState, LevelMapping } from "../types";
 import { LibraryTabs } from "../components/library/LibraryTabs";
 import { LibraryModule } from "../components/library/LibraryModule";
 import { LibraryProfile } from "../components/library/LibraryProfile";
+import { LibraryLevels } from "../components/library/LibraryLevels";
 import { PageHeader } from "../components/ui/PageHeader";
 import { useNavigate } from "react-router-dom";
 
@@ -11,17 +12,19 @@ interface AssessmentLibraryPageProps {
   matrix: ModuleState[];
   profiles: ProfileState[];
   stacks: Record<string, string>;
+  levelMappings?: LevelMapping[];
 }
 
 export const AssessmentLibraryPage = ({
   matrix,
   profiles,
   stacks,
+  levelMappings = [],
 }: AssessmentLibraryPageProps) => {
   const navigate = useNavigate();
   // Default to first stack available or empty string
   const [activeStack, setActiveStack] = useState(Object.values(stacks)[0]);
-  const [activeTab, setActiveTab] = useState<"modules" | "profiles">("modules");
+  const [activeTab, setActiveTab] = useState<"modules" | "profiles" | "levels">("modules");
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">
@@ -83,7 +86,8 @@ export const AssessmentLibraryPage = ({
               ))}
             </div>
           </div>
-        ) : (
+
+        ) : activeTab === "profiles" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {profiles
               //   .filter((p) => p.stack === activeStack)
@@ -95,6 +99,8 @@ export const AssessmentLibraryPage = ({
                 />
               ))}
           </div>
+        ) : (
+          <LibraryLevels levelMappings={levelMappings} />
         )}
       </div>
     </div>

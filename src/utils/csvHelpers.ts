@@ -210,8 +210,20 @@ export const parseAssessmentData = (
           if (row.length < 3) continue;
           
           const levelName = row[0];
-          const minScore = parseFloat(row[1]);
-          const maxScore = parseFloat(row[2]);
+          // Handle cases where numbers might be strings with commas or quotes
+          const rawMin = row[1];
+          const rawMax = row[2];
+          
+          const cleanFloat = (val: string) => {
+              if (typeof val !== 'string') return parseFloat(val);
+              // remove quotes if csv parser didn't already
+              let cleaned = val.replace(/['"]+/g, '');
+              cleaned = cleaned.replace(",", ".");
+              return parseFloat(cleaned);
+          };
+
+          const minScore = cleanFloat(rawMin);
+          const maxScore = cleanFloat(rawMax);
           
           if (!isNaN(minScore) && !isNaN(maxScore) && levelName) {
               levelMappings.push({

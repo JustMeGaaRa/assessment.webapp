@@ -220,6 +220,7 @@ const App = () => {
               matrix={matrix}
               profiles={profiles}
               stacks={stacks}
+              levelMappings={levelMappings}
             />
           }
         />
