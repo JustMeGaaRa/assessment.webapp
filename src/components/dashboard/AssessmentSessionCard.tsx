@@ -6,15 +6,19 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
+  ShieldCheck,
+  ClipboardList,
 } from "lucide-react";
-import type { AssessorEvaluationState } from "../../types";
+import type { AssessorEvaluationState, LevelMapping } from "../../types";
 
 interface AssessmentSessionCardProps {
   session: AssessorEvaluationState;
+  levelMappings?: LevelMapping[];
 }
 
 export const AssessmentSessionCard = ({
   session,
+  levelMappings,
 }: AssessmentSessionCardProps) => {
   const navigate = useNavigate();
 
@@ -55,18 +59,15 @@ export const AssessmentSessionCard = ({
             {getStatusIcon(session.status)}
             {session.status}
           </div>
-          {session.status === "completed" &&
-            session.finalScore !== undefined && (
-              <div className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 bg-indigo-50 text-indigo-700 border border-indigo-100">
-                <span className="text-[10px]">Score:</span>
-                <span className="text-[10px]">
-                  {session.finalScore.toFixed(1)}
-                </span>
-              </div>
-            )}
+          <div className="px-2 py-1 rounded-md bg-slate-50 border border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <ClipboardList size={12} />
+            Assessment
+          </div>
         </div>
-        <div className="text-slate-300 group-hover:text-indigo-500 transition-colors">
-          <ChevronRight size={20} />
+        <div className="flex items-center gap-3">
+          <div className="text-slate-300 group-hover:text-indigo-500 transition-colors">
+            <ChevronRight size={20} />
+          </div>
         </div>
       </div>
 
@@ -76,14 +77,30 @@ export const AssessmentSessionCard = ({
 
       <div className="space-y-2.5 text-sm text-slate-500">
         <div className="flex items-center gap-2">
-          <Layers size={16} className="text-slate-400" />
-          <span className="font-medium">{session.stack}</span>
-          <span className="text-slate-300">•</span>
-          <span>{session.profileTitle}</span>
-        </div>
-        <div className="flex items-center gap-2">
           <Calendar size={16} className="text-slate-400" />
           <span>{new Date(session.date).toLocaleDateString()}</span>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <ShieldCheck size={16} className="text-slate-400" />
+          {session.status === "completed" && session.finalScore !== undefined && levelMappings && levelMappings.length > 0 ? (
+             <span>
+               {levelMappings.find(
+                  (l) =>
+                    session.finalScore! >= l.minScore &&
+                    session.finalScore! < l.maxScore,
+                )?.level || "N/A"}
+               <span className="mx-1.5 text-slate-300">•</span>
+               {session.profileTitle}
+             </span>
+          ) : (
+            <span>{session.profileTitle}</span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Layers size={16} className="text-slate-400" />
+          <span>{session.stack}</span>
         </div>
       </div>
     </div>

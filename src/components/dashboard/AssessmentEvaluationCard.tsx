@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Clock, CheckCircle2, Calendar } from "lucide-react";
+import { Clock, CheckCircle2, Calendar, MessageSquareText } from "lucide-react";
 import type { AssessorEvaluationState } from "../../types";
 
 interface AssessmentEvaluationCardProps {
@@ -29,7 +29,7 @@ export const AssessmentEvaluationCard = ({
       className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between min-h-[220px]"
     >
       <div>
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex items-start mb-4">
           <div className="flex gap-2">
             <div
               className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
@@ -45,6 +45,10 @@ export const AssessmentEvaluationCard = ({
               )}
               {evalSession.status}
             </div>
+          </div>
+          <div className="px-2 py-1 rounded-md bg-slate-50 border border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 self-center">
+            <MessageSquareText size={12} />
+            Feedback
           </div>
         </div>
 

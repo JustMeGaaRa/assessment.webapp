@@ -105,6 +105,9 @@ export const HomePage = ({
     ? parsedContext.profiles
     : existingProfiles;
 
+  const currentLevelMappings =
+    parsedContext?.levelMappings ?? existingLevelMappings;
+
   // Form State
   const [name, setNameInput] = useState("");
   const [selectedStackKey, setSelectedStackKey] = useState("");
@@ -637,6 +640,7 @@ export const HomePage = ({
                     <AssessmentSessionCard
                       key={assessment.id}
                       session={displaySession}
+                      levelMappings={currentLevelMappings}
                     />
                   );
                 })}
