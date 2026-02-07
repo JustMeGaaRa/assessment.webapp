@@ -20,10 +20,17 @@ export interface ProfileState {
   weights: Record<string, number>;
 }
 
+export interface LevelMapping {
+  level: string;
+  minScore: number;
+  maxScore: number;
+}
+
 export interface AppDataState {
   matrix: ModuleState[];
   profiles: ProfileState[];
   stacks: Record<string, string>;
+  levelMappings?: LevelMapping[];
 }
 
 export type FileStatus = "idle" | "uploading" | "parsing" | "done" | "error";
@@ -49,10 +56,10 @@ export interface AssessorEvaluationState {
   profileId: string;
   profileTitle: string;
   stack: string;
-  
+
   date: string;
   status: "ongoing" | "completed" | "rejected";
-  
+
   scores: Record<string, number>; // { topicId, score }
   notes: Record<string, string>; // { topicId, note }
   finalScore?: number;
@@ -106,7 +113,10 @@ export interface AggregatedAssessorStatistics {
   averageScore: number;
   weightedScore: number;
   weight: number;
-  assessorEvaluationStatistics: Record<string, AssessorEvaluationModuleStatistics>;
+  assessorEvaluationStatistics: Record<
+    string,
+    AssessorEvaluationModuleStatistics
+  >;
 }
 
 export interface AssessmentStatistics {

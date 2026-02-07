@@ -8,6 +8,7 @@ import type {
   FileStatus,
   AssessorEvaluationState,
   AssessmentSessionState,
+  LevelMapping,
 } from "../types";
 import { ImportForm } from "../components/home/ImportForm";
 import { SessionForm } from "../components/home/SessionForm";
@@ -26,6 +27,7 @@ interface HomePageProps {
     matrix: ModuleState[],
     profiles: ProfileState[],
     stacks: Record<string, string>,
+    levelMappings?: LevelMapping[],
   ) => void;
   existingStacks: string[];
   existingProfiles: ProfileState[];
@@ -78,11 +80,18 @@ export const HomePage = ({
   const [modProgress, setModProgress] = useState(0);
   const [modError, setModError] = useState<string | null>(null);
 
+  const [levelFile, setLevelFile] = useState<File | null>(null);
+  const [levelUrl, setLevelUrl] = useState("");
+  const [levelStatus, setLevelStatus] = useState<FileStatus>("idle");
+  const [levelProgress, setLevelProgress] = useState(0);
+  const [levelError, setLevelError] = useState<string | null>(null);
+
   // Parsed Output
   const [parsedContext, setParsedContext] = useState<{
     matrix: ModuleState[];
     profiles: ProfileState[];
     stacks: Record<string, string>;
+    levelMappings?: LevelMapping[];
   } | null>(null);
 
   const currentStacks = parsedContext
@@ -110,7 +119,7 @@ export const HomePage = ({
   const processFile = async (
     file: File | null,
     url: string,
-    type: "profiles" | "topics" | "modules",
+    type: "profiles" | "topics" | "modules" | "levels",
     setStatus: (s: FileStatus) => void,
     setProgress: (p: number) => void,
     setError: (e: string | null) => void,
@@ -294,13 +303,51 @@ export const HomePage = ({
     }
   };
 
+  const handleLevelFileChange = (file: File | null) => {
+    setLevelFile(file);
+    if (!file && !levelUrl) {
+      setLevelStatus("idle");
+      setLevelError(null);
+    } else {
+      processFile(
+        file,
+        levelUrl,
+        "levels",
+        setLevelStatus,
+        setLevelProgress,
+        setLevelError,
+      );
+    }
+  };
+
+  const handleLevelUrlChange = (url: string) => {
+    setLevelUrl(url);
+    if (!levelFile && !url) {
+      setLevelStatus("idle");
+      setLevelError(null);
+    } else {
+      processFile(
+        levelFile,
+        url,
+        "levels",
+        setLevelStatus,
+        setLevelProgress,
+        setLevelError,
+      );
+    }
+  };
+
   useEffect(() => {
-    if (profStatus === "done" && topStatus === "done") {
+    const requiredDone = profStatus === "done" && topStatus === "done";
+    const modDone = !modFile || modStatus === "done";
+    const levelDone = !levelFile || levelStatus === "done";
+
+    if (requiredDone && modDone && levelDone) {
       const readAll = async () => {
         const filesToRead: {
           name: string;
           content: string;
-          type: "profiles" | "topics" | "modules";
+          type: "profiles" | "topics" | "modules" | "levels";
         }[] = [];
 
         const readFile = (f: File) =>
@@ -328,6 +375,12 @@ export const HomePage = ({
             content: await readFile(modFile),
             type: "modules",
           });
+        if (levelFile)
+          filesToRead.push({
+            name: levelFile.name,
+            content: await readFile(levelFile),
+            type: "levels",
+          });
 
         try {
           const data = parseAssessmentData(filesToRead);
@@ -338,7 +391,7 @@ export const HomePage = ({
       };
       readAll();
     }
-  }, [profStatus, topStatus, modStatus, profFile, topFile, modFile]);
+  }, [profStatus, topStatus, modStatus, levelStatus, profFile, topFile, modFile, levelFile]);
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
@@ -349,6 +402,7 @@ export const HomePage = ({
         parsedContext.matrix,
         parsedContext.profiles,
         parsedContext.stacks,
+        parsedContext.levelMappings,
       );
     }
 
@@ -375,6 +429,7 @@ export const HomePage = ({
         parsedContext.matrix,
         parsedContext.profiles,
         parsedContext.stacks,
+        parsedContext.levelMappings,
       );
     }
     setManualImportOpen(false);
@@ -571,6 +626,13 @@ export const HomePage = ({
           modStatus={modStatus}
           modProgress={modProgress}
           modError={modError}
+          levelsFile={levelFile}
+          setLevelsFile={handleLevelFileChange}
+          levelsUrl={levelUrl}
+          setLevelsUrl={handleLevelUrlChange}
+          levelsStatus={levelStatus}
+          levelsProgress={levelProgress}
+          levelsError={levelError}
           assessorName={assessorName}
           setAssessorName={setAssessorName}
         />

@@ -1,4 +1,4 @@
-import type { ModuleState, ProfileState, Topic, AppDataState } from "../types";
+import type { ModuleState, ProfileState, Topic, AppDataState, LevelMapping } from "../types";
 
 import Papa from "papaparse";
 
@@ -11,7 +11,7 @@ const parseCSV = (text: string): string[][] => {
   return result.data;
 };
 
-export const validateCsvContent = (content: string, type: "profiles" | "topics" | "modules"): string | null => {
+export const validateCsvContent = (content: string, type: "profiles" | "topics" | "modules" | "levels"): string | null => {
   const rows = parseCSV(content);
   if (rows.length === 0) return "File is empty";
   
@@ -46,11 +46,19 @@ export const validateCsvContent = (content: string, type: "profiles" | "topics" 
           return "Profiles file must contain at least one profile column";
       }
   }
+
+  if (type === "levels") {
+      const required = ["level", "min score", "max score"];
+      const missing = required.filter(f => !hasField(f));
+      if (missing.length > 0) {
+          return `Missing required columns: ${missing.map(m => `"${m}"`).join(", ")}`;
+      }
+  }
   return null;
 }
 
 export const parseAssessmentData = (
-  files: { name: string; content: string; type: "profiles" | "topics" | "modules" }[]
+  files: { name: string; content: string; type: "profiles" | "topics" | "modules" | "levels" }[]
 ): AppDataState => {
   let matrix: ModuleState[] = [];
   const profiles: ProfileState[] = [];
@@ -189,6 +197,44 @@ export const parseAssessmentData = (
       }
   }
 
+
+
+  // 4. Parse Levels
+  const levelMappings: LevelMapping[] = [];
+  const levelsFile = files.find(f => f.type === "levels");
+  if (levelsFile) {
+      const rows = parseCSV(levelsFile.content);
+      // Skip header, assuming headers are validated
+      for (let i = 1; i < rows.length; i++) {
+          const row = rows[i];
+          if (row.length < 3) continue;
+          
+          const levelName = row[0];
+          // Handle cases where numbers might be strings with commas or quotes
+          const rawMin = row[1];
+          const rawMax = row[2];
+          
+          const cleanFloat = (val: string) => {
+              if (typeof val !== 'string') return parseFloat(val);
+              // remove quotes if csv parser didn't already
+              let cleaned = val.replace(/['"]+/g, '');
+              cleaned = cleaned.replace(",", ".");
+              return parseFloat(cleaned);
+          };
+
+          const minScore = cleanFloat(rawMin);
+          const maxScore = cleanFloat(rawMax);
+          
+          if (!isNaN(minScore) && !isNaN(maxScore) && levelName) {
+              levelMappings.push({
+                  level: levelName,
+                  minScore,
+                  maxScore
+              });
+          }
+      }
+  }
+
   matrix = Array.from(modulesMap.values());
-  return { matrix, profiles, stacks };
+  return { matrix, profiles, stacks, levelMappings };
 };

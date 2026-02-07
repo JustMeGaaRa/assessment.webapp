@@ -26,6 +26,14 @@ interface ImportFormProps {
   modProgress: number;
   modError: string | null;
 
+  levelsFile: File | null;
+  setLevelsFile: (f: File | null) => void;
+  levelsUrl: string;
+  setLevelsUrl: (u: string) => void;
+  levelsStatus: FileStatus;
+  levelsProgress: number;
+  levelsError: string | null;
+
   assessorName: string;
   setAssessorName: (name: string) => void;
 }
@@ -52,6 +60,13 @@ export const ImportForm = ({
   modStatus,
   modProgress,
   modError,
+  levelsFile,
+  setLevelsFile,
+  levelsUrl,
+  setLevelsUrl,
+  levelsStatus,
+  levelsProgress,
+  levelsError,
   assessorName,
   setAssessorName,
 }: ImportFormProps) => {
@@ -103,6 +118,16 @@ export const ImportForm = ({
           status={modStatus}
           progress={modProgress}
           error={modError}
+        />
+        <DataSourceInput
+          label="Level Mappings"
+          file={levelsFile}
+          setFile={setLevelsFile}
+          url={levelsUrl}
+          setUrl={setLevelsUrl}
+          status={levelsStatus}
+          progress={levelsProgress}
+          error={levelsError}
         />
       </div>
     </div>
