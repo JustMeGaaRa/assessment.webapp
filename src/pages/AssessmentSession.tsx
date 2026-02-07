@@ -9,6 +9,7 @@ import type {
   AssessorEvaluationState,
   ModuleState,
   ProfileState,
+  LevelMapping,
 } from "../types";
 import { importSessionFromJSON } from "../utils/fileHelpers";
 import { NewAssessmentCard } from "../components/dashboard/NewAssessmentCard";
@@ -29,6 +30,7 @@ interface AssessmentSessionPageProps {
   matrix: ModuleState[];
   profile: ProfileState;
   assessorName: string;
+  levelMappings?: LevelMapping[];
 }
 
 export const AssessmentSessionPage = ({
@@ -39,6 +41,7 @@ export const AssessmentSessionPage = ({
   assessorName,
   matrix,
   profile,
+  levelMappings,
 }: AssessmentSessionPageProps) => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
@@ -224,6 +227,7 @@ export const AssessmentSessionPage = ({
               assessment={assessmentProps}
               profile={profile}
               matrix={matrix}
+              levelMappings={levelMappings}
             />
           </div>
         )}

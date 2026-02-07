@@ -6,7 +6,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-import type { AssessmentScores, ModuleState, ProfileState } from "../../types";
+import type { AssessmentScores, ModuleState, ProfileState, LevelMapping } from "../../types";
 import { AssessmentHelper } from "../../utils/assessmentHelper";
 
 export interface Assessor {
@@ -25,6 +25,7 @@ export const AssessmentSummaryCard = ({
   assessment,
   profile,
   matrix,
+  levelMappings,
 }: {
   candidate: string;
   stack: string;
@@ -33,6 +34,7 @@ export const AssessmentSummaryCard = ({
   assessment: AssessmentScores;
   profile: ProfileState;
   matrix: ModuleState[];
+  levelMappings?: LevelMapping[];
 }) => {
   // TODO: move state calculation outside of this component and just pass the result as props
   const restructuredAssessment = AssessmentHelper.changeAssessmentStructure(
@@ -63,6 +65,18 @@ export const AssessmentSummaryCard = ({
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-bold text-indigo-600 bg-indigo-50 w-fit px-3 py-1 rounded-lg">
               <ShieldCheck size={16} />
+              {levelMappings && levelMappings.length > 0 && assessmentSummary.totalScore > 0 && (
+                <>
+                  <span>
+                    {levelMappings.find(
+                      (l) =>
+                        assessmentSummary.totalScore >= l.minScore &&
+                        assessmentSummary.totalScore < l.maxScore,
+                    )?.level || "Unknown Level"}
+                  </span>
+                  <span className="w-1 h-1 rounded-full bg-indigo-400" />
+                </>
+              )}
               {profile.title}
             </div>
             <div className="flex flex-wrap items-center gap-x-4 text-slate-400 text-xs font-bold uppercase tracking-widest">

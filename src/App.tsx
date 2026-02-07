@@ -210,6 +210,7 @@ const App = () => {
               profiles={profiles}
               assessorName={assessorName}
               onUpdateSession={updateEvaluation}
+              levelMappings={levelMappings}
             />
           }
         />
@@ -239,6 +240,7 @@ const AssessmentSessionRoute = ({
   matrix,
   profiles,
   assessorName,
+  levelMappings,
 }: {
   assessments: AssessmentSessionState[];
   evaluations: AssessorEvaluationState[];
@@ -251,6 +253,7 @@ const AssessmentSessionRoute = ({
   matrix: ModuleState[];
   profiles: ProfileState[];
   assessorName: string;
+  levelMappings: LevelMapping[];
 }) => {
   const { assessmentId } = useParams();
   const assessment = assessments.find((a) => a.id === assessmentId);
@@ -280,6 +283,7 @@ const AssessmentSessionRoute = ({
       matrix={profileModules}
       profile={profile}
       assessorName={assessorName}
+      levelMappings={levelMappings}
     />
   );
 };
