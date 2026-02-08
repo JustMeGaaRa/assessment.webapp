@@ -105,7 +105,8 @@ export const usePeerSession = ({
 
       // Helper to Echo messages to other peers if we are the Host
       const broadcastToOthers = (msg: PeerMessage) => {
-        if (peerId === sessionId) {
+        const myId = peerRef.current?.id;
+        if (myId && myId === sessionId) {
           connectionsRef.current.forEach((conn) => {
             if (conn.open && conn.peer !== senderConnection.peer) {
               console.log("Echoing", msg.type, "to", conn.peer);
@@ -168,7 +169,7 @@ export const usePeerSession = ({
           break;
       }
     },
-    [peerId, sessionId],
+    [sessionId],
   );
 
   // Broadcast peers when activePeers changes (only if Host)
