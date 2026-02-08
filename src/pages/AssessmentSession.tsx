@@ -43,6 +43,9 @@ interface AssessmentSessionPageProps {
   ) => void;
   onStartSession: () => void;
   onEndSession: () => void;
+  onJoinSession: () => void;
+  onLeaveSession: () => void;
+  isGuestMode: boolean;
 }
 
 export const AssessmentSessionPage = ({
@@ -57,6 +60,9 @@ export const AssessmentSessionPage = ({
   onCreateEvaluation,
   onStartSession,
   onEndSession,
+  onJoinSession,
+  onLeaveSession,
+  isGuestMode,
 }: AssessmentSessionPageProps) => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
@@ -254,31 +260,65 @@ export const AssessmentSessionPage = ({
               <div className="h-6 w-px bg-slate-300 hidden sm:block"></div>
             )}
 
-            {!isOnline && !isConnected ? (
-              <button
-                onClick={onStartSession}
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-500 rounded-xl font-bold transition-all shadow-sm text-sm"
-              >
-                <Play size={18} />
-                <span>Start Session</span>
-              </button>
-            ) : (
+            {/* Session Control Buttons */}
+            {isOnline ? (
+              // HOST CONTROLS
               <>
-                {isOnline && (
-                  <button
-                    onClick={onEndSession}
-                    className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-red-300 hover:text-red-600 rounded-xl font-bold transition-all shadow-sm text-sm"
-                  >
-                    <Square size={18} />
-                    <span>End Session</span>
-                  </button>
-                )}
+                <button
+                  onClick={onEndSession}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-red-300 hover:text-red-600 rounded-xl font-bold transition-all shadow-sm text-sm"
+                >
+                  <Square size={18} />
+                  <span>End Session</span>
+                </button>
                 <button
                   onClick={handleCopyLink}
                   className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 rounded-xl font-bold transition-all shadow-sm text-sm"
                 >
                   {copied ? <Check size={18} /> : <Share2 size={18} />}
                   <span>{copied ? "Copied" : "Share Session"}</span>
+                </button>
+              </>
+            ) : isGuestMode ? (
+              // GUEST CONTROLS (Active or Connecting)
+              <>
+                <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-sm font-medium">
+                  {isConnected ? (
+                    <>
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                      Connected
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                      Connecting...
+                    </>
+                  )}
+                </div>
+                <button
+                  onClick={onLeaveSession}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-red-300 hover:text-red-600 rounded-xl font-bold transition-all shadow-sm text-sm"
+                >
+                  <Square size={18} />
+                  <span>Leave Session</span>
+                </button>
+              </>
+            ) : (
+              // OFFLINE CONTROLS (Can Start or Join)
+              <>
+                <button
+                  onClick={onJoinSession}
+                  className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-50 rounded-xl font-bold transition-all shadow-sm text-sm"
+                >
+                  <LinkIcon size={18} />
+                  <span>Join Session</span>
+                </button>
+                <button
+                  onClick={onStartSession}
+                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-500 rounded-xl font-bold transition-all shadow-sm text-sm"
+                >
+                  <Play size={18} />
+                  <span>Start Session</span>
                 </button>
               </>
             )}

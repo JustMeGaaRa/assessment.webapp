@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { type PeerSessionState, usePeerSession } from "../hooks/usePeerSession";
 import { AssessmentSessionPage } from "../pages/AssessmentSession";
@@ -41,15 +42,17 @@ export const AssessmentSessionRoute = ({
 }: AssessmentSessionRouteProps) => {
   const { assessmentId } = useParams();
   const assessment = assessments.find((a) => a.id === assessmentId);
+  const [isGuestMode, setIsGuestMode] = useState(false);
 
   const isHosting = hostedSessionId === assessmentId;
 
   // Guest Session Hook
-  // Only connect if we are NOT hosting this session.
+  // Only connect if we are NOT hosting this session AND we explicitly enabled guest mode.
   const guestSession: PeerSessionState = usePeerSession({
     sessionId: isHosting ? "" : assessmentId || "",
     assessorName,
     currentAssessment: assessment,
+    enabled: isGuestMode,
     currentEvaluations: evaluations.filter(
       (e) => e.assessmentId === assessmentId,
     ),
@@ -110,6 +113,9 @@ export const AssessmentSessionRoute = ({
       isOnline={isHosting}
       onStartSession={() => setHostedSessionId(assessmentId || null)}
       onEndSession={() => setHostedSessionId(null)}
+      onJoinSession={() => setIsGuestMode(true)}
+      onLeaveSession={() => setIsGuestMode(false)}
+      isGuestMode={isGuestMode}
       activePeers={activeSession.activePeers}
       isConnected={activeSession.isConnected}
     />

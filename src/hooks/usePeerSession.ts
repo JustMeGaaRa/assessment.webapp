@@ -51,7 +51,8 @@ export const usePeerSession = ({
   onSyncReceived,
   onEvaluationReceived,
   onAssessmentUpdateReceived,
-}: UsePeerSessionProps) => {
+  enabled = true,
+}: UsePeerSessionProps & { enabled?: boolean }) => {
   const [peerId, setPeerId] = useState<string>("");
   const [connections, setConnections] = useState<DataConnection[]>([]);
   const [activePeers, setActivePeers] = useState<
@@ -322,10 +323,13 @@ export const usePeerSession = ({
 
     // Start initialization (try to be Host first)
     // We strictly use the passed sessionId.
-    if (sessionId) {
-      initializePeer(false);
+    if (sessionId && enabled) {
+      if (typeof window !== "undefined") {
+        // Ensure client-side only (though React usually is)
+        initializePeer(false);
+      }
     }
-  }, [sessionId, connectToHost, handleConnection]);
+  }, [sessionId, connectToHost, handleConnection, enabled]);
 
   // Cleanup connections and peer on unmount or sessionId change
   useEffect(() => {
