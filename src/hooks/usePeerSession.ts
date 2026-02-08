@@ -325,11 +325,22 @@ export const usePeerSession = ({
     if (sessionId) {
       initializePeer(false);
     }
-
-    return () => {
-      peerRef.current?.destroy();
-    };
   }, [sessionId, connectToHost, handleConnection]);
+
+  // Cleanup connections and peer on unmount or sessionId change
+  useEffect(() => {
+    return () => {
+      if (peerRef.current) {
+        console.log("Cleaning up Peer session:", peerRef.current.id);
+        // Explicitly close all connections
+        connectionsRef.current.forEach((conn) => {
+          console.log("Closing connection to:", conn.peer);
+          conn.close();
+        });
+        peerRef.current.destroy();
+      }
+    };
+  }, [sessionId]); // Only clean up when sessionId changes (or unmount)
 
   const broadcast = useCallback(
     (msg: PeerMessage) => {
