@@ -28,6 +28,8 @@ export type PeerMessage =
       payload: { id: string; name: string }[];
     };
 
+export type PeerSessionState = ReturnType<typeof usePeerSession>;
+
 interface UsePeerSessionProps {
   sessionId: string;
   assessorName: string;
@@ -57,6 +59,7 @@ export const usePeerSession = ({
   >([]);
   const [isConnected, setIsConnected] = useState(false);
   const peerRef = useRef<Peer | null>(null);
+  const connectionsRef = useRef<DataConnection[]>([]);
 
   // Use refs for current state to avoid dependency loops in callbacks
   const stateRef = useRef({
@@ -67,6 +70,11 @@ export const usePeerSession = ({
     onEvaluationReceived,
     onAssessmentUpdateReceived,
   });
+
+  // Keep connectionsRef in sync with state for stable access in callbacks
+  useEffect(() => {
+    connectionsRef.current = connections;
+  }, [connections]);
 
   useEffect(() => {
     stateRef.current = {
@@ -88,6 +96,25 @@ export const usePeerSession = ({
 
   const handleMessage = useCallback(
     (message: PeerMessage, senderConnection: DataConnection) => {
+      console.log(
+        "Processing message:",
+        message.type,
+        "from",
+        senderConnection.peer,
+      );
+
+      // Helper to Echo messages to other peers if we are the Host
+      const broadcastToOthers = (msg: PeerMessage) => {
+        if (peerId === sessionId) {
+          connectionsRef.current.forEach((conn) => {
+            if (conn.open && conn.peer !== senderConnection.peer) {
+              console.log("Echoing", msg.type, "to", conn.peer);
+              conn.send(msg);
+            }
+          });
+        }
+      };
+
       switch (message.type) {
         case "SYNC_REQUEST":
           if (
@@ -113,10 +140,12 @@ export const usePeerSession = ({
 
         case "UPDATE_EVALUATION":
           stateRef.current.onEvaluationReceived(message.payload);
+          broadcastToOthers(message);
           break;
 
         case "UPDATE_ASSESSMENT":
           stateRef.current.onAssessmentUpdateReceived(message.payload);
+          broadcastToOthers(message);
           break;
 
         case "HELLO":
@@ -124,38 +153,22 @@ export const usePeerSession = ({
           setActivePeers((prev) => {
             const exists = prev.some((p) => p.id === message.payload.peerId);
             if (exists) return prev;
-            const newPeers = [
+            return [
               ...prev,
               { id: message.payload.peerId, name: message.payload.nametag },
             ];
-            // Broadcast new peer list to everyone
-            // We need to include OURSELVES (Host) in the list we send to others?
-            // Actually, we should broadcast the FULL list of "Everyone in session".
-            // That is: Me (Host) + All Guests (prev + new).
-            // But we can't access 'broadcast' here easily due to closure?
-            // 'broadcast' depends on 'connections'. 'connections' is state.
-            // We can use 'connections' from ref? No ref for connections.
-            // But 'handleMessage' is re-created if deps change? Currently [].
-
-            // We need to trigger broadcast via useEffect or ref.
-            // Simplified: Just update state here.
-            // Add a useEffect that listens to 'activePeers' changes?
-            // If I am Host (how do I know? 'peerId === sessionId' or I have incoming connections?), broadcast.
-            // Better: 'handleMessage' can call a helper?
-            return newPeers;
           });
           break;
 
         case "UPDATE_PEERS":
           // I am a guest receiving the full list
-          // Filter out myself?
           setActivePeers(
             message.payload.filter((p) => p.id !== peerRef.current?.id),
           );
           break;
       }
     },
-    [],
+    [peerId, sessionId],
   );
 
   // Broadcast peers when activePeers changes (only if Host)
@@ -188,9 +201,13 @@ export const usePeerSession = ({
 
   const handleConnection = useCallback(
     (connection: DataConnection) => {
-      connection.on("open", () => {
-        console.log("Connection opened with:", connection.peer);
-        setConnections((prev) => [...prev, connection]);
+      const registerEvents = () => {
+        console.log("Connection opened properly:", connection.peer);
+        setConnections((prev) => {
+          // Avoid duplicates
+          if (prev.some((c) => c.peer === connection.peer)) return prev;
+          return [...prev, connection];
+        });
         setIsConnected(true);
 
         // Say Hello
@@ -201,11 +218,16 @@ export const usePeerSession = ({
             nametag: stateRef.current.assessorName,
           },
         });
-      });
+      };
+
+      if (connection.open) {
+        registerEvents();
+      } else {
+        connection.on("open", registerEvents);
+      }
 
       connection.on("data", (data: unknown) => {
         const message = data as PeerMessage;
-        console.log("Received message:", message.type);
         handleMessage(message, connection);
       });
 
@@ -215,6 +237,13 @@ export const usePeerSession = ({
           prev.filter((c) => c.peer !== connection.peer),
         );
         setActivePeers((prev) => prev.filter((p) => p.id !== connection.peer));
+      });
+
+      connection.on("error", (err) => {
+        console.error("Connection error:", err);
+        setConnections((prev) =>
+          prev.filter((c) => c.peer !== connection.peer),
+        );
       });
     },
     [handleMessage],

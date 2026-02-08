@@ -29,32 +29,32 @@ import { AvatarGroup } from "../components/ui/AvatarGroup";
 interface AssessmentSessionPageProps {
   assessment?: AssessmentSessionState;
   evaluations: AssessorEvaluationState[];
+  matrix: ModuleState[];
+  profile?: ProfileState;
+  assessorName: string;
+  isOnline: boolean;
+  activePeers: { id: string; name: string }[];
+  isConnected: boolean;
   onCreateAssessment: (assessment: AssessmentSessionState) => void;
   onCreateEvaluation: (session: AssessorEvaluationState) => void;
   onUpdateAssessment: (
     id: string,
     data: Partial<AssessmentSessionState>,
   ) => void;
-  matrix: ModuleState[];
-  profile?: ProfileState;
-  assessorName: string;
-  isOnline: boolean;
   onStartSession: () => void;
   onEndSession: () => void;
-  activePeers: { id: string; name: string }[];
-  isConnected: boolean;
 }
 
 export const AssessmentSessionPage = ({
   assessment,
   evaluations,
-  onCreateEvaluation,
   assessorName,
   matrix,
   profile,
   activePeers,
   isConnected,
   isOnline,
+  onCreateEvaluation,
   onStartSession,
   onEndSession,
 }: AssessmentSessionPageProps) => {
