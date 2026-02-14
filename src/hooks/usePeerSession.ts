@@ -58,7 +58,6 @@ interface UsePeerSessionProps {
 }
 
 export const usePeerSession = ({
-  assessmentId,
   assessorName,
   currentAssessment,
   currentEvaluations,
@@ -391,7 +390,7 @@ export const usePeerSession = ({
         console.log("[Host] Incoming connection from", conn.peer);
         handleConnection(conn);
       });
-    } catch (err: any) {
+    } catch (err) {
       console.error("Failed to start session:", err);
       setError("Failed to create session. Please try again.");
       setStatus("error");
@@ -423,7 +422,7 @@ export const usePeerSession = ({
         });
 
         // Handling connection immediate errors/close in handleConnection but need to be sure
-      } catch (err: any) {
+      } catch (err) {
         console.error("Failed to join session:", err);
         setError(
           "Failed to join session. It may have ended or does not exist.",

@@ -40,13 +40,19 @@ export const AssessmentSessionCard = ({
     }
   };
 
+  // ... no changes to props ...
+
   return (
     <div
-      onClick={() =>
-        navigate(`/assessment/${session.assessmentId ?? session.id}`)
-      }
+      onClick={() => {
+        const url = `/assessment/${session.assessmentId ?? session.id}${
+          session.hostId ? `?s=${session.hostId}` : ""
+        }`;
+        navigate(url);
+      }}
       className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group min-h-[220px] flex flex-col"
     >
+      {/* ... rest of component ... */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex gap-2">
           <div

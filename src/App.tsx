@@ -9,7 +9,6 @@ import { AssessmentSessionRoute } from "./routes/AssessmentSessionRoute";
 import type {
   ModuleState,
   ProfileState,
-  FileStatus,
   AssessorEvaluationState,
   AssessmentSessionState,
 } from "./types";
@@ -50,12 +49,9 @@ const App = () => {
     currentStacks: stacks,
     onSyncReceived: (
       _a: AssessmentSessionState,
-      evs: AssessorEvaluationState[],
-      _m: ModuleState[],
-      _p: ProfileState[],
-      _s: Record<string, string>,
+      evaluations: AssessorEvaluationState[],
     ) => {
-      evs.forEach((ev) => createEvaluation(ev));
+      evaluations.forEach((ev) => createEvaluation(ev));
     },
     onEvaluationReceived: (ev: AssessorEvaluationState) => createEvaluation(ev),
     onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => {
@@ -124,6 +120,7 @@ const App = () => {
               onBackup={backupApplicationState}
               hostedSessionId={hostedSessionId}
               guestAssessmentId={guestAssessmentId}
+              guestHostId={guestHostId}
             />
           }
         />

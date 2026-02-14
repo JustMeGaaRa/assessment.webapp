@@ -36,6 +36,7 @@ interface HomePageProps {
   onRestore: (data: BackupData) => void;
   hostedSessionId?: string | null;
   guestAssessmentId?: string | null;
+  guestHostId?: string | null;
 }
 
 export const HomePage = ({
@@ -52,6 +53,7 @@ export const HomePage = ({
   onRestore,
   hostedSessionId,
   guestAssessmentId,
+  guestHostId,
 }: HomePageProps) => {
   const navigate = useNavigate();
 
@@ -495,10 +497,11 @@ export const HomePage = ({
                           assessorName: isHosted
                             ? "Your Session"
                             : "Participating",
+                          hostId:
+                            !isHosted && guestAssessmentId
+                              ? guestHostId || undefined
+                              : undefined,
                         };
-                        // Add a visual indicator or label for Host vs Guest in the card?
-                        // The card component (AssessmentSessionCard) shows `assessorName` at the bottom.
-                        // We use 'Your Session' or 'Participating' to distinguish.
 
                         return (
                           <AssessmentSessionCard

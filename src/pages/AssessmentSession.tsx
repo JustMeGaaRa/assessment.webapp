@@ -94,6 +94,16 @@ export const AssessmentSessionPage = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Auto-open Share Popover when session starts (Bug #5)
+  useEffect(() => {
+    if (sessionStatus === "connected" && isHost) {
+      const timer = setTimeout(() => {
+        setShowSharePopover(true);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [sessionStatus, isHost]);
+
   const handleCopyLink = () => {
     if (!hostPeerId) return;
     const url = `${window.location.origin}/assessment/${assessmentId}?s=${hostPeerId}`;
@@ -178,18 +188,21 @@ export const AssessmentSessionPage = ({
     );
   }
 
-  const onlineUsers = [{ name: assessorName, id: "me" }, ...activePeers].map(
-    (p, idx) => {
-      const style = colors[idx % colors.length];
-      return {
-        id: p.id,
-        name: p.name,
-        color: style.color,
-        text: style.text,
-        light: style.light,
-      };
-    },
-  );
+  const onlineUsers = [
+    { name: assessorName, id: "me" },
+    ...activePeers.filter(
+      (p) => p.name !== assessorName && p.id !== "me" && p.id !== hostPeerId,
+    ), // Bug #3: Filter duplicates
+  ].map((p, idx) => {
+    const style = colors[idx % colors.length];
+    return {
+      id: p.id,
+      name: p.name,
+      color: style.color,
+      text: style.text,
+      light: style.light,
+    };
+  });
 
   const assessors = evaluations.map((ev, idx) => {
     const style = colors[idx % colors.length];
@@ -312,7 +325,7 @@ export const AssessmentSessionPage = ({
                     }`}
                   >
                     <Wifi size={18} className="text-emerald-500" />
-                    <span>Active Session</span>
+                    <span>Share Session</span>
                   </button>
                 ) : (
                   <button
@@ -430,14 +443,25 @@ export const AssessmentSessionPage = ({
               </>
             )}
 
-            {/* Error Display */}
+            {/* Error Display or Session Closed */}
             {sessionStatus === "error" && !isHost && (
               <div className="relative group">
-                <div className="p-2 text-red-500 bg-white border border-red-100 rounded-lg shadow-sm cursor-help">
+                <div className="p-2 text-red-500 bg-white border border-red-100 rounded-lg shadow-sm cursor-help animate-pulse">
                   <AlertTriangle size={20} />
                 </div>
-                <div className="absolute right-0 top-full mt-2 w-64 bg-red-50 text-red-700 text-xs p-3 rounded-lg border border-red-100 shadow-xl z-30 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all">
-                  <strong>Connection Error:</strong> {sessionError}
+                <div className="absolute right-0 top-full mt-2 w-72 bg-white p-4 rounded-xl border border-slate-200 shadow-xl z-30 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all">
+                  <h4 className="font-bold text-slate-800 mb-1">
+                    Connection Lost
+                  </h4>
+                  <p className="text-sm text-slate-500 mb-3">
+                    {sessionError || "Connection interrupted."}
+                  </p>
+                  <button
+                    onClick={onLeaveSession}
+                    className="w-full px-3 py-2 bg-indigo-600 text-white font-bold rounded-lg text-sm hover:bg-indigo-500 transition-colors"
+                  >
+                    Continue Locally
+                  </button>
                 </div>
               </div>
             )}

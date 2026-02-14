@@ -51,7 +51,7 @@ export const AssessmentSessionRoute = ({
   setHostedSessionId,
 }: AssessmentSessionRouteProps) => {
   const { assessmentId } = useParams();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const assessment = assessments.find((a) => a.id === assessmentId);
   const sessionIdParam = searchParams.get("s");
 
@@ -79,15 +79,15 @@ export const AssessmentSessionRoute = ({
         : sessionIdParam || undefined;
 
   // Auto-join logic if we have the link and we are ready
+  // Only auto-join if we are NOT the host, we have a session param, and we are not connected/connecting
   useEffect(() => {
     if (
       isGuestView &&
       sessionIdParam &&
       guestSession.status === "disconnected" &&
       assessorName &&
-      matrix.length > 0 &&
       !guestSession.error &&
-      !guestHostId
+      !guestHostId // Don't try to join if we think we are already joined/joining
     ) {
       guestSession.joinSession(sessionIdParam);
       setGuestHostId(sessionIdParam);
@@ -97,7 +97,6 @@ export const AssessmentSessionRoute = ({
     isGuestView,
     sessionIdParam,
     assessorName,
-    matrix.length,
     guestSession,
     guestHostId,
     setGuestHostId,
@@ -140,6 +139,11 @@ export const AssessmentSessionRoute = ({
     guestSession.leaveSession();
     setGuestHostId(null);
     setGuestAssessmentId(null);
+
+    // Remove the 's' parameter from URL to prevent auto-rejoin logic
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete("s");
+    setSearchParams(newParams);
   };
 
   const profile = assessment

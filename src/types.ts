@@ -49,13 +49,14 @@ export interface AssessorEvaluationState {
   profileId: string;
   profileTitle: string;
   stack: string;
-  
+
   date: string;
   status: "ongoing" | "completed" | "rejected";
-  
+
   scores: Record<string, number>; // { topicId, score }
   notes: Record<string, string>; // { topicId, note }
   finalScore?: number;
+  hostId?: string; // Optional: Link to host if this is a guest view
 }
 
 // types that represent assessor scoring hierarchy
@@ -106,7 +107,10 @@ export interface AggregatedAssessorStatistics {
   averageScore: number;
   weightedScore: number;
   weight: number;
-  assessorEvaluationStatistics: Record<string, AssessorEvaluationModuleStatistics>;
+  assessorEvaluationStatistics: Record<
+    string,
+    AssessorEvaluationModuleStatistics
+  >;
 }
 
 export interface AssessmentStatistics {
