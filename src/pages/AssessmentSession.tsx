@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -7,7 +7,10 @@ import {
   Check,
   Play,
   Square,
-  Share2,
+  AlertTriangle,
+  Wifi,
+  WifiOff,
+  Copy,
 } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Modal } from "../components/ui/Modal";
@@ -25,6 +28,7 @@ import { AssessmentEvaluationCard } from "../components/dashboard/AssessmentEval
 import { AssessmentSummaryCard } from "../components/assessment/AssessmentSummaryCard";
 import { EvaluationStateHelper } from "../utils/evaluationStateHelper";
 import { AvatarGroup } from "../components/ui/AvatarGroup";
+import type { PeerSessionState } from "../hooks/usePeerSession";
 
 interface AssessmentSessionPageProps {
   assessment?: AssessmentSessionState;
@@ -32,9 +36,14 @@ interface AssessmentSessionPageProps {
   matrix: ModuleState[];
   profile?: ProfileState;
   assessorName: string;
-  isOnline: boolean;
+
+  // Session Props
+  sessionStatus: PeerSessionState["status"];
+  sessionError: string | null;
   activePeers: { id: string; name: string }[];
-  isConnected: boolean;
+  isHost: boolean;
+  hostPeerId?: string; // The ID to share (if Host) or the ID to join (if Guest)
+
   onCreateAssessment: (assessment: AssessmentSessionState) => void;
   onCreateEvaluation: (session: AssessorEvaluationState) => void;
   onUpdateAssessment: (
@@ -45,7 +54,6 @@ interface AssessmentSessionPageProps {
   onEndSession: () => void;
   onJoinSession: () => void;
   onLeaveSession: () => void;
-  isGuestMode: boolean;
 }
 
 export const AssessmentSessionPage = ({
@@ -55,22 +63,40 @@ export const AssessmentSessionPage = ({
   matrix,
   profile,
   activePeers,
-  isConnected,
-  isOnline,
+  sessionStatus,
+  sessionError,
+  isHost,
+  hostPeerId,
   onCreateEvaluation,
   onStartSession,
   onEndSession,
   onJoinSession,
   onLeaveSession,
-  isGuestMode,
 }: AssessmentSessionPageProps) => {
   const { assessmentId } = useParams();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [showSharePopover, setShowSharePopover] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  // Close popover when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target as Node)
+      ) {
+        setShowSharePopover(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleCopyLink = () => {
-    const url = `${window.location.origin}/assessment/${assessmentId}`;
+    if (!hostPeerId) return;
+    const url = `${window.location.origin}/assessment/${assessmentId}?s=${hostPeerId}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -105,7 +131,7 @@ export const AssessmentSessionPage = ({
     },
   ];
 
-  // Loading State for Guest
+  // Loading State for Guest (If no assessment data yet)
   if (!assessment || !profile) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
@@ -119,15 +145,28 @@ export const AssessmentSessionPage = ({
           <p className="text-slate-500">
             Connecting to peer to synchronize assessment data.
           </p>
-          {isConnected ? (
+
+          {sessionStatus === "error" && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-start gap-2 text-left">
+              <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+              <span>{sessionError || "Failed to connect."}</span>
+            </div>
+          )}
+
+          {sessionStatus === "connected" ? (
             <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold bg-emerald-50 py-2 px-4 rounded-full mx-auto w-fit">
               <Check size={18} /> Connected! Syncing...
+            </div>
+          ) : sessionStatus === "connecting" ? (
+            <div className="text-slate-400 text-sm">
+              Establishing P2P connection...
             </div>
           ) : (
             <div className="text-slate-400 text-sm">
               Waiting for connection...
             </div>
           )}
+
           <button
             onClick={() => navigate("/")}
             className="text-indigo-600 font-bold hover:underline mt-4 block"
@@ -160,6 +199,7 @@ export const AssessmentSessionPage = ({
       color: style.color,
       text: style.text,
       light: style.light,
+      isCurrentUser: false, // We don't distinguish explicitly here unless we match assessorName? But names aren't unique IDs.
     };
   });
 
@@ -200,7 +240,6 @@ export const AssessmentSessionPage = ({
     };
 
     onCreateEvaluation(newEvaluation);
-    // sendUpdateEvaluation(newEvaluation); // P2P handled by wrapper
     setIsAddModalOpen(false);
     navigate(`/assessment/${assessmentId}/evaluation/${newEvaluationId}`);
   };
@@ -225,7 +264,6 @@ export const AssessmentSessionPage = ({
           stack: assessment?.stack || importedSession.stack,
         };
         onCreateEvaluation(newSession);
-        // sendUpdateEvaluation(newSession); // P2P handled by wrapper
         alert("Evaluation imported successfully.");
       })
       .catch((err) => {
@@ -261,66 +299,147 @@ export const AssessmentSessionPage = ({
             )}
 
             {/* Session Control Buttons */}
-            {isOnline ? (
-              // HOST CONTROLS
-              <>
-                <button
-                  onClick={onEndSession}
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-red-300 hover:text-red-600 rounded-xl font-bold transition-all shadow-sm text-sm"
-                >
-                  <Square size={18} />
-                  <span>End Session</span>
-                </button>
-                <button
-                  onClick={handleCopyLink}
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 rounded-xl font-bold transition-all shadow-sm text-sm"
-                >
-                  {copied ? <Check size={18} /> : <Share2 size={18} />}
-                  <span>{copied ? "Copied" : "Share Session"}</span>
-                </button>
-              </>
-            ) : isGuestMode ? (
-              // GUEST CONTROLS (Active or Connecting)
-              <>
-                <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-sm font-medium">
-                  {isConnected ? (
-                    <>
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                      Connected
-                    </>
-                  ) : (
-                    <>
-                      <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
-                      Connecting...
-                    </>
-                  )}
-                </div>
-                <button
-                  onClick={onLeaveSession}
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 hover:border-red-300 hover:text-red-600 rounded-xl font-bold transition-all shadow-sm text-sm"
-                >
-                  <Square size={18} />
-                  <span>Leave Session</span>
-                </button>
-              </>
+            {isHost ? (
+              // HOST Controls
+              <div className="relative" ref={popoverRef}>
+                {sessionStatus === "connected" ? (
+                  <button
+                    onClick={() => setShowSharePopover(!showSharePopover)}
+                    className={`flex items-center gap-2 px-4 py-2 border rounded-xl font-bold transition-all shadow-sm text-sm ${
+                      showSharePopover
+                        ? "bg-indigo-50 border-indigo-200 text-indigo-700"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
+                    }`}
+                  >
+                    <Wifi size={18} className="text-emerald-500" />
+                    <span>Active Session</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={onStartSession}
+                    className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-50 rounded-xl font-bold transition-all shadow-sm text-sm"
+                    disabled={sessionStatus === "connecting"}
+                  >
+                    {sessionStatus === "connecting" ? (
+                      <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Play size={18} />
+                    )}
+                    <span>Start Session</span>
+                  </button>
+                )}
+
+                {/* Popover */}
+                {showSharePopover && sessionStatus === "connected" && (
+                  <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-100 z-20 p-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="font-bold text-slate-800">
+                        Share Session
+                      </h3>
+                      <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                        Online
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-500 mb-3">
+                      Share this link with peers to let them join this
+                      assessment session.
+                    </p>
+
+                    <button
+                      onClick={handleCopyLink}
+                      className="w-full flex items-center justify-between gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 hover:border-slate-300 transition-all group mb-4"
+                    >
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <LinkIcon
+                          size={16}
+                          className="text-slate-400 group-hover:text-indigo-500"
+                        />
+                        <span className="truncate max-w-[180px]">
+                          {window.location.origin}/assessment/{assessmentId}...
+                        </span>
+                      </div>
+                      {copied ? (
+                        <Check size={16} className="text-emerald-500" />
+                      ) : (
+                        <Copy
+                          size={16}
+                          className="text-slate-400 group-hover:text-indigo-500"
+                        />
+                      )}
+                    </button>
+
+                    <div className="h-px bg-slate-100 my-2" />
+
+                    <button
+                      onClick={() => {
+                        onEndSession();
+                        setShowSharePopover(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm font-bold transition-colors"
+                    >
+                      <Square size={16} />
+                      Stop Session
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
-              // OFFLINE CONTROLS (Can Start or Join)
+              // GUEST / PEER Controls
               <>
-                <button
-                  onClick={onJoinSession}
-                  className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 hover:bg-indigo-50 rounded-xl font-bold transition-all shadow-sm text-sm"
-                >
-                  <LinkIcon size={18} />
-                  <span>Join Session</span>
-                </button>
-                <button
-                  onClick={onStartSession}
-                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-500 rounded-xl font-bold transition-all shadow-sm text-sm"
-                >
-                  <Play size={18} />
-                  <span>Start Session</span>
-                </button>
+                {sessionStatus === "connected" ? (
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl text-sm font-bold">
+                      <Wifi size={16} />
+                      <span>Connected</span>
+                    </div>
+                    <button
+                      onClick={onLeaveSession}
+                      className="flex items-center gap-2 px-3 py-2 bg-white text-slate-500 border border-slate-200 hover:text-red-600 hover:border-red-200 rounded-xl font-bold transition-all shadow-sm text-sm"
+                    >
+                      <Square size={16} />
+                      <span>Leave</span>
+                    </button>
+                  </div>
+                ) : sessionStatus === "connecting" ? (
+                  <div className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-600 border border-indigo-200 rounded-xl font-bold shadow-sm text-sm">
+                    <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                    <span>Joining...</span>
+                  </div>
+                ) : hostPeerId && !isHost ? (
+                  // We have a Host ID (from URL) but are not connected
+                  <button
+                    onClick={onJoinSession}
+                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-500 rounded-xl font-bold transition-all shadow-sm text-sm animate-pulse"
+                  >
+                    <LinkIcon size={18} />
+                    <span>
+                      {sessionStatus === "error"
+                        ? "Retry Join"
+                        : "Join Session"}
+                    </span>
+                  </button>
+                ) : (
+                  // No active session context
+                  <div className="flex items-center gap-2 text-slate-400 text-sm font-medium px-2">
+                    <WifiOff size={16} />
+                    Offline
+                  </div>
+                )}
               </>
+            )}
+
+            {/* Error Display */}
+            {sessionStatus === "error" && !isHost && (
+              <div className="relative group">
+                <div className="p-2 text-red-500 bg-white border border-red-100 rounded-lg shadow-sm cursor-help">
+                  <AlertTriangle size={20} />
+                </div>
+                <div className="absolute right-0 top-full mt-2 w-64 bg-red-50 text-red-700 text-xs p-3 rounded-lg border border-red-100 shadow-xl z-30 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all">
+                  <strong>Connection Error:</strong> {sessionError}
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -328,7 +447,11 @@ export const AssessmentSessionPage = ({
         <PageHeader
           icon={<User className="text-indigo-600 w-8 h-8" />}
           title="Assessment Session"
-          description="An overview of the assessment session"
+          description={
+            assessment
+              ? `Assess ${candidateName}`
+              : "An overview of the assessment session"
+          }
         />
 
         {/* Assessment Summary Section */}

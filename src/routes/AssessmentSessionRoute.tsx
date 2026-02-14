@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { type PeerSessionState, usePeerSession } from "../hooks/usePeerSession";
+import { useEffect } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
+import { type PeerSessionState } from "../hooks/usePeerSession";
 import { AssessmentSessionPage } from "../pages/AssessmentSession";
 import type {
   AssessmentSessionState,
@@ -14,17 +14,23 @@ interface AssessmentSessionRouteProps {
   evaluations: AssessorEvaluationState[];
   matrix: ModuleState[];
   profiles: ProfileState[];
-  stacks: Record<string, string>;
   assessorName: string;
+
   hostedSessionId: string | null;
+  setHostedSessionId: (id: string | null) => void;
   hostSession: PeerSessionState;
+
+  guestHostId: string | null;
+  setGuestHostId: (id: string | null) => void;
+  guestSession: PeerSessionState;
+  setGuestAssessmentId: (id: string | null) => void;
+
   onCreateAssessment: (assessment: AssessmentSessionState) => void;
   onCreateEvaluation: (evaluation: AssessorEvaluationState) => void;
   onUpdateAssessment: (
     id: string,
     data: Partial<AssessmentSessionState>,
   ) => void;
-  setHostedSessionId: (id: string | null) => void;
 }
 
 export const AssessmentSessionRoute = ({
@@ -35,45 +41,69 @@ export const AssessmentSessionRoute = ({
   assessorName,
   hostedSessionId,
   hostSession,
+  guestHostId,
+  setGuestHostId,
+  guestSession,
+  setGuestAssessmentId,
   onCreateAssessment,
   onCreateEvaluation,
   onUpdateAssessment,
   setHostedSessionId,
 }: AssessmentSessionRouteProps) => {
   const { assessmentId } = useParams();
+  const [searchParams] = useSearchParams();
   const assessment = assessments.find((a) => a.id === assessmentId);
-  const [isGuestMode, setIsGuestMode] = useState(false);
+  const sessionIdParam = searchParams.get("s");
 
-  const isHosting = hostedSessionId === assessmentId;
-
-  // Guest Session Hook
-  // Only connect if we are NOT hosting this session AND we explicitly enabled guest mode.
-  const guestSession: PeerSessionState = usePeerSession({
-    sessionId: isHosting ? "" : assessmentId || "",
-    assessorName,
-    currentAssessment: assessment,
-    enabled: isGuestMode,
-    currentEvaluations: evaluations.filter(
-      (e) => e.assessmentId === assessmentId,
-    ),
-    onSyncReceived: (
-      syncedAssessment: AssessmentSessionState,
-      syncedEvaluations: AssessorEvaluationState[],
-    ) => {
-      if (syncedAssessment && !assessment) {
-        onCreateAssessment(syncedAssessment);
-      }
-      syncedEvaluations.forEach((ev) => onCreateEvaluation(ev));
-    },
-    onEvaluationReceived: (ev: AssessorEvaluationState) =>
-      onCreateEvaluation(ev),
-    onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => {
-      if (assessmentId) onUpdateAssessment(assessmentId, update);
-    },
-  });
+  const isGuestView = !!sessionIdParam;
+  const isActivelyHostingThis = hostedSessionId === assessmentId;
 
   // Decide which session interface to use
-  const activeSession = isHosting ? hostSession : guestSession;
+  // If not a guest view (no ?s= param), we are the Host (or potential Host)
+  const activeSession = !isGuestView ? hostSession : guestSession;
+
+  // Determine display status
+  // If we are a Host View, but not actively hosting THIS assessment, show disconnected
+  // so the user can see the "Start Session" button.
+  // If we are hosting another session, this will effectively allow overriding it.
+  const displayStatus =
+    !isGuestView && !isActivelyHostingThis
+      ? "disconnected"
+      : activeSession.status;
+
+  const displayPeerId =
+    !isGuestView && !isActivelyHostingThis
+      ? undefined
+      : isActivelyHostingThis
+        ? hostSession.peerId
+        : sessionIdParam || undefined;
+
+  // Auto-join logic if we have the link and we are ready
+  useEffect(() => {
+    if (
+      isGuestView &&
+      sessionIdParam &&
+      guestSession.status === "disconnected" &&
+      assessorName &&
+      matrix.length > 0 &&
+      !guestSession.error &&
+      !guestHostId
+    ) {
+      guestSession.joinSession(sessionIdParam);
+      setGuestHostId(sessionIdParam);
+      if (assessmentId) setGuestAssessmentId(assessmentId);
+    }
+  }, [
+    isGuestView,
+    sessionIdParam,
+    assessorName,
+    matrix.length,
+    guestSession,
+    guestHostId,
+    setGuestHostId,
+    assessmentId,
+    setGuestAssessmentId,
+  ]);
 
   const handleCreateEvaluation = (ev: AssessorEvaluationState) => {
     onCreateEvaluation(ev);
@@ -86,6 +116,30 @@ export const AssessmentSessionRoute = ({
   ) => {
     onUpdateAssessment(id, data);
     activeSession.sendUpdateAssessment(data);
+  };
+
+  const handleStartSession = async () => {
+    await hostSession.startSession();
+    setHostedSessionId(assessmentId || null);
+  };
+
+  const handleEndSession = () => {
+    hostSession.stopSession();
+    setHostedSessionId(null);
+  };
+
+  const handleJoinSession = () => {
+    if (sessionIdParam) {
+      guestSession.joinSession(sessionIdParam);
+      setGuestHostId(sessionIdParam);
+      if (assessmentId) setGuestAssessmentId(assessmentId);
+    }
+  };
+
+  const handleLeaveSession = () => {
+    guestSession.leaveSession();
+    setGuestHostId(null);
+    setGuestAssessmentId(null);
   };
 
   const profile = assessment
@@ -110,14 +164,15 @@ export const AssessmentSessionRoute = ({
       matrix={profileModules}
       profile={profile}
       assessorName={assessorName}
-      isOnline={isHosting}
-      onStartSession={() => setHostedSessionId(assessmentId || null)}
-      onEndSession={() => setHostedSessionId(null)}
-      onJoinSession={() => setIsGuestMode(true)}
-      onLeaveSession={() => setIsGuestMode(false)}
-      isGuestMode={isGuestMode}
+      sessionStatus={displayStatus}
+      sessionError={activeSession.error}
       activePeers={activeSession.activePeers}
-      isConnected={activeSession.isConnected}
+      isHost={!isGuestView}
+      hostPeerId={displayPeerId}
+      onStartSession={handleStartSession}
+      onEndSession={handleEndSession}
+      onJoinSession={handleJoinSession}
+      onLeaveSession={handleLeaveSession}
     />
   );
 };

@@ -6,7 +6,13 @@ import { AssessmentLibraryPage } from "./pages/AssessmentLibrary";
 import { HomePage } from "./pages/Home";
 import { AssessmentEvaluationRoute } from "./routes/AssessmentEvaluationRoute";
 import { AssessmentSessionRoute } from "./routes/AssessmentSessionRoute";
-import type { AssessmentSessionState, AssessorEvaluationState } from "./types";
+import type {
+  ModuleState,
+  ProfileState,
+  FileStatus,
+  AssessorEvaluationState,
+  AssessmentSessionState,
+} from "./types";
 
 const App = () => {
   const {
@@ -27,24 +33,69 @@ const App = () => {
   } = useApplicationData();
 
   const [hostedSessionId, setHostedSessionId] = useState<string | null>(null);
+  const [guestHostId, setGuestHostId] = useState<string | null>(null);
+  const [guestAssessmentId, setGuestAssessmentId] = useState<string | null>(
+    null,
+  );
 
   // Host Session Hook (Persists across navigation)
   const hostSession: PeerSessionState = usePeerSession({
-    sessionId: hostedSessionId || "",
     assessorName,
     currentAssessment: assessments.find((a) => a.id === hostedSessionId),
     currentEvaluations: evaluations.filter(
       (e) => e.assessmentId === hostedSessionId,
     ),
+    currentMatrix: matrix,
+    currentProfiles: profiles,
+    currentStacks: stacks,
     onSyncReceived: (
       _a: AssessmentSessionState,
       evs: AssessorEvaluationState[],
+      _m: ModuleState[],
+      _p: ProfileState[],
+      _s: Record<string, string>,
     ) => {
       evs.forEach((ev) => createEvaluation(ev));
     },
     onEvaluationReceived: (ev: AssessorEvaluationState) => createEvaluation(ev),
     onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => {
       if (hostedSessionId) updateAssessment(hostedSessionId, update);
+    },
+    onSessionClosed: () => {
+      setHostedSessionId(null);
+    },
+  });
+
+  // Guest Session Hook (Persists across navigation)
+  const guestSession: PeerSessionState = usePeerSession({
+    assessorName,
+    onSyncReceived: (
+      syncedAssessment: AssessmentSessionState,
+      syncedEvaluations: AssessorEvaluationState[],
+      syncedMatrix: ModuleState[],
+      syncedProfiles: ProfileState[],
+      syncedStacks: Record<string, string>,
+    ) => {
+      if (syncedAssessment) {
+        createAssessment(syncedAssessment);
+        // If we receive sync, we assume we are connected to this assessment
+        setGuestAssessmentId(syncedAssessment.id);
+      }
+      if (syncedMatrix && syncedProfiles && syncedStacks) {
+        // Update library data if provided
+        handleDataLoad(syncedMatrix, syncedProfiles, syncedStacks);
+      }
+      syncedEvaluations.forEach((ev) => createEvaluation(ev));
+    },
+    onEvaluationReceived: (ev: AssessorEvaluationState) => createEvaluation(ev),
+    onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => {
+      if (update.id) {
+        updateAssessment(update.id, update);
+      }
+    },
+    onSessionClosed: () => {
+      setGuestHostId(null);
+      setGuestAssessmentId(null);
     },
   });
 
@@ -72,6 +123,7 @@ const App = () => {
               onRestore={restoreApplicationState}
               onBackup={backupApplicationState}
               hostedSessionId={hostedSessionId}
+              guestAssessmentId={guestAssessmentId}
             />
           }
         />
@@ -83,8 +135,14 @@ const App = () => {
               matrix={matrix}
               profiles={profiles}
               onUpdateEvaluation={updateEvaluation}
-              onCreateEvaluation={createEvaluation}
               assessorName={assessorName}
+              activeSession={
+                hostedSessionId
+                  ? hostSession
+                  : guestHostId
+                    ? guestSession
+                    : undefined
+              }
             />
           }
         />
@@ -99,11 +157,14 @@ const App = () => {
               onUpdateAssessment={updateAssessment}
               matrix={matrix}
               profiles={profiles}
-              stacks={stacks}
               assessorName={assessorName}
               hostedSessionId={hostedSessionId}
               setHostedSessionId={setHostedSessionId}
               hostSession={hostSession}
+              guestHostId={guestHostId}
+              setGuestHostId={setGuestHostId}
+              guestSession={guestSession}
+              setGuestAssessmentId={setGuestAssessmentId}
             />
           }
         />

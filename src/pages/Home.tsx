@@ -35,6 +35,7 @@ interface HomePageProps {
   onBackup: () => void;
   onRestore: (data: BackupData) => void;
   hostedSessionId?: string | null;
+  guestAssessmentId?: string | null;
 }
 
 export const HomePage = ({
@@ -50,6 +51,7 @@ export const HomePage = ({
   onBackup,
   onRestore,
   hostedSessionId,
+  guestAssessmentId,
 }: HomePageProps) => {
   const navigate = useNavigate();
 
@@ -462,42 +464,52 @@ export const HomePage = ({
           ) : (
             <>
               {/* Active / Ongoing Session */}
-              {hostedSessionId &&
-                assessments.find((a) => a.id === hostedSessionId) && (
-                  <div className="mb-10">
-                    <div className="flex items-center gap-3 mb-6">
-                      <h2 className="text-2xl font-bold text-slate-800">
-                        Ongoing Assessment
-                      </h2>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                      {assessments
-                        .filter((a) => a.id === hostedSessionId)
-                        .map((assessment) => {
-                          const displaySession: AssessorEvaluationState = {
-                            id: assessment.id,
-                            assessmentId: assessment.id,
-                            candidateName: assessment.candidateName,
-                            profileTitle: assessment.profileTitle,
-                            profileId: assessment.profileId,
-                            stack: assessment.stack,
-                            date: assessment.date,
-                            status: "ongoing", // Force ongoing for active session
-                            scores: {},
-                            notes: {},
-                            finalScore: undefined,
-                            assessorName: "Group",
-                          };
-                          return (
-                            <AssessmentSessionCard
-                              key={assessment.id}
-                              session={displaySession}
-                            />
-                          );
-                        })}
-                    </div>
+              {(hostedSessionId || guestAssessmentId) && (
+                <div className="mb-10">
+                  <div className="flex items-center gap-3 mb-6">
+                    <h2 className="text-2xl font-bold text-slate-800">
+                      Ongoing Assessment
+                    </h2>
                   </div>
-                )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {assessments
+                      .filter(
+                        (a) =>
+                          a.id === hostedSessionId ||
+                          a.id === guestAssessmentId,
+                      )
+                      .map((assessment) => {
+                        const isHosted = assessment.id === hostedSessionId;
+                        const displaySession: AssessorEvaluationState = {
+                          id: assessment.id,
+                          assessmentId: assessment.id,
+                          candidateName: assessment.candidateName,
+                          profileTitle: assessment.profileTitle,
+                          profileId: assessment.profileId,
+                          stack: assessment.stack,
+                          date: assessment.date,
+                          status: "ongoing", // Force ongoing for active session
+                          scores: {},
+                          notes: {},
+                          finalScore: undefined,
+                          assessorName: isHosted
+                            ? "Your Session"
+                            : "Participating",
+                        };
+                        // Add a visual indicator or label for Host vs Guest in the card?
+                        // The card component (AssessmentSessionCard) shows `assessorName` at the bottom.
+                        // We use 'Your Session' or 'Participating' to distinguish.
+
+                        return (
+                          <AssessmentSessionCard
+                            key={assessment.id}
+                            session={displaySession}
+                          />
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
 
               <h2 className="text-2xl font-bold text-slate-800 mb-6">
                 Recent Assessments

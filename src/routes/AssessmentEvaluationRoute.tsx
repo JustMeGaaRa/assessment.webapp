@@ -1,8 +1,7 @@
 import { Navigate, useParams } from "react-router-dom";
-import { usePeerSession } from "../hooks/usePeerSession";
 import { AssessorEvaluationPage } from "../pages/AssessorEvaluation";
+import type { PeerSessionState } from "../hooks/usePeerSession";
 import type {
-  AssessmentSessionState,
   AssessorEvaluationState,
   ModuleState,
   ProfileState,
@@ -17,7 +16,7 @@ export interface AssessmentEvaluationRouteProps {
     id: string,
     data: Partial<AssessorEvaluationState>,
   ) => void;
-  onCreateEvaluation: (evaluation: AssessorEvaluationState) => void;
+  activeSession?: PeerSessionState;
 }
 
 export const AssessmentEvaluationRoute = ({
@@ -26,29 +25,10 @@ export const AssessmentEvaluationRoute = ({
   profiles,
   assessorName,
   onUpdateEvaluation,
-  onCreateEvaluation,
+  activeSession,
 }: AssessmentEvaluationRouteProps) => {
   const { evaluationId } = useParams();
   const evaluation = evaluations.find((s) => s.id === evaluationId);
-
-  const { sendUpdateEvaluation } = usePeerSession({
-    sessionId: evaluation?.assessmentId || "",
-    currentEvaluations: evaluations,
-    onSyncReceived: (
-      _syncAssessment: AssessmentSessionState,
-      syncEvaluations: AssessorEvaluationState[],
-    ) => {
-      // Upsert synced evaluations
-      syncEvaluations.forEach((ev) => onCreateEvaluation(ev));
-    },
-    onEvaluationReceived: (ev: AssessorEvaluationState) => {
-      onCreateEvaluation(ev);
-    },
-    onAssessmentUpdateReceived: () => {
-      // Do nothing for assessment props updates here
-    },
-    assessorName,
-  });
 
   if (!evaluation) {
     return <Navigate to="/" replace />;
@@ -62,15 +42,34 @@ export const AssessmentEvaluationRoute = ({
 
   const profileModules = matrix.filter((m) => profile.weights[m.id] > 0);
 
+  // Locking Logic
+  // If activeSession is present and connected:
+  // - If evaluation.assessorName !== assessorName (and evaluation.assessorName exists), LOCK IT.
+  // - If we are Host, maybe we can edit everything? Requirement: "users are only able to set scores in the assessment evaluation feedback that they created."
+  // So even Host cannot edit others' scores in P2P mode.
+  // Exception: If no active session, user can modify any.
+
+  const isSessionActive = activeSession?.status === "connected";
+  const isMyEvaluation = evaluation.assessorName === assessorName;
+
+  // If session is active, and it's NOT my evaluation, it is locked.
+  const isLocked = isSessionActive && !isMyEvaluation;
+
+  // We also need to send updates if session is active
+  const handleUpdate = (data: Partial<AssessorEvaluationState>) => {
+    onUpdateEvaluation(evaluation.id, data);
+    if (activeSession?.status === "connected") {
+      activeSession.sendUpdateEvaluation({ ...evaluation, ...data });
+    }
+  };
+
   return (
     <AssessorEvaluationPage
       evaluation={evaluation}
       modules={profileModules}
       profile={profile}
-      onUpdate={(data) => {
-        onUpdateEvaluation(evaluation.id, data);
-        sendUpdateEvaluation({ ...evaluation, ...data });
-      }}
+      onUpdate={handleUpdate}
+      isLocked={isLocked}
     />
   );
 };
