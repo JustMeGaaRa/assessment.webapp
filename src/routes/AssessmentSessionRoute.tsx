@@ -104,6 +104,24 @@ export const AssessmentSessionRoute = ({
     setGuestAssessmentId,
   ]);
 
+  // Handle Session Closed by Host
+  useEffect(() => {
+    if (guestSession.error === "The session was closed by the host.") {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete("s");
+      setSearchParams(newParams);
+      // We also strictly ensure our local state is cleared, though App.tsx handles onSessionClosed
+      setGuestHostId(null);
+      setGuestAssessmentId(null);
+    }
+  }, [
+    guestSession.error,
+    searchParams,
+    setSearchParams,
+    setGuestHostId,
+    setGuestAssessmentId,
+  ]);
+
   const handleCreateEvaluation = (ev: AssessorEvaluationState) => {
     onCreateEvaluation(ev);
     activeSession.sendUpdateEvaluation(ev);

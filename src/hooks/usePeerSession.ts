@@ -222,12 +222,11 @@ export const usePeerSession = ({
 
         case "SESSION_CLOSED":
           console.log("[Peer] Session closed by Host.");
+          setError("The session was closed by the host.");
           if (stateRef.current.onSessionClosed) {
             stateRef.current.onSessionClosed();
           }
           destroyPeer();
-          setError("The session was closed by the host.");
-          setStatus("disconnected");
           break;
       }
     },
