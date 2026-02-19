@@ -26,16 +26,16 @@ export const AssessmentEvaluationCard = ({
   return (
     <div
       onClick={handleCardClick}
-      className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between min-h-[220px]"
+      className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group min-h-[220px] flex flex-col"
     >
       <div>
-        <div className="flex items-start mb-4">
+        <div className="flex  justify-between items-start mb-4">
           <div className="flex gap-2">
             <div
-              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
+              className={`px-2 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
                 evalSession.status === "completed"
-                  ? "text-emerald-600 bg-emerald-50"
-                  : "text-amber-600 bg-amber-50"
+                  ? "border-emerald-100 text-emerald-600 bg-emerald-50"
+                  : "border-amber-100 text-amber-600 bg-amber-50"
               }`}
             >
               {evalSession.status === "completed" ? (
@@ -45,10 +45,10 @@ export const AssessmentEvaluationCard = ({
               )}
               {evalSession.status}
             </div>
-          </div>
-          <div className="px-2 py-1 rounded-md bg-slate-50 border border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 self-center">
-            <MessageSquareText size={12} />
-            Feedback
+            <div className="px-2 py-1 rounded-full bg-slate-50 border border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <MessageSquareText size={12} />
+              Feedback
+            </div>
           </div>
         </div>
 

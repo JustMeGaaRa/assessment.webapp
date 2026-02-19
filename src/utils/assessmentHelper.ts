@@ -6,6 +6,7 @@ import type {
   AssessorEvaluationModuleStatistics,
   AssessorModuleScores,
   AssessorTopicScore,
+  LevelMapping,
   ModuleState,
   ModuleSummaryBreakdown,
   ProfileState,
@@ -113,12 +114,16 @@ export class AssessmentHelper {
         ) / moduleStatistics.length,
       weight: moduleStatistics[0].weight,
       assessorEvaluationStatistics,
+      assessorNotes: {
+        [moduleId]: moduleStatistics.flatMap((evaluation) => evaluation.notes)
+      },
     };
   }
 
   public static calculateAssessmentStatistics(
     profile: ProfileState,
     modules: ModuleState[],
+    levelMappings: LevelMapping[] | undefined,
     assessment: AssessmentSummaryBreakdown,
   ): AssessmentStatistics {
     const profileModules = modules.filter((mod) => profile.weights[mod.id] > 0);
@@ -135,15 +140,26 @@ export class AssessmentHelper {
       {} as Record<string, AggregatedAssessorStatistics>,
     );
 
+    const factor = Math.pow(10, 2);
     const totalScore = Object.values(moduleScores).reduce(
       (total, moduleScore) => total + moduleScore.weightedScore,
       0,
     );
-    const factor = Math.pow(10, 2);
+    const totalScoreRounded = Math.ceil(totalScore * factor) / factor;
+
+    const calculateProficiencyLevel = (totalScore: number, levelMappings: LevelMapping[] | undefined)=> {
+      const mapping = levelMappings?.find(
+        (l) =>
+          totalScore >= l.minScore &&
+          totalScore < l.maxScore,
+      )
+    return mapping?.level
+  }
 
     return {
       assessmentId: assessment.assessmentId,
-      totalScore: Math.ceil(totalScore * factor) / factor,
+      totalScore: totalScoreRounded,
+      proficiencyLevel: calculateProficiencyLevel(totalScoreRounded, levelMappings),
       moduleStatistics: moduleScores,
     };
   }

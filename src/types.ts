@@ -85,6 +85,17 @@ export interface AssessorEvaluationScores {
 
 export interface AssessmentScores {
   assessmentId: string;
+  date: Date;
+  candidate: {
+    name: string;
+  };
+  profile: {
+    profileId: string;
+    title: string;
+  };
+  stack: {
+    name: string;
+  };
   evaluations: Record<string, AssessorEvaluationScores>;
 }
 
@@ -117,10 +128,12 @@ export interface AggregatedAssessorStatistics {
     string,
     AssessorEvaluationModuleStatistics
   >;
+  assessorNotes: Record<string, string[]>;
 }
 
 export interface AssessmentStatistics {
   assessmentId: string;
   totalScore: number;
+  proficiencyLevel?: string;
   moduleStatistics: Record<string, AggregatedAssessorStatistics>;
 }

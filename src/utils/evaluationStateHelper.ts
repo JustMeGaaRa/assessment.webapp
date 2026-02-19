@@ -1,4 +1,4 @@
-import type { AssessorEvaluationState, ModuleState } from "../types";
+import type { AssessmentSessionState, AssessorEvaluationState, ModuleState } from "../types";
 import type { AssessmentScores, AssessorEvaluationScores, AssessorModuleScores, AssessorTopicScore } from "../types";
 
 export class EvaluationStateHelper {
@@ -62,12 +62,23 @@ export class EvaluationStateHelper {
   }
   
   public static mapEvaluationStateToAssessmentFeedback(
-    assessmentId: string,
+    assessment: AssessmentSessionState,
     evaluations: AssessorEvaluationState[],
     matrix: ModuleState[],
   ): AssessmentScores {
     return {
-      assessmentId: assessmentId,
+      assessmentId: assessment.id,
+      date: new Date(assessment.date),
+      candidate: {
+        name: assessment.candidateName
+      },
+      profile: {
+        profileId: assessment.profileId,
+        title: assessment.profileTitle
+      },
+      stack: {
+        name: assessment.stack
+      },
       evaluations: evaluations.reduce(
         (ee, evaluation) => ({
           ...ee,

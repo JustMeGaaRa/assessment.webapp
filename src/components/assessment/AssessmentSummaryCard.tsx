@@ -1,13 +1,11 @@
 import {
   MessageSquareQuote,
-  TrendingUp,
   Calendar,
   Box,
   ShieldCheck,
 } from "lucide-react";
 
-import type { AssessmentScores, ModuleState, ProfileState, LevelMapping } from "../../types";
-import { AssessmentHelper } from "../../utils/assessmentHelper";
+import type { ModuleState, AssessmentStatistics, AssessmentScores } from "../../types";
 
 export interface Assessor {
   id: string;
@@ -18,39 +16,19 @@ export interface Assessor {
 }
 
 export const AssessmentSummaryCard = ({
-  candidate,
-  stack,
-  date,
   assessors,
-  assessment,
-  profile,
   matrix,
-  levelMappings,
+  assessment,
+  statistics
 }: {
-  candidate: string;
-  stack: string;
-  date: Date;
   assessors: Assessor[];
-  assessment: AssessmentScores;
-  profile: ProfileState;
   matrix: ModuleState[];
-  levelMappings?: LevelMapping[];
+  assessment: AssessmentScores;
+  statistics: AssessmentStatistics
 }) => {
-  // TODO: move state calculation outside of this component and just pass the result as props
-  const restructuredAssessment = AssessmentHelper.changeAssessmentStructure(
-    matrix,
-    profile,
-    assessment,
-  );
-  const assessmentSummary = AssessmentHelper.calculateAssessmentStatistics(
-    profile,
-    matrix,
-    restructuredAssessment,
-  );
-
   return (
     <div
-      key={assessmentSummary.assessmentId}
+      key={statistics.assessmentId}
       className="bg-white border border-slate-200 rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col h-full relative overflow-hidden"
     >
       {/* Background Accent */}
@@ -60,40 +38,36 @@ export const AssessmentSummaryCard = ({
       <div className="flex justify-between items-start mb-8 relative z-10">
         <div>
           <h2 className="text-4xl font-black text-slate-800 tracking-tight leading-none mb-4">
-            {candidate}
+            {assessment.candidate.name}
           </h2>
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-bold text-indigo-600 bg-indigo-50 w-fit px-3 py-1 rounded-lg">
               <ShieldCheck size={16} />
-              {levelMappings && levelMappings.length > 0 && assessmentSummary.totalScore > 0 && (
+              {statistics.proficiencyLevel && (
                 <>
                   <span>
-                    {levelMappings.find(
-                      (l) =>
-                        assessmentSummary.totalScore >= l.minScore &&
-                        assessmentSummary.totalScore < l.maxScore,
-                    )?.level || "Unknown Level"}
+                    {statistics?.proficiencyLevel}
                   </span>
                   <span className="w-1 h-1 rounded-full bg-indigo-400" />
                 </>
               )}
-              {profile.title}
+              {assessment.profile.title}
             </div>
             <div className="flex flex-wrap items-center gap-x-4 text-slate-400 text-xs font-bold uppercase tracking-widest">
               <span className="flex items-center gap-1.5">
                 <Box size={14} />
-                {stack}
+                {assessment.stack.name}
               </span>
               <span className="flex items-center gap-1.5">
                 <Calendar size={14} />
-                {date.toLocaleDateString()}
+                {assessment.date.toLocaleDateString()}
               </span>
             </div>
           </div>
         </div>
         <div className="text-right">
           <div className="text-5xl font-black text-indigo-600">
-            {assessmentSummary.totalScore.toFixed(1)}
+            {statistics.totalScore.toFixed(1)}
           </div>
           <div className="text-[10px] font-black uppercase text-slate-400 tracking-widest mt-1">
             Summary Score
@@ -123,16 +97,16 @@ export const AssessmentSummaryCard = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 items-start">
         {matrix.map((module) => {
           const averagePoints =
-            assessmentSummary.moduleStatistics[module.id].averageScore.toFixed(
+            statistics.moduleStatistics[module.id].averageScore.toFixed(
               1,
             );
-          const weight = assessmentSummary.moduleStatistics[module.id].weight;
+          const weight = statistics.moduleStatistics[module.id].weight;
           const weightedPoints =
-            assessmentSummary.moduleStatistics[module.id].weightedScore.toFixed(
+            statistics.moduleStatistics[module.id].weightedScore.toFixed(
               2,
             );
           const notes = Object.entries(
-            assessmentSummary.moduleStatistics[module.id]
+            statistics.moduleStatistics[module.id]
               .assessorEvaluationStatistics,
           )
             .filter(([, score]) => score.notes.length > 0)
@@ -176,7 +150,7 @@ export const AssessmentSummaryCard = ({
               <div className="space-y-4 mb-4">
                 {assessors.map((assessor) => {
                   const score =
-                    assessmentSummary.moduleStatistics[module.id]
+                    statistics.moduleStatistics[module.id]
                       ?.assessorEvaluationStatistics[assessor.id]
                       ?.averageScore ?? 0;
                   const percentage = (score / 5) * 100;
@@ -226,13 +200,6 @@ export const AssessmentSummaryCard = ({
             </div>
           );
         })}
-      </div>
-
-      <div className="mt-12 pt-8 border-t border-slate-100">
-        <button className="w-full py-4 bg-slate-900 hover:bg-black text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-3">
-          <TrendingUp size={16} />
-          Download Full Analytics Report
-        </button>
       </div>
     </div>
   );

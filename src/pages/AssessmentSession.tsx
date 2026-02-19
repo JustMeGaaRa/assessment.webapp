@@ -4,19 +4,21 @@ import { ArrowLeft, User, Lock, Unlock } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Modal } from "../components/ui/Modal";
 import type {
-  AssessmentScores,
   AssessmentSessionState,
   AssessorEvaluationState,
   ModuleState,
   ProfileState,
   LevelMapping,
+  AssessmentStatistics,
 } from "../types";
 import { importSessionFromJSON } from "../utils/fileHelpers";
 import { NewAssessmentCard } from "../components/dashboard/NewAssessmentCard";
 import { ImportAssessmentCard } from "../components/dashboard/ImportAssessmentCard";
 import { AssessmentEvaluationCard } from "../components/dashboard/AssessmentEvaluationCard";
 import { AssessmentSummaryCard } from "../components/assessment/AssessmentSummaryCard";
+import { AssessmentFeedback, type AssessmentFeedbackProps } from "../components/assessment/AssessmentFeedback";
 import { EvaluationStateHelper } from "../utils/evaluationStateHelper";
+import { AssessmentHelper } from "../utils/assessmentHelper";
 
 interface AssessmentSessionPageProps {
   assessment: AssessmentSessionState;
@@ -46,7 +48,6 @@ export const AssessmentSessionPage = ({
   const { assessmentId } = useParams();
   const navigate = useNavigate();
 
-  const candidateName = assessment?.candidateName || "Unknown Candidate";
   const isLocked = assessment?.locked || false;
   const colors = [
     {
@@ -87,12 +88,47 @@ export const AssessmentSessionPage = ({
     };
   });
 
-  const assessmentProps: AssessmentScores =
+  const assessmentSummary =
     EvaluationStateHelper.mapEvaluationStateToAssessmentFeedback(
-      assessment.id,
+      assessment,
       evaluations,
       matrix,
     );
+  const assessmentRestructured = AssessmentHelper.changeAssessmentStructure(
+    matrix,
+    profile,
+    assessmentSummary,
+  );
+  const assessmentStatistics = AssessmentHelper.calculateAssessmentStatistics(
+    profile,
+    matrix,
+    levelMappings,
+    assessmentRestructured,
+  );
+
+  const aggregateNotes = (modules: ModuleState[], stats: AssessmentStatistics) => {
+    return Object.entries(stats.moduleStatistics).reduce((acc, [moduleId, stats]) => {
+      const moduleNotes = {
+        module: modules.find(m => m.id === moduleId)?.title ?? "Unknown module",
+        notes: Object.entries(stats.assessorNotes ?? {})
+        .filter(([, notes]) => notes.length > 0)
+        .map(([, notes]) => notes.filter((note) => note !== "" && note !== undefined).join(". "))
+      }
+      return [...acc, moduleNotes];
+    }, [] as Array<{module: string, notes: string[]}>)
+  }
+
+  const assessmentDetails: AssessmentFeedbackProps = {
+    assessmentId: assessment.id,
+    assessmentDate: assessment.date,
+    candidateName: assessment.candidateName,
+    profileName: assessment.profileTitle,
+    technologyStack: assessment.stack,
+    summaryScore: assessmentStatistics.totalScore,
+    proficiencyLevel: assessmentStatistics.proficiencyLevel,
+    assessmentNotes: aggregateNotes(matrix, assessmentStatistics)
+  }
+  console.log(assessmentDetails);
 
   const handleToggleLock = () => {
     if (!assessment) return;
@@ -220,14 +256,14 @@ export const AssessmentSessionPage = ({
           <div className="grid grid-cols-1 gap-10 mb-10">
             <AssessmentSummaryCard
               key={assessment.id}
-              candidate={candidateName}
-              stack={assessment.stack}
-              date={new Date(assessment.date)}
               assessors={assessors}
-              assessment={assessmentProps}
-              profile={profile}
               matrix={matrix}
-              levelMappings={levelMappings}
+              assessment={assessmentSummary}
+              statistics={assessmentStatistics}
+            />
+
+            <AssessmentFeedback
+              {...assessmentDetails}
             />
           </div>
         )}
@@ -267,7 +303,7 @@ export const AssessmentSessionPage = ({
           <div className="space-y-4">
             <p className="text-slate-600">
               You are about to start a new evaluation for{" "}
-              <strong>{candidateName}</strong> as{" "}
+              <strong>{assessment.candidateName}</strong> as{" "}
               <strong>{assessorName || "Unknown Assessor"}</strong>.
             </p>
             <div className="flex justify-end gap-3">

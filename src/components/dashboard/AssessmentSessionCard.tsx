@@ -25,11 +25,11 @@ export const AssessmentSessionCard = ({
   const getStatusColor = (status: AssessorEvaluationState["status"]) => {
     switch (status) {
       case "completed":
-        return "text-emerald-600 bg-emerald-50";
+        return "border-emerald-100 text-emerald-600 bg-emerald-50";
       case "rejected":
-        return "text-red-600 bg-red-50";
+        return "border-red-100 text-red-600 bg-red-50";
       default:
-        return "text-amber-600 bg-amber-50";
+        return "border-amber-100 text-amber-600 bg-amber-50";
     }
   };
 
@@ -54,12 +54,12 @@ export const AssessmentSessionCard = ({
       <div className="flex justify-between items-start mb-4">
         <div className="flex gap-2">
           <div
-            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${getStatusColor(session.status)}`}
+            className={`px-2 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${getStatusColor(session.status)}`}
           >
             {getStatusIcon(session.status)}
             {session.status}
           </div>
-          <div className="px-2 py-1 rounded-md bg-slate-50 border border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <div className="px-2 py-1 rounded-full bg-slate-50 border border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
             <ClipboardList size={12} />
             Assessment
           </div>
