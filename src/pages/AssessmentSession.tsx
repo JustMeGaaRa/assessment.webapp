@@ -127,7 +127,6 @@ export const AssessmentSessionPage = ({
     proficiencyLevel: assessmentStatistics.proficiencyLevel,
     assessmentNotes: aggregateNotes(matrix, assessmentStatistics)
   }
-  console.log(assessmentDetails);
 
   const handleToggleLock = () => {
     if (!assessment) return;
