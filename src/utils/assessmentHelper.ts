@@ -98,7 +98,7 @@ export class AssessmentHelper {
       {} as Record<string, AssessorEvaluationModuleStatistics>,
     );
 
-    const moduleStatistics = Object.values(assessorEvaluationStatistics);
+    const moduleStatistics = Object.values(assessorEvaluationStatistics) ?? [];
 
     return {
       moduleId,
@@ -112,7 +112,7 @@ export class AssessmentHelper {
           (total, evaluation) => total + evaluation.weightedScore,
           0,
         ) / moduleStatistics.length,
-      weight: moduleStatistics[0].weight,
+      weight: moduleStatistics ? moduleStatistics[0]?.weight : 0,
       assessorEvaluationStatistics,
       assessorNotes: {
         [moduleId]: moduleStatistics.flatMap((evaluation) => evaluation.notes)

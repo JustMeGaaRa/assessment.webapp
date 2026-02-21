@@ -1,5 +1,6 @@
 import type { ModuleState } from "../../types";
 import { LibraryModuleTopic } from "./LibraryModuleTopic";
+import { Card } from "../ui/Card";
 
 interface LibraryModuleProps {
   module: ModuleState;
@@ -8,19 +9,17 @@ interface LibraryModuleProps {
 
 export const LibraryModule = ({ module, activeStack }: LibraryModuleProps) => {
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-      <div className="px-4 py-3 md:px-6 md:py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+    <Card>
+      <Card.Header border className="px-4 py-3 md:px-6 md:py-4 bg-slate-50 flex justify-between items-center">
         <div>
           <h3 className="text-lg font-bold text-slate-800">{module.title}</h3>
-          <p className="text-xs text-slate-500 font-medium">
-            {module.description}
-          </p>
+          <p className="text-xs text-slate-500 font-medium">{module.description}</p>
         </div>
         <div className="text-[10px] font-black uppercase tracking-widest text-indigo-500 bg-indigo-50 px-2 py-1 rounded">
           {module.topics.length} Topics
         </div>
-      </div>
-      <div className="overflow-x-auto">
+      </Card.Header>
+      <Card.Body className="p-0 overflow-x-auto">
         <table className="w-full text-left">
           <thead>
             <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
@@ -43,7 +42,7 @@ export const LibraryModule = ({ module, activeStack }: LibraryModuleProps) => {
             ))}
           </tbody>
         </table>
-      </div>
-    </div>
+      </Card.Body>
+    </Card>
   );
 };

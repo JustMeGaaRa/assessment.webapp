@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, User, Lock, Unlock } from "lucide-react";
+import { ArrowLeft, Lock, Plus, Unlock, Upload, User } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 import { Modal } from "../components/ui/Modal";
 import type {
@@ -12,8 +12,7 @@ import type {
   AssessmentStatistics,
 } from "../types";
 import { importSessionFromJSON } from "../utils/fileHelpers";
-import { NewAssessmentCard } from "../components/dashboard/NewAssessmentCard";
-import { ImportAssessmentCard } from "../components/dashboard/ImportAssessmentCard";
+import { ActionCard } from "../components/dashboard/ActionCard";
 import { AssessmentEvaluationCard } from "../components/dashboard/AssessmentEvaluationCard";
 import { AssessmentSummaryCard } from "../components/assessment/AssessmentSummaryCard";
 import { AssessmentFeedback, type AssessmentFeedbackProps } from "../components/assessment/AssessmentFeedback";
@@ -128,7 +127,6 @@ export const AssessmentSessionPage = ({
     proficiencyLevel: assessmentStatistics.proficiencyLevel,
     assessmentNotes: aggregateNotes(matrix, assessmentStatistics)
   }
-  console.log(assessmentDetails);
 
   const handleToggleLock = () => {
     if (!assessment) return;
@@ -271,16 +269,23 @@ export const AssessmentSessionPage = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {!isLocked && (
             <>
-              <NewAssessmentCard
+              <ActionCard
+                icon={<Plus size={24} />}
                 title="Add Evaluation"
                 description="Create new feedback"
                 onClick={() => setIsAddModalOpen(true)}
               />
 
-              <ImportAssessmentCard
+              <ActionCard
+                icon={<Upload size={24} />}
                 title="Import Evaluation"
                 description="Load feedback from JSON"
-                onImport={handleImportJSON}
+                variant="emerald"
+                fileInput={{
+                  id: "import-eval-input",
+                  accept: ".json",
+                  onChange: handleImportJSON,
+                }}
               />
             </>
           )}

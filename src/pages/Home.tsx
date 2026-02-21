@@ -13,9 +13,9 @@ import type {
 import { ImportForm } from "../components/home/ImportForm";
 import { SessionForm } from "../components/home/SessionForm";
 import { AssessmentSessionCard } from "../components/dashboard/AssessmentSessionCard";
-import { NewAssessmentCard } from "../components/dashboard/NewAssessmentCard";
+import { ActionCard } from "../components/dashboard/ActionCard";
 import { Modal } from "../components/ui/Modal";
-import { Box, Library, UploadCloud } from "lucide-react";
+import { Box, Library, Plus, UploadCloud } from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
 
 interface HomePageProps {
@@ -589,7 +589,8 @@ export const HomePage = ({
                 Recent Assessments
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <NewAssessmentCard
+                <ActionCard
+                  icon={<Plus size={24} />}
                   title="New Assessment"
                   description="Start a new evaluation session for a candidate"
                   onClick={handleOpenSessionModal}
