@@ -1,6 +1,8 @@
 import { ChevronRight } from "lucide-react";
 import type { ModuleState } from "../../types";
 import { AssessmentTopic } from "./AssessmentTopic";
+import { Card } from "../ui/Card";
+import { ProgressBar } from "../ui/ProgressBar";
 
 export interface AssessmentModuleStats {
   moduleId: string;
@@ -35,8 +37,9 @@ export const AssessmentModule = ({
 }: AssessmentModuleProps) => {
   const percentage =
     stats?.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200">
+    <Card className="transition-all duration-200">
       {/* Module Header */}
       <div
         className={`p-4 md:p-5 flex items-start md:items-center gap-3 md:gap-4 cursor-pointer select-none hover:bg-slate-50 transition-colors ${
@@ -69,34 +72,8 @@ export const AssessmentModule = ({
         </div>
 
         {stats && (
-          <div className="flex flex-col items-end gap-1 flex-shrink-0">
-            <span
-              className={`text-sm font-bold ${
-                (percentage ?? 0) === 0 ? "text-slate-400" : ""
-              }`}
-              style={
-                (percentage ?? 0) > 0
-                  ? {
-                      color: `hsl(${Math.round(
-                        ((percentage ?? 0) * 120) / 100,
-                      )}, 70%, 45%)`,
-                    }
-                  : undefined
-              }
-            >
-              {percentage ?? 0}%
-            </span>
-            <div className="w-16 md:w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-              <div
-                className="h-full transition-all duration-500"
-                style={{
-                  width: `${percentage ?? 0}%`,
-                  backgroundColor: `hsl(${Math.round(
-                    ((percentage ?? 0) * 120) / 100,
-                  )}, 70%, 50%)`,
-                }}
-              />
-            </div>
+          <div className="flex-shrink-0">
+            <ProgressBar value={percentage} showLabel className="w-16 md:w-20" />
           </div>
         )}
       </div>
@@ -124,6 +101,6 @@ export const AssessmentModule = ({
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 };

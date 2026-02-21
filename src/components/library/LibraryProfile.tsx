@@ -1,5 +1,7 @@
 import { Settings2 } from "lucide-react";
 import type { ModuleState, ProfileState } from "../../types";
+import { Card } from "../ui/Card";
+import { ProgressBar } from "../ui/ProgressBar";
 
 interface LibraryProfileProps {
   profile: ProfileState;
@@ -8,21 +10,18 @@ interface LibraryProfileProps {
 
 export const LibraryProfile = ({ profile, matrix }: LibraryProfileProps) => {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="p-6 border-b border-slate-100">
+    <Card>
+      <Card.Header border>
         <div className="flex justify-between items-start mb-4">
-          <div
-            className={`px-2 py-1 rounded text-[10px] font-bold uppercase bg-blue-100 text-blue-700`}
-          >
+          <div className="px-2 py-1 rounded text-[10px] font-bold uppercase bg-blue-100 text-blue-700">
             {profile.stack} Stack
           </div>
           <Settings2 size={18} className="text-slate-300" />
         </div>
-
         <h3 className="text-xl font-bold text-slate-800">{profile.title}</h3>
         <p className="text-slate-500 text-sm">{profile.description}</p>
-      </div>
-      <div className="p-6">
+      </Card.Header>
+      <Card.Body>
         <h4 className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-4">
           Module Weight Distribution
         </h4>
@@ -41,17 +40,12 @@ export const LibraryProfile = ({ profile, matrix }: LibraryProfileProps) => {
                       {weight as number}%
                     </span>
                   </div>
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full bg-indigo-500`}
-                      style={{ width: `${weight as number}%` }}
-                    />
-                  </div>
+                  <ProgressBar value={weight as number} fillClassName="bg-indigo-500" />
                 </div>
               );
             })}
         </div>
-      </div>
-    </div>
+      </Card.Body>
+    </Card>
   );
 };
