@@ -18,7 +18,12 @@ export const AssessmentSessionCard = ({
   return (
     <Card
       hoverable
-      onClick={() => navigate(`/assessment/${session.assessmentId ?? session.id}`)}
+      onClick={() => {
+        const url = `/assessment/${session.assessmentId ?? session.id}${
+          session.hostId ? `?s=${session.hostId}` : ""
+        }`;
+        navigate(url);
+      }}
       className="min-h-[220px] flex flex-col"
     >
       <Card.Header>

@@ -7,6 +7,7 @@ import {
   Download,
   FileSpreadsheet,
   RotateCcw,
+  Lock,
 } from "lucide-react";
 import type {
   ModuleState,
@@ -29,6 +30,7 @@ interface AssessorEvaluationPageProps {
   modules: ModuleState[];
   profile: ProfileState;
   onUpdate: (data: Partial<AssessorEvaluationState>) => void;
+  isLocked?: boolean;
 }
 
 export const AssessorEvaluationPage = ({
@@ -36,6 +38,7 @@ export const AssessorEvaluationPage = ({
   modules,
   profile,
   onUpdate,
+  isLocked = false,
 }: AssessorEvaluationPageProps) => {
   const navigate = useNavigate();
 
@@ -52,18 +55,21 @@ export const AssessorEvaluationPage = ({
   };
 
   const handleScore = (topicId: string, score: number) => {
+    if (isLocked) return;
     onUpdate({
       scores: { ...evaluation.scores, [topicId]: score },
     });
   };
 
   const handleNote = (topicId: string, note: string) => {
+    if (isLocked) return;
     onUpdate({
       notes: { ...evaluation.notes, [topicId]: note },
     });
   };
 
   const resetAssessment = () => {
+    if (isLocked) return;
     if (window.confirm("Are you sure you want to clear all scores?")) {
       onUpdate({
         scores: {},
@@ -73,6 +79,7 @@ export const AssessorEvaluationPage = ({
   };
 
   const finishAssessment = () => {
+    if (isLocked) return;
     if (window.confirm("Mark this assessment as completed?")) {
       onUpdate({
         status: "completed",
@@ -119,6 +126,11 @@ export const AssessorEvaluationPage = ({
     ),
   };
 
+  const isReadOnly =
+    isLocked ||
+    evaluation.status === "completed" ||
+    evaluation.status === "rejected";
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8 pb-32 md:pb-40">
       <div className="max-w-7xl mx-auto">
@@ -135,6 +147,17 @@ export const AssessorEvaluationPage = ({
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
+            {/* Lock Indicator */}
+            {isLocked && (
+              <div
+                className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold shadow-sm"
+                title="You cannot edit this evaluation."
+              >
+                <Lock size={14} />
+                <span>Read Only</span>
+              </div>
+            )}
+
             {/* JSON Export */}
             <div className="flex gap-1 items-center bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
               <button
@@ -170,9 +193,19 @@ export const AssessorEvaluationPage = ({
           </div>
         </div>
         <PageHeader
-          icon={<FileText className="text-indigo-600 w-8 h-8" />}
+          icon={
+            isLocked ? (
+              <Lock className="text-amber-500 w-8 h-8" />
+            ) : (
+              <FileText className="text-indigo-600 w-8 h-8" />
+            )
+          }
           title="Assessment Evaluation"
-          description="Evaluate candidate technical competencies."
+          description={
+            isLocked
+              ? "Viewing peer assessment (Read Only)"
+              : "Evaluate candidate technical competencies."
+          }
         />
 
         <AssessmentEvaluationStats
@@ -208,68 +241,67 @@ export const AssessorEvaluationPage = ({
                 notes={evaluation.notes}
                 onScore={handleScore}
                 onNote={handleNote}
-                isReadOnly={
-                  evaluation.status === "completed" ||
-                  evaluation.status === "rejected"
-                }
+                isReadOnly={isReadOnly}
               />
             );
           })}
         </div>
 
-        {/* Action Bar - Floating */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-8 pointer-events-none">
-          <div className="max-w-7xl mx-auto pointer-events-auto">
-            <footer className="flex justify-between p-6 bg-slate-800 rounded-2xl text-white shadow-2xl border border-slate-700/50 backdrop-blur-sm bg-slate-800/95">
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-3">
-                  <p className="text-slate-400 text-sm font-medium">
-                    Final Evaluation Status
-                  </p>
+        {/* Action Bar - Floating - Only show if NOT locked, or maybe show simplified view? */}
+        {!isLocked && (
+          <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-8 pointer-events-none">
+            <div className="max-w-7xl mx-auto pointer-events-auto">
+              <footer className="flex justify-between p-6 bg-slate-800 rounded-2xl text-white shadow-2xl border border-slate-700/50 backdrop-blur-sm bg-slate-800/95">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-3">
+                    <p className="text-slate-400 text-sm font-medium">
+                      Final Evaluation Status
+                    </p>
+                  </div>
+                  <h3 className="text-xl font-bold">
+                    {evaluationStats.completedTopics ===
+                    evaluationStats.totalTopics
+                      ? "Assessment Ready for Submission"
+                      : `${
+                          evaluationStats.totalTopics -
+                          evaluationStats.completedTopics
+                        } Topics Remaining`}
+                  </h3>
                 </div>
-                <h3 className="text-xl font-bold">
-                  {evaluationStats.completedTopics ===
-                  evaluationStats.totalTopics
-                    ? "Assessment Ready for Submission"
-                    : `${
-                        evaluationStats.totalTopics -
-                        evaluationStats.completedTopics
-                      } Topics Remaining`}
-                </h3>
-              </div>
-              <div className="flex gap-3">
-                <button
-                  disabled={
-                    evaluation.status === "completed" ||
-                    evaluation.status === "rejected"
-                  }
-                  onClick={resetAssessment}
-                  className="px-4 py-3 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-slate-200 rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100 border border-slate-600 flex items-center gap-2"
-                  title="Reset Assessment"
-                >
-                  <RotateCcw size={18} />
-                  <span className="hidden sm:inline">Reset</span>
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    disabled={
+                      evaluation.status === "completed" ||
+                      evaluation.status === "rejected"
+                    }
+                    onClick={resetAssessment}
+                    className="px-4 py-3 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-slate-200 rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100 border border-slate-600 flex items-center gap-2"
+                    title="Reset Assessment"
+                  >
+                    <RotateCcw size={18} />
+                    <span className="hidden sm:inline">Reset</span>
+                  </button>
 
-                <button
-                  disabled={
-                    evaluation.status === "completed" ||
-                    evaluation.status === "rejected"
-                  }
-                  onClick={finishAssessment}
-                  className="px-4 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100 flex items-center gap-2"
-                >
-                  <CheckCircle size={20} />
-                  <span className="hidden sm:inline">
-                    {evaluation.status === "completed"
-                      ? "Completed"
-                      : "Complete"}
-                  </span>
-                </button>
-              </div>
-            </footer>
+                  <button
+                    disabled={
+                      evaluation.status === "completed" ||
+                      evaluation.status === "rejected"
+                    }
+                    onClick={finishAssessment}
+                    className="px-4 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100 flex items-center gap-2"
+                  >
+                    <CheckCircle size={20} />
+                    <span className="hidden sm:inline">
+                      {evaluation.status === "completed"
+                        ? "Completed"
+                        : "Complete"}
+                    </span>
+                  </button>
+                </div>
+              </footer>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

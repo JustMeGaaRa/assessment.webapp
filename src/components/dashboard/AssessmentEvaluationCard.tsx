@@ -51,7 +51,7 @@ export const AssessmentEvaluationCard = ({
         <Card.Footer className="flex justify-between items-center">
           <span className="text-xs font-bold text-slate-400 uppercase">Score</span>
           <span className="text-xl font-black text-indigo-600">
-            {evalSession.finalScore.toFixed(1)}
+            {evalSession.finalScore?.toFixed(1)}
           </span>
         </Card.Footer>
       )}

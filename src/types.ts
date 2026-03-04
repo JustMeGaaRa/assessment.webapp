@@ -63,6 +63,7 @@ export interface AssessorEvaluationState {
   scores: Record<string, number>; // { topicId, score }
   notes: Record<string, string>; // { topicId, note }
   finalScore?: number;
+  hostId?: string; // Optional: Link to host if this is a guest view
 }
 
 // types that represent assessor scoring hierarchy
