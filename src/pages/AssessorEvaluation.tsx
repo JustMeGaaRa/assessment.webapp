@@ -5,7 +5,6 @@ import {
   Library,
   ArrowLeft,
   Download,
-  FileSpreadsheet,
   RotateCcw,
   Lock,
 } from "lucide-react";
@@ -18,10 +17,7 @@ import { AssessmentEvaluationStats } from "../components/assessment/AssessmentSt
 import { AssessmentModule } from "../components/assessment/AssessmentModule";
 import { PageHeader } from "../components/ui/PageHeader";
 import { useNavigate } from "react-router-dom";
-import {
-  exportSessionToJSON,
-  exportAssessmentToCSV,
-} from "../utils/fileHelpers";
+import { exportSessionToJSON } from "../utils/fileHelpers";
 import { AssessmentHelper } from "../utils/assessmentHelper";
 import { EvaluationStateHelper } from "../utils/evaluationStateHelper";
 
@@ -93,11 +89,6 @@ export const AssessorEvaluationPage = ({
     exportSessionToJSON(evaluation);
   };
 
-  // --- CSV Handlers ---
-  const handleExportCSV = () => {
-    exportAssessmentToCSV(evaluation, modules);
-  };
-
   // Calculations
   const getScoredTopicsInModule = (module: ModuleState) => {
     return module.topics.filter((topic) => evaluation.scores[topic.id] > 0)
@@ -167,18 +158,6 @@ export const AssessorEvaluationPage = ({
               >
                 <Download size={14} />
                 <span className="hidden sm:inline">JSON Export</span>
-              </button>
-            </div>
-
-            {/* CSV Export */}
-            <div className="flex gap-1 items-center bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
-              <button
-                onClick={handleExportCSV}
-                className="flex items-center gap-2 px-3 py-1.5 text-slate-600 font-bold hover:text-emerald-600 transition-all text-xs"
-                title="Export Scores CSV"
-              >
-                <FileSpreadsheet size={14} />
-                <span className="hidden sm:inline">CSV Export</span>
               </button>
             </div>
 

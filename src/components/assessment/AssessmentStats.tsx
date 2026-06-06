@@ -79,7 +79,7 @@ export const AssessmentEvaluationStats = ({
       </div>
 
       {/* Desktop/Tablet View: Grid */}
-      <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+      <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 mb-8">
         {statItems.map((item, index) => (
           <StatCard
             key={index}

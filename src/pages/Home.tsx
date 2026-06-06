@@ -15,8 +15,18 @@ import { SessionForm } from "../components/home/SessionForm";
 import { AssessmentSessionCard } from "../components/dashboard/AssessmentSessionCard";
 import { ActionCard } from "../components/dashboard/ActionCard";
 import { Modal } from "../components/ui/Modal";
-import { Box, Library, Plus, UploadCloud } from "lucide-react";
+import {
+  Box,
+  Library,
+  Plus,
+  UploadCloud,
+  Search,
+  X,
+  ArrowUpNarrowWide,
+  ArrowDownNarrowWide,
+} from "lucide-react";
 import { PageHeader } from "../components/ui/PageHeader";
+import { FilterChip } from "../components/ui/FilterChip";
 
 interface HomePageProps {
   assessments: AssessmentSessionState[];
@@ -104,15 +114,139 @@ export const HomePage = ({
     levelMappings?: LevelMapping[];
   } | null>(null);
 
-  const currentStacks = parsedContext
-    ? parsedContext.stacks
-    : existingStacks;
+  const currentStacks = parsedContext ? parsedContext.stacks : existingStacks;
   const currentProfiles = parsedContext
     ? parsedContext.profiles
     : existingProfiles;
 
   const currentLevelMappings =
     parsedContext?.levelMappings ?? existingLevelMappings;
+
+  // Filter States
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedProfiles, setSelectedProfiles] = useState<string[]>([]);
+  const [selectedStacks, setSelectedStacks] = useState<string[]>([]);
+
+  // Sort States
+  const [sortBy, setSortBy] = useState<"date" | "name">("date");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setSelectedProfiles([]);
+    setSelectedStacks([]);
+    setSortBy("date");
+    setSortOrder("desc");
+  };
+
+  const hasActiveFilters =
+    searchTerm !== "" ||
+    selectedProfiles.length > 0 ||
+    selectedStacks.length > 0 ||
+    sortBy !== "date" ||
+    sortOrder !== "desc";
+
+  // Toggle helpers
+  const toggleProfile = (profileId: string) => {
+    setSelectedProfiles((prev) =>
+      prev.includes(profileId)
+        ? prev.filter((id) => id !== profileId)
+        : [...prev, profileId],
+    );
+  };
+
+  const toggleStack = (stack: string) => {
+    setSelectedStacks((prev) =>
+      prev.includes(stack) ? prev.filter((s) => s !== stack) : [...prev, stack],
+    );
+  };
+
+  // Get dynamic counts for pills
+  const getProfileCount = (profileId: string) => {
+    return assessments
+      .filter((a) => a.id !== hostedSessionId)
+      .filter((a) => {
+        const matchesName = a.candidateName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const matchesStack =
+          selectedStacks.length === 0 || selectedStacks.includes(a.stack);
+        return matchesName && matchesStack && a.profileId === profileId;
+      }).length;
+  };
+
+  const getStackCount = (stack: string) => {
+    return assessments
+      .filter((a) => a.id !== hostedSessionId)
+      .filter((a) => {
+        const matchesName = a.candidateName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const matchesProfile =
+          selectedProfiles.length === 0 ||
+          selectedProfiles.includes(a.profileId);
+        return matchesName && matchesProfile && a.stack === stack;
+      }).length;
+  };
+
+  // Build a list of all chips (profiles and stacks combined) and sort them by overall count (popularity)
+  const unifiedChips = [
+    ...currentProfiles.map((p) => {
+      const totalCount = assessments.filter(
+        (a) => a.id !== hostedSessionId && a.profileId === p.id,
+      ).length;
+      return {
+        type: "profile" as const,
+        id: p.id,
+        label: p.title,
+        popularity: totalCount,
+      };
+    }),
+    ...currentStacks.map((s) => {
+      const totalCount = assessments.filter(
+        (a) => a.id !== hostedSessionId && a.stack === s,
+      ).length;
+      return {
+        type: "stack" as const,
+        id: s,
+        label: s,
+        popularity: totalCount,
+      };
+    }),
+  ].sort(
+    (a, b) => b.popularity - a.popularity || a.label.localeCompare(b.label),
+  );
+
+  // Filter assessments based on search criteria
+  const filteredAssessments = assessments
+    .filter((a) => a.id !== hostedSessionId)
+    .filter((assessment) => {
+      const matchesName = assessment.candidateName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesProfile =
+        selectedProfiles.length === 0 ||
+        selectedProfiles.includes(assessment.profileId);
+      const matchesStack =
+        selectedStacks.length === 0 ||
+        selectedStacks.includes(assessment.stack);
+      return matchesName && matchesProfile && matchesStack;
+    });
+
+  // Sort assessments
+  const sortedAssessments = [...filteredAssessments].sort((a, b) => {
+    let comparison = 0;
+    if (sortBy === "name") {
+      comparison = a.candidateName.localeCompare(b.candidateName);
+    } else if (sortBy === "date") {
+      comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+    }
+    return sortOrder === "asc" ? comparison : -comparison;
+  });
+
+  const displayAssessments = hasActiveFilters
+    ? sortedAssessments
+    : sortedAssessments.slice(0, 10);
 
   // Form State
   const [name, setNameInput] = useState("");
@@ -362,14 +496,14 @@ export const HomePage = ({
     // If we don't have data, input is required (must be done).
     // Note: Modules and Level Mappings are technically optional in the parser but if we want to enforce structure:
     // Profiles and Topics are usually required for a valid assessment.
-    
+
     const profValid = hasProfiles
       ? profStatus === "idle" || profStatus === "done"
       : profStatus === "done";
     const topValid = hasTopics
       ? topStatus === "idle" || topStatus === "done"
       : topStatus === "done";
-    
+
     // Modules/Levels always optional effectively, but let's stick to pattern
     const modValid = modStatus === "idle" || modStatus === "done";
     const levelValid = levelStatus === "idle" || levelStatus === "done";
@@ -419,7 +553,7 @@ export const HomePage = ({
           // so handleImportComplete does not trigger onDataLoad (unless we want to support "reset"?)
           // actually, logic is: if parsedContext is null, we don't update data.
           // So doing nothing is fine.
-          
+
           // But wait! If I uploaded a file then removed it (back to idle), filesToRead is empty.
           // parsedContext should be cleared or reset?
           setParsedContext(null);
@@ -428,13 +562,15 @@ export const HomePage = ({
 
         try {
           const data = parseAssessmentData(filesToRead);
-          
+
           if (hasData) {
-              if (data.matrix.length === 0) data.matrix = existingMatrix;
-              if (data.profiles.length === 0) data.profiles = existingProfiles;
-              // Stacks is a Record. Check if keys exist.
-              if (Object.keys(data.stacks).length === 0) data.stacks = existingStacks;
-              if (!data.levelMappings || data.levelMappings.length === 0) data.levelMappings = existingLevelMappings;
+            if (data.matrix.length === 0) data.matrix = existingMatrix;
+            if (data.profiles.length === 0) data.profiles = existingProfiles;
+            // Stacks is a Record. Check if keys exist.
+            if (Object.keys(data.stacks).length === 0)
+              data.stacks = existingStacks;
+            if (!data.levelMappings || data.levelMappings.length === 0)
+              data.levelMappings = existingLevelMappings;
           }
 
           setParsedContext(data);
@@ -459,7 +595,7 @@ export const HomePage = ({
     existingStacks,
     existingLevelMappings,
     hasProfiles,
-    hasTopics
+    hasTopics,
   ]);
 
   const handleStart = (e: React.FormEvent) => {
@@ -640,9 +776,126 @@ export const HomePage = ({
                 </div>
               )}
 
-              <h2 className="text-2xl font-bold text-slate-800 mb-6">
-                Recent Assessments
-              </h2>
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+                <div>
+                  <h2 className="flex items-center gap-2 text-2xl font-bold text-slate-800">
+                    <span>Recent Assessments</span>
+                  </h2>
+                  <p className="text-sm text-slate-500 mt-1">
+                    All candidate evaluation sessions
+                  </p>
+                </div>
+              </div>
+
+              {/* Filter and Controls Suite */}
+              <div className="flex flex-col gap-4 mb-8">
+                {/* Search & Sort controls row */}
+                <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+                  {/* Name Search */}
+                  <div className="flex-1 relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <input
+                      type="text"
+                      placeholder="Search candidate by name..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm("")}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Sort Controls */}
+                  <div className="flex items-center justify-end gap-3 shrink-0">
+                    {hasActiveFilters && (
+                      <button
+                        onClick={handleClearFilters}
+                        className="text-sm text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1 transition-colors cursor-pointer mr-1"
+                      >
+                        <X size={16} />
+                        Clear Filters
+                      </button>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-slate-500 font-medium select-none">
+                        Sort by
+                      </span>
+                      <div className="relative">
+                        <select
+                          value={sortBy}
+                          onChange={(e) =>
+                            setSortBy(e.target.value as "date" | "name")
+                          }
+                          className="bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer appearance-none"
+                          style={{
+                            backgroundImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E")`,
+                            backgroundPosition: "right 0.5rem center",
+                            backgroundSize: "1rem",
+                            backgroundRepeat: "no-repeat",
+                          }}
+                        >
+                          <option value="date">Date Added</option>
+                          <option value="name">Candidate Name</option>
+                        </select>
+                      </div>
+
+                      <button
+                        onClick={() =>
+                          setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                        }
+                        title={
+                          sortOrder === "asc"
+                            ? "Sort Ascending"
+                            : "Sort Descending"
+                        }
+                        className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 transition-all cursor-pointer flex items-center justify-center shadow-sm"
+                      >
+                        {sortOrder === "asc" ? (
+                          <ArrowUpNarrowWide className="w-5 h-5" />
+                        ) : (
+                          <ArrowDownNarrowWide className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Unified scrollable Tag Chips (Profiles & Tech Stacks) */}
+                <div className="flex flex-row gap-2 overflow-x-auto pb-2 scrollbar-none">
+                  {unifiedChips.map((chip) => {
+                    const isProfile = chip.type === "profile";
+                    const isSelected = isProfile
+                      ? selectedProfiles.includes(chip.id)
+                      : selectedStacks.includes(chip.id);
+
+                    const count = isProfile
+                      ? getProfileCount(chip.id)
+                      : getStackCount(chip.id);
+
+                    return (
+                      <FilterChip
+                        key={`${chip.type}-${chip.id}`}
+                        label={chip.label}
+                        isSelected={isSelected}
+                        onClick={() =>
+                          isProfile
+                            ? toggleProfile(chip.id)
+                            : toggleStack(chip.id)
+                        }
+                        count={count}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <ActionCard
                   icon={<Plus size={24} />}
@@ -650,59 +903,70 @@ export const HomePage = ({
                   description="Start a new evaluation session for a candidate"
                   onClick={handleOpenSessionModal}
                 />
-                {assessments
-                  .filter((a) => a.id !== hostedSessionId)
-                  .slice(0, 10)
-                  .map((assessment) => {
-                    // Find evaluations for this assessment to compute status/score
-                    const relatedEvals = evaluations.filter(
-                      (e) => e.assessmentId === assessment.id,
-                    );
-                    const completed = relatedEvals.filter(
-                      (e) => e.status === "completed",
-                    );
-                    const isCompleted =
-                      relatedEvals.length > 0 &&
-                      relatedEvals.every((e) => e.status === "completed");
-                    // Compute average score
-                    const totalScore = completed.reduce(
-                      (acc, curr) => acc + (curr.finalScore || 0),
-                      0,
-                    );
-                    const avgScore =
-                      completed.length > 0
-                        ? totalScore / completed.length
-                        : undefined;
+                {displayAssessments.map((assessment) => {
+                  // Find evaluations for this assessment to compute status/score
+                  const relatedEvals = evaluations.filter(
+                    (e) => e.assessmentId === assessment.id,
+                  );
+                  const completed = relatedEvals.filter(
+                    (e) => e.status === "completed",
+                  );
+                  const isCompleted =
+                    relatedEvals.length > 0 &&
+                    relatedEvals.every((e) => e.status === "completed");
+                  // Compute average score
+                  const totalScore = completed.reduce(
+                    (acc, curr) => acc + (curr.finalScore || 0),
+                    0,
+                  );
+                  const avgScore =
+                    completed.length > 0
+                      ? totalScore / completed.length
+                      : undefined;
 
-                    // Construct a display object compatible with AssessmentSessionCard
-                    // We treat 'locked' as a pseudo-status or just use ongoing/completed
-                    const displaySession: AssessorEvaluationState = {
-                      id: assessment.id, // Use Group ID as ID for navigation
-                      assessmentId: assessment.id, // It IS the assessment
-                      candidateName: assessment.candidateName,
-                      profileTitle: assessment.profileTitle,
-                      profileId: assessment.profileId,
-                      stack: assessment.stack,
-                      date: assessment.date,
-                      status: assessment.locked
+                  // Construct a display object compatible with AssessmentSessionCard
+                  // We treat 'locked' as a pseudo-status or just use ongoing/completed
+                  const displaySession: AssessorEvaluationState = {
+                    id: assessment.id, // Use Group ID as ID for navigation
+                    assessmentId: assessment.id, // It IS the assessment
+                    candidateName: assessment.candidateName,
+                    profileTitle: assessment.profileTitle,
+                    profileId: assessment.profileId,
+                    stack: assessment.stack,
+                    date: assessment.date,
+                    status: assessment.locked
+                      ? "completed"
+                      : isCompleted
                         ? "completed"
-                        : isCompleted
-                          ? "completed"
-                          : "ongoing",
-                      scores: {},
-                      notes: {},
-                      finalScore: avgScore,
-                      assessorName: "Group", // Placeholder
-                    };
+                        : "ongoing",
+                    scores: {},
+                    notes: {},
+                    finalScore: avgScore,
+                    assessorName: "Group", // Placeholder
+                  };
 
-                    return (
-                      <AssessmentSessionCard
-                        key={assessment.id}
-                        session={displaySession}
-                        levelMappings={currentLevelMappings}
-                      />
-                    );
-                  })}
+                  return (
+                    <AssessmentSessionCard
+                      key={assessment.id}
+                      session={displaySession}
+                      levelMappings={currentLevelMappings}
+                    />
+                  );
+                })}
+                {hasActiveFilters && displayAssessments.length === 0 && (
+                  <div className="col-span-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-8 text-center flex flex-col items-center justify-center">
+                    <Search className="text-slate-300 w-12 h-12 mb-3" />
+                    <p className="text-slate-500 font-medium">
+                      No assessments match your filters
+                    </p>
+                    <button
+                      onClick={handleClearFilters}
+                      className="mt-3 text-sm text-indigo-600 hover:text-indigo-800 font-semibold underline"
+                    >
+                      Clear all filters
+                    </button>
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -733,7 +997,9 @@ export const HomePage = ({
       <Modal
         isOpen={isImportModalOpen}
         onClose={() => hasData && setManualImportOpen(false)}
-        title={hasData ? "Configuration & Data Import" : "Import Assessment Data"}
+        title={
+          hasData ? "Configuration & Data Import" : "Import Assessment Data"
+        }
       >
         <ImportForm
           hasProfiles={hasProfiles}
