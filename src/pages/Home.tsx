@@ -312,8 +312,6 @@ export const HomePage = ({
                 displayAssessments={filters.displayAssessments}
                 evaluations={evaluations}
                 currentLevelMappings={currentLevelMappings}
-                hasActiveFilters={filters.hasActiveFilters}
-                handleClearFilters={filters.handleClearFilters}
                 handleOpenSessionModal={handleOpenSessionModal}
               />
             </>
