@@ -134,7 +134,7 @@ export const AssessorEvaluationPage = ({
               <div className="p-1 rounded-full group-hover:bg-slate-100 transition-colors">
                 <ArrowLeft size={20} />
               </div>
-              <span>Back to Assessment</span>
+              <span className="hidden sm:inline">Back to Assessment</span>
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -167,7 +167,7 @@ export const AssessorEvaluationPage = ({
               className="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:text-indigo-600 transition-all text-sm"
             >
               <Library size={18} />
-              <span>View Library</span>
+              <span className="hidden sm:inline">View Library</span>
             </button>
           </div>
         </div>

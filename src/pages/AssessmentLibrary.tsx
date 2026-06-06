@@ -42,7 +42,7 @@ export const AssessmentLibraryPage = ({
             <div className="p-1 rounded-full group-hover:bg-slate-100 transition-colors">
               <ArrowLeft size={20} />
             </div>
-            <span>Back to Dashboard</span>
+            <span className="hidden sm:inline">Back to Dashboard</span>
           </button>
         </div>
         <PageHeader
