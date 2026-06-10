@@ -1,6 +1,7 @@
 import type { LevelMapping } from "../../types";
 import { TrendingUp, TrendingDown, Award } from "lucide-react";
 import { Card } from "../ui/Card";
+import { scoreStyles } from "./skillScoresData";
 
 interface LibraryLevelsProps {
   levelMappings: LevelMapping[];
@@ -24,48 +25,79 @@ export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {sortedMappings.map((mapping, index) => (
-        <Card hoverable key={index} className="relative group">
-          <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500 rounded-l-2xl group-hover:bg-indigo-600 transition-colors" />
-          <Card.Body>
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-xl font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">
-                  {mapping.level}
-                </h3>
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                  Proficiency Level
-                </span>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
-                <Award size={20} />
-              </div>
-            </div>
+      {sortedMappings.map((mapping, index) => {
+        // Map index to a score style (1 to 5) for consistent colors
+        const styleIndex = (index % 5) + 1;
+        const style = scoreStyles[styleIndex] || scoreStyles[1];
 
-            <div className="flex items-center gap-4 mt-4 bg-slate-50 rounded-xl p-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 text-slate-500 text-sm mb-1">
-                  <TrendingDown size={14} />
-                  <span>Min Score</span>
+        return (
+          <Card
+            key={index}
+            hoverable
+            className={`relative flex flex-col h-full border transition-all duration-300 group ${style.border} ${style.shadow}`}
+          >
+            {/* Top Accent Gradient Bar */}
+            <div
+              className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${style.gradient}`}
+            />
+
+            <Card.Body className="flex flex-col flex-1">
+              {/* Header Section */}
+              <div className="flex justify-between items-start gap-4 mb-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span
+                      className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${style.badge}`}
+                    >
+                      Tier {index + 1}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-800 group-hover:text-slate-900 transition-colors truncate">
+                    {mapping.level}
+                  </h3>
                 </div>
-                <div className="text-2xl font-black text-slate-700">
-                  {mapping.minScore}
+                <div
+                  className={`w-10 h-10 rounded-xl bg-gradient-to-br ${style.gradient} flex items-center justify-center text-white shadow-sm transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}
+                >
+                  <Award size={20} />
                 </div>
               </div>
-              <div className="w-px h-10 bg-slate-200" />
-              <div className="flex-1 text-right">
-                <div className="flex items-center justify-end gap-2 text-slate-500 text-sm mb-1">
-                  <span>Max Score</span>
-                  <TrendingUp size={14} />
+
+              {/* Description Placeholder / Label */}
+              <p className="text-slate-500 text-sm mb-6 leading-relaxed">
+                Candidate score profile required to reach {mapping.level} level.
+              </p>
+
+              {/* Divider */}
+              <div className="border-t border-slate-100 my-4" />
+
+              {/* Scores Range Panel */}
+              <div className="flex items-center gap-4 bg-slate-50/50 rounded-xl p-4 border border-slate-100">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+                    <TrendingDown size={12} className={style.text} />
+                    <span>Min Score</span>
+                  </div>
+                  <div className="text-2xl font-black text-slate-700">
+                    {mapping.minScore}
+                  </div>
                 </div>
-                <div className="text-2xl font-black text-slate-700">
-                  {mapping.maxScore}
+                <div className="w-px h-10 bg-slate-200" />
+                <div className="flex-1 text-right">
+                  <div className="flex items-center justify-end gap-2 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">
+                    <span>Max Score</span>
+                    <TrendingUp size={12} className={style.text} />
+                  </div>
+                  <div className="text-2xl font-black text-slate-700">
+                    {mapping.maxScore}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card.Body>
-        </Card>
-      ))}
+            </Card.Body>
+          </Card>
+        );
+      })}
     </div>
   );
 };
+

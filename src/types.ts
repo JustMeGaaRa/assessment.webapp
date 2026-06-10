@@ -138,3 +138,11 @@ export interface AssessmentStatistics {
   proficiencyLevel?: string;
   moduleStatistics: Record<string, AggregatedAssessorStatistics>;
 }
+
+export interface SkillScore {
+  score: number;
+  label: string;
+  description: string;
+  criteria: string;
+}
+

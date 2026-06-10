@@ -1,8 +1,8 @@
-import { Box, Users, BarChart } from "lucide-react";
+import { Box, Users, BarChart, Award } from "lucide-react";
 
 interface LibraryTabsProps {
-  activeTab: "modules" | "profiles" | "levels";
-  onTabChange: (tab: "modules" | "profiles" | "levels") => void;
+  activeTab: "modules" | "profiles" | "levels" | "skills";
+  onTabChange: (tab: "modules" | "profiles" | "levels" | "skills") => void;
 }
 
 export const LibraryTabs = ({ activeTab, onTabChange }: LibraryTabsProps) => {
@@ -47,9 +47,24 @@ export const LibraryTabs = ({ activeTab, onTabChange }: LibraryTabsProps) => {
         }`}
       >
         <div className="flex items-center gap-2">
-          <BarChart size={18} /> Level Scores
+          <BarChart size={18} /> Proficiency Levels
         </div>
         {activeTab === "levels" && (
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-600 rounded-t-full" />
+        )}
+      </button>
+      <button
+        onClick={() => onTabChange("skills")}
+        className={`pb-4 px-2 text-sm font-bold transition-colors relative whitespace-nowrap ${
+          activeTab === "skills"
+            ? "text-indigo-600"
+            : "text-slate-400 hover:text-slate-600"
+        }`}
+      >
+        <div className="flex items-center gap-2">
+          <Award size={18} /> Skill Scores
+        </div>
+        {activeTab === "skills" && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-600 rounded-t-full" />
         )}
       </button>

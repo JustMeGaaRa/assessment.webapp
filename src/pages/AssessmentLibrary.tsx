@@ -5,6 +5,7 @@ import { LibraryTabs } from "../components/library/LibraryTabs";
 import { LibraryModule } from "../components/library/LibraryModule";
 import { LibraryProfile } from "../components/library/LibraryProfile";
 import { LibraryLevels } from "../components/library/LibraryLevels";
+import { LibrarySkillScores } from "../components/library/LibrarySkillScores";
 import { PageHeader } from "../components/ui/PageHeader";
 import { FilterChip } from "../components/ui/FilterChip";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +28,7 @@ export const AssessmentLibraryPage = ({
   const [activeStack, setActiveStack] = useState(
     stacks.length > 0 ? stacks[0] : "",
   );
-  const [activeTab, setActiveTab] = useState<"modules" | "profiles" | "levels">(
+  const [activeTab, setActiveTab] = useState<"modules" | "profiles" | "levels" | "skills">(
     "modules",
   );
 
@@ -101,8 +102,10 @@ export const AssessmentLibraryPage = ({
                 />
               ))}
           </div>
-        ) : (
+        ) : activeTab === "levels" ? (
           <LibraryLevels levelMappings={levelMappings} />
+        ) : (
+          <LibrarySkillScores />
         )}
       </div>
     </div>

@@ -7,6 +7,9 @@ import {
   Download,
   RotateCcw,
   Lock,
+  Info,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import type {
   ModuleState,
@@ -20,6 +23,11 @@ import { useNavigate } from "react-router-dom";
 import { exportSessionToJSON } from "../utils/fileHelpers";
 import { AssessmentHelper } from "../utils/assessmentHelper";
 import { EvaluationStateHelper } from "../utils/evaluationStateHelper";
+import {
+  dummySkillScores,
+  scoreStyles,
+} from "../components/library/skillScoresData";
+
 
 interface AssessorEvaluationPageProps {
   evaluation: AssessorEvaluationState;
@@ -42,6 +50,7 @@ export const AssessorEvaluationPage = ({
   const [expandedModules, setExpandedModules] = useState<Set<string>>(() => {
     return modules.length > 0 ? new Set([modules[0].id]) : new Set();
   });
+  const [showReference, setShowReference] = useState(true);
 
   const toggleModule = (id: string) => {
     const newSet = new Set(expandedModules);
@@ -195,6 +204,61 @@ export const AssessorEvaluationPage = ({
           stack={evaluation.stack}
           stats={evaluationStats}
         />
+
+        {/* Skill Score Reference Rubric */}
+        <div className="mb-6 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden transition-all duration-300">
+          <button
+            onClick={() => setShowReference(!showReference)}
+            className="w-full flex justify-between items-center p-4 hover:bg-slate-50/50 transition-colors text-left"
+          >
+            <div className="flex items-center gap-2">
+              <Info size={18} className="text-indigo-600" />
+              <span className="font-bold text-sm text-slate-700">
+                Evaluation Rubric Reference
+              </span>
+            </div>
+            <div className="flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors">
+              <span>{showReference ? "Hide Reference" : "Show Reference"}</span>
+              {showReference ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </div>
+          </button>
+
+          {showReference && (
+            <div className="p-4 pt-0 border-t border-slate-100 bg-slate-50/30">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mt-4">
+                {dummySkillScores.map((skill) => {
+                  const style = scoreStyles[skill.score] || scoreStyles[1];
+                  const Icon = style.icon;
+                  return (
+                    <div
+                      key={skill.score}
+                      className="border border-slate-100 rounded-xl p-3 bg-white flex flex-col relative overflow-hidden shadow-xs hover:shadow-sm transition-all group"
+                    >
+                      {/* Top Accent Gradient Bar */}
+                      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${style.gradient}`} />
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className={`text-[9px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 ${style.badge}`}>
+                            {skill.score}
+                          </span>
+                          <span className="font-bold text-slate-800 text-xs truncate">
+                            {skill.label}
+                          </span>
+                        </div>
+                        <span className={`${style.text} opacity-60 group-hover:opacity-100 transition-opacity`}>
+                          <Icon size={12} />
+                        </span>
+                      </div>
+                      <p className="text-slate-500 text-[11px] leading-relaxed">
+                        {skill.description}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Modules List */}
         <div className="space-y-4">
