@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Peer, { type DataConnection } from "peerjs";
-import type { AssessorEvaluationState, AssessmentSessionState } from "../types";
+import type { AssessorFeedbackState, AssessmentSessionState } from "../types";
 
 export type PeerMessage =
   | { type: "SYNC_REQUEST" }
@@ -8,7 +8,7 @@ export type PeerMessage =
       type: "SYNC_RESPONSE";
       payload: {
         assessment: AssessmentSessionState;
-        evaluations: AssessorEvaluationState[];
+        evaluations: AssessorFeedbackState[];
         matrix: ModuleState[];
         profiles: ProfileState[];
         stacks: string[];
@@ -16,7 +16,7 @@ export type PeerMessage =
     }
   | {
       type: "UPDATE_EVALUATION";
-      payload: AssessorEvaluationState;
+      payload: AssessorFeedbackState;
     }
   | {
       type: "UPDATE_ASSESSMENT";
@@ -41,18 +41,18 @@ interface UsePeerSessionProps {
   assessmentId?: string;
   assessorName: string;
   currentAssessment?: AssessmentSessionState;
-  currentEvaluations?: AssessorEvaluationState[];
+  currentEvaluations?: AssessorFeedbackState[];
   currentMatrix?: ModuleState[];
   currentProfiles?: ProfileState[];
   currentStacks?: string[];
   onSyncReceived: (
     assessment: AssessmentSessionState,
-    evaluations: AssessorEvaluationState[],
+    evaluations: AssessorFeedbackState[],
     matrix: ModuleState[],
     profiles: ProfileState[],
     stacks: string[],
   ) => void;
-  onEvaluationReceived: (evaluation: AssessorEvaluationState) => void;
+  onEvaluationReceived: (evaluation: AssessorFeedbackState) => void;
   onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => void;
   onSessionClosed?: () => void;
 }
@@ -455,7 +455,7 @@ export const usePeerSession = ({
   }, []);
 
   const sendUpdateEvaluation = useCallback(
-    (evaluation: AssessorEvaluationState) => {
+    (evaluation: AssessorFeedbackState) => {
       broadcast({ type: "UPDATE_EVALUATION", payload: evaluation });
     },
     [broadcast],

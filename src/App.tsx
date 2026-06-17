@@ -9,7 +9,7 @@ import { AssessmentSessionRoute } from "./routes/AssessmentSessionRoute";
 import type {
   ModuleState,
   ProfileState,
-  AssessorEvaluationState,
+  AssessorFeedbackState,
   AssessmentSessionState,
 } from "./types";
 
@@ -50,11 +50,11 @@ const App = () => {
     currentStacks: stacks,
     onSyncReceived: (
       _a: AssessmentSessionState,
-      evaluations: AssessorEvaluationState[],
+      evaluations: AssessorFeedbackState[],
     ) => {
       evaluations.forEach((ev) => createEvaluation(ev));
     },
-    onEvaluationReceived: (ev: AssessorEvaluationState) => createEvaluation(ev),
+    onEvaluationReceived: (ev: AssessorFeedbackState) => createEvaluation(ev),
     onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => {
       if (hostedSessionId) updateAssessment(hostedSessionId, update);
     },
@@ -68,7 +68,7 @@ const App = () => {
     assessorName,
     onSyncReceived: (
       syncedAssessment: AssessmentSessionState,
-      syncedEvaluations: AssessorEvaluationState[],
+      syncedEvaluations: AssessorFeedbackState[],
       syncedMatrix: ModuleState[],
       syncedProfiles: ProfileState[],
       syncedStacks: string[],
@@ -84,7 +84,7 @@ const App = () => {
       }
       syncedEvaluations.forEach((ev) => createEvaluation(ev));
     },
-    onEvaluationReceived: (ev: AssessorEvaluationState) => createEvaluation(ev),
+    onEvaluationReceived: (ev: AssessorFeedbackState) => createEvaluation(ev),
     onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => {
       if (update.id) {
         updateAssessment(update.id, update);

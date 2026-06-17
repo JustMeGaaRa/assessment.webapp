@@ -20,7 +20,7 @@ export interface ProfileState {
   weights: Record<string, number>;
 }
 
-export interface LevelMapping {
+export interface ProficiencyLevel {
   level: string;
   minScore: number;
   maxScore: number;
@@ -30,7 +30,7 @@ export interface AppDataState {
   matrix: ModuleState[];
   profiles: ProfileState[];
   stacks: string[];
-  levelMappings?: LevelMapping[];
+  levelMappings?: ProficiencyLevel[];
 }
 
 export type FileStatus = "idle" | "uploading" | "parsing" | "done" | "error";
@@ -47,7 +47,7 @@ export interface AssessmentSessionState {
 }
 
 // WARNING: do not change, this is used to load state from localStorage
-export interface AssessorEvaluationState {
+export interface AssessorFeedbackState {
   id: string; // Evaluation ID
   assessmentId: string; // Link to AssessmentSession
   assessorName?: string; // Optional if not set yet
@@ -145,4 +145,3 @@ export interface SkillScore {
   description: string;
   criteria: string;
 }
-

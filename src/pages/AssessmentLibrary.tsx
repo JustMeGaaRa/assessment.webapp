@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, Book } from "lucide-react";
-import type { ModuleState, ProfileState, LevelMapping } from "../types";
+import type { ModuleState, ProfileState, ProficiencyLevel } from "../types";
 import { LibraryTabs } from "../components/library/LibraryTabs";
 import { LibraryModule } from "../components/library/LibraryModule";
 import { LibraryProfile } from "../components/library/LibraryProfile";
@@ -14,7 +14,7 @@ interface AssessmentLibraryPageProps {
   matrix: ModuleState[];
   profiles: ProfileState[];
   stacks: string[];
-  levelMappings?: LevelMapping[];
+  levelMappings?: ProficiencyLevel[];
 }
 
 export const AssessmentLibraryPage = ({
@@ -28,9 +28,9 @@ export const AssessmentLibraryPage = ({
   const [activeStack, setActiveStack] = useState(
     stacks.length > 0 ? stacks[0] : "",
   );
-  const [activeTab, setActiveTab] = useState<"modules" | "profiles" | "levels" | "skills">(
-    "modules",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "modules" | "profiles" | "levels" | "skills"
+  >("modules");
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8">

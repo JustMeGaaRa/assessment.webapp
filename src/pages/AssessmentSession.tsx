@@ -13,17 +13,20 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { Modal } from "../components/ui/Modal";
 import type {
   AssessmentSessionState,
-  AssessorEvaluationState,
+  AssessorFeedbackState,
   ModuleState,
   ProfileState,
-  LevelMapping,
-  AssessmentStatistics,
+  ProficiencyLevel,
 } from "../types";
+import type { ConsolidatedAssessmentSummary } from "../../lib/types";
 import { importSessionFromJSON } from "../utils/fileHelpers";
 import { ActionCard } from "../components/dashboard/ActionCard";
 import { AssessmentEvaluationCard } from "../components/dashboard/AssessmentEvaluationCard";
 import { AssessmentSummaryCard } from "../components/assessment/AssessmentSummaryCard";
-import { AssessmentFeedback, type AssessmentFeedbackProps } from "../components/assessment/AssessmentFeedback";
+import {
+  AssessmentFeedback,
+  type AssessmentFeedbackProps,
+} from "../components/assessment/AssessmentFeedback";
 import { EvaluationStateHelper } from "../utils/evaluationStateHelper";
 import { AssessmentHelper } from "../utils/assessmentHelper";
 import type { PeerSessionState } from "../hooks/usePeerSession";
@@ -31,7 +34,7 @@ import { SessionConnectionBar } from "../components/assessment/SessionConnection
 
 interface AssessmentSessionPageProps {
   assessment?: AssessmentSessionState;
-  evaluations: AssessorEvaluationState[];
+  evaluations: AssessorFeedbackState[];
   matrix: ModuleState[];
   profile?: ProfileState;
   assessorName: string;
@@ -43,9 +46,9 @@ interface AssessmentSessionPageProps {
   isHost: boolean;
   hostPeerId?: string; // The ID to share (if Host) or the ID to join (if Guest)
 
-  levelMappings?: LevelMapping[];
+  levelMappings?: ProficiencyLevel[];
   onCreateAssessment: (assessment: AssessmentSessionState) => void;
-  onCreateEvaluation: (session: AssessorEvaluationState) => void;
+  onCreateEvaluation: (session: AssessorFeedbackState) => void;
   onUpdateAssessment: (
     id: string,
     data: Partial<AssessmentSessionState>,
@@ -186,28 +189,40 @@ export const AssessmentSessionPage = ({
     assessmentRestructured,
   );
 
-  const aggregateNotes = (modules: ModuleState[], stats: AssessmentStatistics) => {
-    return Object.entries(stats.moduleStatistics).reduce((acc, [moduleId, stats]) => {
-      const moduleNotes = {
-        module: modules.find(m => m.id === moduleId)?.title ?? "Unknown module",
+  const consolidatedAssessmentSummary: ConsolidatedAssessmentSummary = {
+    details: {
+      date: new Date(assessment.date),
+      candidate: assessment.candidateName,
+      profile: assessment.profileTitle,
+      stack: assessment.stack,
+    },
+    modules: matrix.map((module) => {
+      const stats = assessmentStatistics.moduleStatistics[module.id];
+      return {
+        moduleName: module.title,
+        weightedScore: stats.weightedScore,
+        weight: stats.weight,
         notes: Object.entries(stats.assessorNotes ?? {})
-        .filter(([, notes]) => notes.length > 0)
-        .map(([, notes]) => notes.filter((note) => note !== "" && note !== undefined).join(". "))
-      }
-      return [...acc, moduleNotes];
-    }, [] as Array<{module: string, notes: string[]}>)
-  }
+          .filter(([, notes]) => notes.length > 0)
+          .map(([, notes]) =>
+            notes
+              .filter((note) => note !== "" && note !== undefined)
+              .join(". "),
+          ),
+      };
+    }),
+    summary: {
+      proficiencyLevel: assessmentStatistics.proficiencyLevel ?? "",
+      totalScore: assessmentStatistics.totalScore,
+    },
+  };
 
+  // TODO: use AssessmentSession type as input
   const assessmentDetails: AssessmentFeedbackProps = {
-    assessmentId: assessment.id,
-    assessmentDate: assessment.date,
-    candidateName: assessment.candidateName,
-    profileName: assessment.profileTitle,
-    technologyStack: assessment.stack,
-    summaryScore: assessmentStatistics.totalScore,
-    proficiencyLevel: assessmentStatistics.proficiencyLevel,
-    assessmentNotes: aggregateNotes(matrix, assessmentStatistics)
-  }
+    summary: consolidatedAssessmentSummary,
+  };
+
+  console.log(assessmentDetails);
 
   const handleAddEvaluation = (e: React.FormEvent) => {
     e.preventDefault();
@@ -223,7 +238,7 @@ export const AssessmentSessionPage = ({
     }
 
     const newEvaluationId = crypto.randomUUID();
-    const newEvaluation: AssessorEvaluationState = {
+    const newEvaluation: AssessorFeedbackState = {
       id: newEvaluationId,
       assessmentId: assessment.id,
       candidateName: assessment.candidateName,
@@ -250,7 +265,7 @@ export const AssessmentSessionPage = ({
     importSessionFromJSON(file)
       .then((importedSession) => {
         // Ensure imported session links to this assessment
-        const newSession: AssessorEvaluationState = {
+        const newSession: AssessorFeedbackState = {
           ...importedSession,
           id: crypto.randomUUID(),
           assessmentId: assessmentId || "",
@@ -328,9 +343,7 @@ export const AssessmentSessionPage = ({
               statistics={assessmentStatistics}
             />
 
-            <AssessmentFeedback
-              {...assessmentDetails}
-            />
+            <AssessmentFeedback {...assessmentDetails} />
           </div>
         )}
 

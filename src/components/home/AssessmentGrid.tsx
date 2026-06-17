@@ -1,16 +1,16 @@
 import { Plus } from "lucide-react";
 import type {
   AssessmentSessionState,
-  AssessorEvaluationState,
-  LevelMapping,
+  AssessorFeedbackState,
+  ProficiencyLevel,
 } from "../../types";
 import { ActionCard } from "../dashboard/ActionCard";
 import { AssessmentSessionCard } from "../dashboard/AssessmentSessionCard";
 
 interface AssessmentGridProps {
   displayAssessments: AssessmentSessionState[];
-  evaluations: AssessorEvaluationState[];
-  currentLevelMappings: LevelMapping[];
+  evaluations: AssessorFeedbackState[];
+  currentLevelMappings: ProficiencyLevel[];
   handleOpenSessionModal: () => void;
 }
 
@@ -47,7 +47,7 @@ export const AssessmentGrid = ({
 
         // Construct a display object compatible with AssessmentSessionCard
         // We treat 'locked' as a pseudo-status or just use ongoing/completed
-        const displaySession: AssessorEvaluationState = {
+        const displaySession: AssessorFeedbackState = {
           id: assessment.id, // Use Group ID as ID for navigation
           assessmentId: assessment.id, // It IS the assessment
           candidateName: assessment.candidateName,

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import type {
   ModuleState,
   ProfileState,
-  LevelMapping,
+  ProficiencyLevel,
   FileStatus,
 } from "../types";
 import { parseAssessmentData, validateCsvContent } from "../utils/csvHelpers";
@@ -14,7 +14,7 @@ interface UseConfigImportProps {
   existingMatrix: ModuleState[];
   existingProfiles: ProfileState[];
   existingStacks: string[];
-  existingLevelMappings: LevelMapping[];
+  existingLevelMappings: ProficiencyLevel[];
 }
 
 export const useConfigImport = ({
@@ -59,7 +59,7 @@ export const useConfigImport = ({
     matrix: ModuleState[];
     profiles: ProfileState[];
     stacks: string[];
-    levelMappings?: LevelMapping[];
+    levelMappings?: ProficiencyLevel[];
   } | null>(null);
 
   const processFile = async (
@@ -68,7 +68,7 @@ export const useConfigImport = ({
     type: "profiles" | "topics" | "modules" | "levels",
     setStatus: (s: FileStatus) => void,
     setProgress: (p: number) => void,
-    setError: (e: string | null) => void
+    setError: (e: string | null) => void,
   ) => {
     if (!file && !url) return;
     setStatus("uploading");
@@ -127,7 +127,7 @@ export const useConfigImport = ({
         "profiles",
         setProfStatus,
         setProfProgress,
-        setProfError
+        setProfError,
       );
     }
   };
@@ -144,7 +144,7 @@ export const useConfigImport = ({
         "profiles",
         setProfStatus,
         setProfProgress,
-        setProfError
+        setProfError,
       );
     }
   };
@@ -161,7 +161,7 @@ export const useConfigImport = ({
         "topics",
         setTopStatus,
         setTopProgress,
-        setTopError
+        setTopError,
       );
     }
   };
@@ -178,7 +178,7 @@ export const useConfigImport = ({
         "topics",
         setTopStatus,
         setTopProgress,
-        setTopError
+        setTopError,
       );
     }
   };
@@ -195,7 +195,7 @@ export const useConfigImport = ({
         "modules",
         setModStatus,
         setModProgress,
-        setModError
+        setModError,
       );
     }
   };
@@ -212,7 +212,7 @@ export const useConfigImport = ({
         "modules",
         setModStatus,
         setModProgress,
-        setModError
+        setModError,
       );
     }
   };
@@ -229,7 +229,7 @@ export const useConfigImport = ({
         "levels",
         setLevelStatus,
         setLevelProgress,
-        setLevelError
+        setLevelError,
       );
     }
   };
@@ -246,7 +246,7 @@ export const useConfigImport = ({
         "levels",
         setLevelStatus,
         setLevelProgress,
-        setLevelError
+        setLevelError,
       );
     }
   };

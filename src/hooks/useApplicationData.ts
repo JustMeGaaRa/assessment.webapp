@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import type {
   AssessmentSessionState,
-  AssessorEvaluationState,
-  LevelMapping,
+  AssessorFeedbackState,
+  ProficiencyLevel,
   ModuleState,
   ProfileState,
 } from "../types";
@@ -29,7 +29,7 @@ export const useApplicationData = () => {
     return saved ? Object.values(JSON.parse(saved).stacks) : [];
   });
 
-  const [levelMappings, setLevelMappings] = useState<LevelMapping[]>(() => {
+  const [levelMappings, setLevelMappings] = useState<ProficiencyLevel[]>(() => {
     const saved = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
     return saved ? JSON.parse(saved).levelMappings || [] : [];
   });
@@ -57,7 +57,7 @@ export const useApplicationData = () => {
   }, [assessments]);
 
   // Assessment Evaluations State
-  const [evaluations, setEvaluations] = useState<AssessorEvaluationState[]>(
+  const [evaluations, setEvaluations] = useState<AssessorFeedbackState[]>(
     () => {
       const saved = localStorage.getItem(ASSESSOR_EVALUATIONS_KEY);
       return saved ? JSON.parse(saved) : [];
@@ -82,7 +82,7 @@ export const useApplicationData = () => {
     m: ModuleState[],
     p: ProfileState[],
     s: string[],
-    l?: LevelMapping[],
+    l?: ProficiencyLevel[],
   ) => {
     setMatrix(m);
     setProfiles(p);
@@ -90,7 +90,12 @@ export const useApplicationData = () => {
     if (l) setLevelMappings(l);
     localStorage.setItem(
       ASSESSMENT_LIBRARY_KEY,
-      JSON.stringify({ matrix: m, profiles: p, stacks: s, levelMappings: l || levelMappings }),
+      JSON.stringify({
+        matrix: m,
+        profiles: p,
+        stacks: s,
+        levelMappings: l || levelMappings,
+      }),
     );
   };
 
@@ -103,7 +108,7 @@ export const useApplicationData = () => {
     });
   };
 
-  const createEvaluation = (evaluation: AssessorEvaluationState) => {
+  const createEvaluation = (evaluation: AssessorFeedbackState) => {
     setEvaluations((prev) => {
       if (prev.some((e) => e.id === evaluation.id)) {
         return prev.map((e) => (e.id === evaluation.id ? evaluation : e));
@@ -127,7 +132,7 @@ export const useApplicationData = () => {
 
   const updateEvaluation = (
     evaluationId: string,
-    evaluationUpdate: Partial<AssessorEvaluationState>,
+    evaluationUpdate: Partial<AssessorFeedbackState>,
   ) => {
     setEvaluations((prev) =>
       prev.map((evaluation) =>
@@ -162,7 +167,8 @@ export const useApplicationData = () => {
     setMatrix(data.library.matrix);
     setProfiles(data.library.profiles);
     setStacks(data.library.stacks);
-    if (data.library.levelMappings) setLevelMappings(data.library.levelMappings);
+    if (data.library.levelMappings)
+      setLevelMappings(data.library.levelMappings);
     setAssessments(data.assessments);
     setEvaluations(data.evaluations);
     setAssessorName(data.assessorName || "");

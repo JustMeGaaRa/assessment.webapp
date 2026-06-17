@@ -1,10 +1,19 @@
-import type { AssessmentSessionState, AssessorEvaluationState, ModuleState } from "../types";
-import type { AssessmentScores, AssessorEvaluationScores, AssessorModuleScores, AssessorTopicScore } from "../types";
+import type {
+  AssessmentSessionState,
+  AssessorFeedbackState,
+  ModuleState,
+} from "../types";
+import type {
+  AssessmentScores,
+  AssessorEvaluationScores,
+  AssessorModuleScores,
+  AssessorTopicScore,
+} from "../types";
 
 export class EvaluationStateHelper {
   public static mapEvaluationToModuleScore(
     modules: ModuleState[],
-    evaluation: AssessorEvaluationState,
+    evaluation: AssessorFeedbackState,
   ) {
     return modules.reduce(
       (acc, module) => ({
@@ -25,15 +34,12 @@ export class EvaluationStateHelper {
           ),
         },
       }),
-      {} as Record<
-        string,
-        AssessorModuleScores
-      >,
+      {} as Record<string, AssessorModuleScores>,
     );
   }
-  
+
   public static mapEvaluationStateToAssessorScore(
-    evaluation: AssessorEvaluationState,
+    evaluation: AssessorFeedbackState,
     matrix: ModuleState[],
   ): AssessorEvaluationScores {
     return {
@@ -60,29 +66,32 @@ export class EvaluationStateHelper {
       ),
     };
   }
-  
+
   public static mapEvaluationStateToAssessmentFeedback(
     assessment: AssessmentSessionState,
-    evaluations: AssessorEvaluationState[],
+    evaluations: AssessorFeedbackState[],
     matrix: ModuleState[],
   ): AssessmentScores {
     return {
       assessmentId: assessment.id,
       date: new Date(assessment.date),
       candidate: {
-        name: assessment.candidateName
+        name: assessment.candidateName,
       },
       profile: {
         profileId: assessment.profileId,
-        title: assessment.profileTitle
+        title: assessment.profileTitle,
       },
       stack: {
-        name: assessment.stack
+        name: assessment.stack,
       },
       evaluations: evaluations.reduce(
         (ee, evaluation) => ({
           ...ee,
-          [evaluation.id]: this.mapEvaluationStateToAssessorScore(evaluation, matrix),
+          [evaluation.id]: this.mapEvaluationStateToAssessorScore(
+            evaluation,
+            matrix,
+          ),
         }),
         {},
       ),

@@ -4,15 +4,15 @@ import { type PeerSessionState } from "../hooks/usePeerSession";
 import { AssessmentSessionPage } from "../pages/AssessmentSession";
 import type {
   AssessmentSessionState,
-  AssessorEvaluationState,
-  LevelMapping,
+  AssessorFeedbackState,
+  ProficiencyLevel,
   ModuleState,
   ProfileState,
 } from "../types";
 
 interface AssessmentSessionRouteProps {
   assessments: AssessmentSessionState[];
-  evaluations: AssessorEvaluationState[];
+  evaluations: AssessorFeedbackState[];
   matrix: ModuleState[];
   profiles: ProfileState[];
   assessorName: string;
@@ -26,9 +26,9 @@ interface AssessmentSessionRouteProps {
   guestSession: PeerSessionState;
   setGuestAssessmentId: (id: string | null) => void;
 
-  levelMappings?: LevelMapping[];
+  levelMappings?: ProficiencyLevel[];
   onCreateAssessment: (assessment: AssessmentSessionState) => void;
-  onCreateEvaluation: (evaluation: AssessorEvaluationState) => void;
+  onCreateEvaluation: (evaluation: AssessorFeedbackState) => void;
   onUpdateAssessment: (
     id: string,
     data: Partial<AssessmentSessionState>,
@@ -125,7 +125,7 @@ export const AssessmentSessionRoute = ({
     setGuestAssessmentId,
   ]);
 
-  const handleCreateEvaluation = (ev: AssessorEvaluationState) => {
+  const handleCreateEvaluation = (ev: AssessorFeedbackState) => {
     onCreateEvaluation(ev);
     activeSession.sendUpdateEvaluation(ev);
   };

@@ -2,19 +2,19 @@ import { Navigate, useParams } from "react-router-dom";
 import { AssessorEvaluationPage } from "../pages/AssessorEvaluation";
 import type { PeerSessionState } from "../hooks/usePeerSession";
 import type {
-  AssessorEvaluationState,
+  AssessorFeedbackState,
   ModuleState,
   ProfileState,
 } from "../types";
 
 export interface AssessmentEvaluationRouteProps {
-  evaluations: AssessorEvaluationState[];
+  evaluations: AssessorFeedbackState[];
   matrix: ModuleState[];
   profiles: ProfileState[];
   assessorName: string;
   onUpdateEvaluation: (
     id: string,
-    data: Partial<AssessorEvaluationState>,
+    data: Partial<AssessorFeedbackState>,
   ) => void;
   activeSession?: PeerSessionState;
 }
@@ -56,7 +56,7 @@ export const AssessmentEvaluationRoute = ({
   const isLocked = isSessionActive && !isMyEvaluation;
 
   // We also need to send updates if session is active
-  const handleUpdate = (data: Partial<AssessorEvaluationState>) => {
+  const handleUpdate = (data: Partial<AssessorFeedbackState>) => {
     onUpdateEvaluation(evaluation.id, data);
     if (activeSession?.status === "connected") {
       activeSession.sendUpdateEvaluation({ ...evaluation, ...data });

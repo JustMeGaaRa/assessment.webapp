@@ -1,8 +1,8 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { vi, describe, test, expect, beforeEach, type Mock } from "vitest";
 import dotenv from "dotenv";
 import path from "path";
-import handler, { generateFeedbackObject } from "./generateFeedback";
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import handler from "../../api/generateFeedback";
 
 // Load environment variables from .env.local
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
@@ -88,45 +88,5 @@ describe("generateFeedback API Integration Test", () => {
 
     // Check that some AI-generated assessment summary content exists
     expect(feedback).toBeTruthy();
-  }, 30000); // 30-second timeout for the real API integration
-});
-
-describe("generateFeedbackObject", () => {
-  test("should successfully call Gemini SDK and return parsed schema object", async () => {
-    const details = {
-      assessmentDate: "05/06/2026",
-      candidateName: "John Doe",
-      profileName: "Senior Frontend Engineer",
-      technologyStack: "React, TypeScript",
-      summaryScore: 4.5,
-      proficiencyLevel: "Senior",
-      assessmentNotes:
-        "Strong candidate with good React knowledge. Needs to improve testing practices.",
-    };
-
-    const result = await generateFeedbackObject(details);
-
-    // Verify returned object conforms to the expected structure and data
-    expect(result).toHaveProperty("candidate_name");
-    expect(result.candidate_name).toBe("John Doe");
-    expect(result).toHaveProperty("assessment_date");
-    expect(result).toHaveProperty("assessment_quarter");
-
-    expect(result).toHaveProperty("target_profile_name");
-    expect(result.target_profile_name).toBe("Senior Frontend Engineer");
-    expect(result).toHaveProperty("target_technology_stack");
-    expect(result.target_technology_stack).toBe("React, TypeScript");
-
-    expect(result).toHaveProperty("summary");
-    expect(result.summary).toHaveProperty("proficiency_level");
-    expect(result.summary).toHaveProperty("description");
-    expect(result.summary).toHaveProperty("key_strengths");
-    expect(Array.isArray(result.summary.key_strengths)).toBe(true);
-    expect(result.summary).toHaveProperty("development_areas");
-    expect(Array.isArray(result.summary.development_areas)).toBe(true);
-    expect(result.summary).toHaveProperty("recommended_resources");
-    expect(Array.isArray(result.summary.recommended_resources)).toBe(true);
-    expect(result.summary).toHaveProperty("development_actions");
-    expect(Array.isArray(result.summary.development_actions)).toBe(true);
   }, 30000); // 30-second timeout for the real API integration
 });

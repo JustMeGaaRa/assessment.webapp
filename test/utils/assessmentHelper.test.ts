@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
-import { AssessmentHelper } from "./assessmentHelper";
-import type { ProfileState, AssessorTopicScore } from "../types";
+import { AssessmentHelper } from "../../src/utils/assessmentHelper";
+import type { ProfileState, AssessorTopicScore } from "../../src/types";
 
 describe("AssessmentHelper Unit Tests", () => {
   const mockProfile: ProfileState = {
@@ -23,7 +23,7 @@ describe("AssessmentHelper Unit Tests", () => {
     const stats = AssessmentHelper.calculateEvaluationStatistics(
       mockProfile,
       "module-js",
-      topics
+      topics,
     );
 
     // averageScore = (4 + 2) / 2 = 3
@@ -39,7 +39,7 @@ describe("AssessmentHelper Unit Tests", () => {
     const stats = AssessmentHelper.calculateEvaluationStatistics(
       mockProfile,
       "module-js",
-      {}
+      {},
     );
 
     expect(stats.averageScore).toBe(0);
@@ -69,7 +69,7 @@ describe("AssessmentHelper Unit Tests", () => {
     const res = AssessmentHelper.calculateEvaluationStatisticsPerAssessor(
       mockProfile,
       evaluationId,
-      modulesData
+      modulesData,
     );
 
     // module-js average: 4, weighted: 4 * 0.6 = 2.4

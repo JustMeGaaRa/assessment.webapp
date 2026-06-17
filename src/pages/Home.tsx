@@ -4,9 +4,9 @@ import { parseBackup, type BackupData } from "../utils/backupHelper";
 import type {
   ModuleState,
   ProfileState,
-  AssessorEvaluationState,
+  AssessorFeedbackState,
   AssessmentSessionState,
-  LevelMapping,
+  ProficiencyLevel,
 } from "../types";
 import { ImportForm } from "../components/home/ImportForm";
 import { SessionForm } from "../components/home/SessionForm";
@@ -22,19 +22,19 @@ import { AssessmentGrid } from "../components/home/AssessmentGrid";
 
 interface HomePageProps {
   assessments: AssessmentSessionState[];
-  evaluations: AssessorEvaluationState[];
+  evaluations: AssessorFeedbackState[];
   onCreateAssessment: (assessment: AssessmentSessionState) => void;
-  onCreateSession: (session: AssessorEvaluationState) => void;
+  onCreateSession: (session: AssessorFeedbackState) => void;
   onDataLoad: (
     matrix: ModuleState[],
     profiles: ProfileState[],
     stacks: string[],
-    levelMappings?: LevelMapping[],
+    levelMappings?: ProficiencyLevel[],
   ) => void;
   existingStacks: string[];
   existingProfiles: ProfileState[];
   existingMatrix: ModuleState[];
-  existingLevelMappings: LevelMapping[];
+  existingLevelMappings: ProficiencyLevel[];
   hasData: boolean;
   assessorName: string;
   setAssessorName: (name: string) => void;

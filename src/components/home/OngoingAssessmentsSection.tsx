@@ -1,4 +1,7 @@
-import type { AssessmentSessionState, AssessorEvaluationState } from "../../types";
+import type {
+  AssessmentSessionState,
+  AssessorFeedbackState,
+} from "../../types";
 import { AssessmentSessionCard } from "../dashboard/AssessmentSessionCard";
 
 interface OngoingAssessmentsSectionProps {
@@ -15,7 +18,7 @@ export const OngoingAssessmentsSection = ({
   guestHostId,
 }: OngoingAssessmentsSectionProps) => {
   const ongoing = assessments.filter(
-    (a) => a.id === hostedSessionId || a.id === guestAssessmentId
+    (a) => a.id === hostedSessionId || a.id === guestAssessmentId,
   );
 
   if (ongoing.length === 0) return null;
@@ -30,7 +33,7 @@ export const OngoingAssessmentsSection = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {ongoing.map((assessment) => {
           const isHosted = assessment.id === hostedSessionId;
-          const displaySession: AssessorEvaluationState = {
+          const displaySession: AssessorFeedbackState = {
             id: assessment.id,
             assessmentId: assessment.id,
             candidateName: assessment.candidateName,

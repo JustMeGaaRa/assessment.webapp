@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import type {
   ModuleState,
-  AssessorEvaluationState,
+  AssessorFeedbackState,
   ProfileState,
 } from "../types";
 import { AssessmentEvaluationStats } from "../components/assessment/AssessmentStats";
@@ -28,12 +28,11 @@ import {
   scoreStyles,
 } from "../components/library/skillScoresData";
 
-
 interface AssessorEvaluationPageProps {
-  evaluation: AssessorEvaluationState;
+  evaluation: AssessorFeedbackState;
   modules: ModuleState[];
   profile: ProfileState;
-  onUpdate: (data: Partial<AssessorEvaluationState>) => void;
+  onUpdate: (data: Partial<AssessorFeedbackState>) => void;
   isLocked?: boolean;
 }
 
@@ -219,7 +218,11 @@ export const AssessorEvaluationPage = ({
             </div>
             <div className="flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors">
               <span>{showReference ? "Hide Reference" : "Show Reference"}</span>
-              {showReference ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              {showReference ? (
+                <ChevronUp size={16} />
+              ) : (
+                <ChevronDown size={16} />
+              )}
             </div>
           </button>
 
@@ -235,17 +238,23 @@ export const AssessorEvaluationPage = ({
                       className="border border-slate-100 rounded-xl p-3 bg-white flex flex-col relative overflow-hidden shadow-xs hover:shadow-sm transition-all group"
                     >
                       {/* Top Accent Gradient Bar */}
-                      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${style.gradient}`} />
+                      <div
+                        className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${style.gradient}`}
+                      />
                       <div className="flex items-center justify-between gap-2 mb-2">
                         <div className="flex items-center gap-1.5 min-w-0">
-                          <span className={`text-[9px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 ${style.badge}`}>
+                          <span
+                            className={`text-[9px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 ${style.badge}`}
+                          >
                             {skill.score}
                           </span>
                           <span className="font-bold text-slate-800 text-xs truncate">
                             {skill.label}
                           </span>
                         </div>
-                        <span className={`${style.text} opacity-60 group-hover:opacity-100 transition-opacity`}>
+                        <span
+                          className={`${style.text} opacity-60 group-hover:opacity-100 transition-opacity`}
+                        >
                           <Icon size={12} />
                         </span>
                       </div>

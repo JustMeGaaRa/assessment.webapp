@@ -1,12 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import { Calendar, Layers, ChevronRight, ShieldCheck, ClipboardList } from "lucide-react";
-import type { AssessorEvaluationState, LevelMapping } from "../../types";
+import {
+  Calendar,
+  Layers,
+  ChevronRight,
+  ShieldCheck,
+  ClipboardList,
+} from "lucide-react";
+import type { AssessorFeedbackState, ProficiencyLevel } from "../../types";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
 
 interface AssessmentSessionCardProps {
-  session: AssessorEvaluationState;
-  levelMappings?: LevelMapping[];
+  session: AssessorFeedbackState;
+  levelMappings?: ProficiencyLevel[];
 }
 
 export const AssessmentSessionCard = ({
@@ -32,7 +38,10 @@ export const AssessmentSessionCard = ({
             <Badge status={session.status} />
             <Badge icon={<ClipboardList size={12} />}>Assessment</Badge>
           </div>
-          <ChevronRight size={20} className="text-slate-300 group-hover:text-indigo-500 transition-colors" />
+          <ChevronRight
+            size={20}
+            className="text-slate-300 group-hover:text-indigo-500 transition-colors"
+          />
         </div>
       </Card.Header>
 
@@ -49,7 +58,10 @@ export const AssessmentSessionCard = ({
 
           <div className="flex items-center gap-2">
             <ShieldCheck size={16} className="text-slate-400" />
-            {session.status === "completed" && session.finalScore !== undefined && levelMappings && levelMappings.length > 0 ? (
+            {session.status === "completed" &&
+            session.finalScore !== undefined &&
+            levelMappings &&
+            levelMappings.length > 0 ? (
               <span>
                 {levelMappings.find(
                   (l) =>

@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Calendar, MessageSquareText } from "lucide-react";
-import type { AssessorEvaluationState } from "../../types";
+import type { AssessorFeedbackState } from "../../types";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
 
 interface AssessmentEvaluationCardProps {
-  evalSession: AssessorEvaluationState;
+  evalSession: AssessorFeedbackState;
   assessmentId?: string;
 }
 
@@ -49,7 +49,9 @@ export const AssessmentEvaluationCard = ({
 
       {evalSession.finalScore !== undefined && (
         <Card.Footer className="flex justify-between items-center">
-          <span className="text-xs font-bold text-slate-400 uppercase">Score</span>
+          <span className="text-xs font-bold text-slate-400 uppercase">
+            Score
+          </span>
           <span className="text-xl font-black text-indigo-600">
             {evalSession.finalScore?.toFixed(1)}
           </span>

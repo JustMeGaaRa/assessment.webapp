@@ -1,10 +1,10 @@
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
-import type { AssessorEvaluationState, ModuleState } from "../types";
+import type { AssessorFeedbackState, ModuleState } from "../types";
 
 // --- JSON Helpers ---
 
-export const exportSessionToJSON = (session: AssessorEvaluationState) => {
+export const exportSessionToJSON = (session: AssessorFeedbackState) => {
   const blob = new Blob([JSON.stringify(session, null, 2)], {
     type: "application/json",
   });
@@ -16,7 +16,7 @@ export const exportSessionToJSON = (session: AssessorEvaluationState) => {
 
 export const importSessionFromJSON = (
   file: File,
-): Promise<AssessorEvaluationState> => {
+): Promise<AssessorFeedbackState> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -26,7 +26,7 @@ export const importSessionFromJSON = (
         if (!json.id || !json.candidateName || !json.scores) {
           throw new Error("Invalid assessment file format");
         }
-        resolve(json as AssessorEvaluationState);
+        resolve(json as AssessorFeedbackState);
       } catch (err) {
         reject(err);
       }
@@ -39,7 +39,7 @@ export const importSessionFromJSON = (
 // --- CSV Helpers (Full Assessment Level) ---
 
 export const exportAssessmentToCSV = (
-  session: AssessorEvaluationState,
+  session: AssessorFeedbackState,
   matrix: ModuleState[],
 ) => {
   // Flatten all topics from all modules
@@ -57,12 +57,18 @@ export const exportAssessmentToCSV = (
 
   const csv = Papa.unparse(data);
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  saveAs(blob, `assessment_scores_${session.candidateName.replace(/\s+/g, "_").toLowerCase()}_${session.date}.csv`);
+  saveAs(
+    blob,
+    `assessment_scores_${session.candidateName.replace(/\s+/g, "_").toLowerCase()}_${session.date}.csv`,
+  );
 };
 
 export const parseAssessmentCSV = (
   file: File,
-): Promise<{ scores: Record<string, number>; notes: Record<string, string> }> => {
+): Promise<{
+  scores: Record<string, number>;
+  notes: Record<string, string>;
+}> => {
   return new Promise((resolve, reject) => {
     Papa.parse(file, {
       header: true,

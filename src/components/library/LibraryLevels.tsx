@@ -1,10 +1,10 @@
-import type { LevelMapping } from "../../types";
+import type { ProficiencyLevel } from "../../types";
 import { TrendingUp, TrendingDown, Award } from "lucide-react";
 import { Card } from "../ui/Card";
 import { scoreStyles } from "./skillScoresData";
 
 interface LibraryLevelsProps {
-  levelMappings: LevelMapping[];
+  levelMappings: ProficiencyLevel[];
 }
 
 export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
@@ -12,16 +12,21 @@ export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
     return (
       <Card className="text-center py-20">
         <Award className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-        <h3 className="text-lg font-bold text-slate-700">No Level Scores Defined</h3>
+        <h3 className="text-lg font-bold text-slate-700">
+          No Level Scores Defined
+        </h3>
         <p className="text-slate-500">
-          Import a "Level Scores" CSV to see the mapping of scores to proficiency levels.
+          Import a "Level Scores" CSV to see the mapping of scores to
+          proficiency levels.
         </p>
       </Card>
     );
   }
 
   // Sort mappings by minScore to ensure logical order
-  const sortedMappings = [...levelMappings].sort((a, b) => a.minScore - b.minScore);
+  const sortedMappings = [...levelMappings].sort(
+    (a, b) => a.minScore - b.minScore,
+  );
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -100,4 +105,3 @@ export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
     </div>
   );
 };
-

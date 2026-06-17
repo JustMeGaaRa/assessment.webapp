@@ -6,7 +6,7 @@ import type {
   AssessorEvaluationModuleStatistics,
   AssessorModuleScores,
   AssessorTopicScore,
-  LevelMapping,
+  ProficiencyLevel,
   ModuleState,
   ModuleSummaryBreakdown,
   ProfileState,
@@ -115,7 +115,7 @@ export class AssessmentHelper {
       weight: moduleStatistics ? moduleStatistics[0]?.weight : 0,
       assessorEvaluationStatistics,
       assessorNotes: {
-        [moduleId]: moduleStatistics.flatMap((evaluation) => evaluation.notes)
+        [moduleId]: moduleStatistics.flatMap((evaluation) => evaluation.notes),
       },
     };
   }
@@ -123,7 +123,7 @@ export class AssessmentHelper {
   public static calculateAssessmentStatistics(
     profile: ProfileState,
     modules: ModuleState[],
-    levelMappings: LevelMapping[] | undefined,
+    levelMappings: ProficiencyLevel[] | undefined,
     assessment: AssessmentSummaryBreakdown,
   ): AssessmentStatistics {
     const profileModules = modules.filter((mod) => profile.weights[mod.id] > 0);
@@ -147,19 +147,23 @@ export class AssessmentHelper {
     );
     const totalScoreRounded = Math.ceil(totalScore * factor) / factor;
 
-    const calculateProficiencyLevel = (totalScore: number, levelMappings: LevelMapping[] | undefined)=> {
+    const calculateProficiencyLevel = (
+      totalScore: number,
+      levelMappings: ProficiencyLevel[] | undefined,
+    ) => {
       const mapping = levelMappings?.find(
-        (l) =>
-          totalScore >= l.minScore &&
-          totalScore < l.maxScore,
-      )
-    return mapping?.level
-  }
+        (l) => totalScore >= l.minScore && totalScore < l.maxScore,
+      );
+      return mapping?.level;
+    };
 
     return {
       assessmentId: assessment.assessmentId,
       totalScore: totalScoreRounded,
-      proficiencyLevel: calculateProficiencyLevel(totalScoreRounded, levelMappings),
+      proficiencyLevel: calculateProficiencyLevel(
+        totalScoreRounded,
+        levelMappings,
+      ),
       moduleStatistics: moduleScores,
     };
   }
