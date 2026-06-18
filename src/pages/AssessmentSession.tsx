@@ -217,12 +217,9 @@ export const AssessmentSessionPage = ({
     },
   };
 
-  // TODO: use AssessmentSession type as input
   const assessmentDetails: AssessmentFeedbackProps = {
     summary: consolidatedAssessmentSummary,
   };
-
-  console.log(assessmentDetails);
 
   const handleAddEvaluation = (e: React.FormEvent) => {
     e.preventDefault();

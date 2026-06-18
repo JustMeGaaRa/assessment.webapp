@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { evaluateAssessment, summarizeTranscript } from "../lib/agents";
+import { evaluateAssessment, summarizeTranscript } from "./agents";
 import {
   IndividualAssessmentScore,
   CompetencyMatrix,

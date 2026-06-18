@@ -3,10 +3,9 @@ import { generateText, Output } from "ai";
 import {
   IndividualAssessmentScore,
   DiscussionSummary,
-  CompetencyMatrix,
-  SkillLevel,
   IndividualAssessmentScoreSchema,
-} from "../../types";
+} from "../../shared/types";
+import { CompetencyMatrix, SkillLevel } from "../../../lib/types";
 import { systemPrompt } from "./prompt";
 
 export async function evaluateAssessment(

@@ -1,7 +1,7 @@
 import { google } from "@ai-sdk/google";
 import { generateText, Output } from "ai";
 import { systemPrompt } from "./prompt";
-import { DiscussionSummarySchema, DiscussionSummary } from "../../types";
+import { DiscussionSummarySchema, DiscussionSummary } from "../../shared/types";
 
 export async function summarizeTranscript(
   transcript: string,
