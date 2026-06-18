@@ -1,9 +1,4 @@
 {
-    "functions": {
-        "api/agents/**/*": {
-            "exclude": true
-        }
-    },
     "rewrites": [
         {
             "source": "/(.*)",
