@@ -16,7 +16,12 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@agents/*": ["api/_agents/*"],
+      "@lib/*": ["lib/*"]
+    }
   },
   "include": [
     "src/**/*",

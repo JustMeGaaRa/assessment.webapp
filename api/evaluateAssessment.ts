@@ -1,10 +1,11 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { evaluateAssessment, summarizeTranscript } from "./agents";
+import { evaluateAssessment } from "@agents/evaluate-assessment/agent";
+import { summarizeTranscript } from "@agents/summarize-transcript/agent";
 import {
   IndividualAssessmentScore,
   CompetencyMatrix,
   SkillLevel,
-} from "../lib/types";
+} from "@lib/types";
 
 export default async function handler(
   request: VercelRequest,

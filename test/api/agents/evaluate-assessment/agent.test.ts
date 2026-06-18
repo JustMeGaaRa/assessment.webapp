@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { evaluateAssessment } from "../../../../api/agents/evaluate-assessment/agent";
+import { evaluateAssessment } from "../../../../api/_agents/evaluate-assessment/agent";
 import dotenv from "dotenv";
 import path from "path";
 

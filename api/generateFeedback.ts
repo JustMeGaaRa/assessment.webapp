@@ -2,8 +2,8 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import fs from "fs";
 import path from "path";
 import { Liquid } from "liquidjs";
-import { generateFeedback } from "./agents/generate-feedback/agent";
-import type { ConsolidatedAssessmentSummary } from "../lib/types";
+import { generateFeedback } from "@agents/generate-feedback/agent";
+import type { ConsolidatedAssessmentSummary } from "@lib/types";
 
 export default async function handler(
   request: VercelRequest,

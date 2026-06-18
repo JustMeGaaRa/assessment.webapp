@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { summarizeTranscript } from "../../../../api/agents/summarize-transcript/agent";
+import { summarizeTranscript } from "../../../../api/_agents/summarize-transcript/agent";
 import dotenv from "dotenv";
 import path from "path";
 
