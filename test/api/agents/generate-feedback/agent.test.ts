@@ -1,18 +1,24 @@
 import { describe, test, expect } from "vitest";
-import { generateFeedback } from "../../../../api/_agents/generate-feedback";
+import { generateFeedback } from "../../../../src/lib/agents/generate-feedback";
 import dotenv from "dotenv";
 import path from "path";
-import { ConsolidatedAssessmentSummary } from "../../../../lib/types";
+import { ConsolidatedAssessmentSummary } from "../../../../src/lib/matrix/types";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
 describe("generateFeedbackObject", () => {
   test("should successfully call Gemini SDK and return parsed schema object", async () => {
     const details: ConsolidatedAssessmentSummary = {
+      assessmentId: "1",
       details: {
         date: new Date("05/06/2026"),
-        candidate: "John Doe",
-        profile: "Senior Frontend Engineer",
+        candidate: {
+          fullname: "John Doe",
+        },
+        profile: {
+          profileId: "1",
+          title: "Senior Frontend Engineer",
+        },
         stack: "React, TypeScript",
       },
       modules: [

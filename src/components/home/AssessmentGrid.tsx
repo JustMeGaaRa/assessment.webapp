@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import type {
   AssessmentSessionState,
   AssessorFeedbackState,
-  ProficiencyLevel,
+  ProficiencyLevelState,
 } from "../../types";
 import { ActionCard } from "../dashboard/ActionCard";
 import { AssessmentSessionCard } from "../dashboard/AssessmentSessionCard";
@@ -10,7 +10,7 @@ import { AssessmentSessionCard } from "../dashboard/AssessmentSessionCard";
 interface AssessmentGridProps {
   displayAssessments: AssessmentSessionState[];
   evaluations: AssessorFeedbackState[];
-  currentLevelMappings: ProficiencyLevel[];
+  currentLevelMappings: ProficiencyLevelState[];
   handleOpenSessionModal: () => void;
 }
 

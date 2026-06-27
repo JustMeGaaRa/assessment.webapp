@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { Calendar, MessageSquareText } from "lucide-react";
 import type { AssessorFeedbackState } from "../../types";
 import { Card } from "../ui/Card";
@@ -13,12 +13,12 @@ export const AssessmentEvaluationCard = ({
   evalSession,
   assessmentId,
 }: AssessmentEvaluationCardProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleCardClick = () => {
     const groupId = assessmentId || evalSession.assessmentId;
     if (groupId) {
-      navigate(`/assessment/${groupId}/evaluation/${evalSession.id}`);
+      router.push(`/assessment/${groupId}/evaluation/${evalSession.id}`);
     } else {
       console.warn("No assessment ID found for navigation");
     }

@@ -1,5 +1,6 @@
-import { Navigate, useParams } from "react-router-dom";
-import { AssessorEvaluationPage } from "../pages/AssessorEvaluation";
+import { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { AssessorEvaluationPage } from "../views/AssessorEvaluation";
 import type { PeerSessionState } from "../hooks/usePeerSession";
 import type {
   AssessorFeedbackState,
@@ -27,17 +28,29 @@ export const AssessmentEvaluationRoute = ({
   onUpdateEvaluation,
   activeSession,
 }: AssessmentEvaluationRouteProps) => {
-  const { evaluationId } = useParams();
+  const params = useParams();
+  const evaluationId = params?.evaluationId as string;
+  const router = useRouter();
   const evaluation = evaluations.find((s) => s.id === evaluationId);
 
-  if (!evaluation) {
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => {
+    if (!evaluation) {
+      router.replace("/");
+    }
+  }, [evaluation, router]);
 
-  const profile = profiles.find((p) => p.id === evaluation.profileId);
+  const profile = evaluation
+    ? profiles.find((p) => p.id === evaluation.profileId)
+    : undefined;
 
-  if (!profile) {
-    return <Navigate to="/" replace />;
+  useEffect(() => {
+    if (evaluation && !profile) {
+      router.replace("/");
+    }
+  }, [evaluation, profile, router]);
+
+  if (!evaluation || !profile) {
+    return null;
   }
 
   const profileModules = matrix.filter((m) => profile.weights[m.id] > 0);

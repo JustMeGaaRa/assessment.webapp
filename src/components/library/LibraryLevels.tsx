@@ -1,10 +1,10 @@
-import type { ProficiencyLevel } from "../../types";
+import type { ProficiencyLevelState } from "../../types";
 import { TrendingUp, TrendingDown, Award } from "lucide-react";
 import { Card } from "../ui/Card";
 import { scoreStyles } from "./skillScoresData";
 
 interface LibraryLevelsProps {
-  levelMappings: ProficiencyLevel[];
+  levelMappings: ProficiencyLevelState[];
 }
 
 export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {

@@ -1,4 +1,4 @@
-import type { SkillScore } from "../../types";
+import type { SkillLevel } from "@lib/types";
 import { BookOpen, Zap, Shield, Star, Sparkles } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -61,7 +61,7 @@ export const scoreStyles: Record<number, ScoreStyle> = {
   },
 };
 
-export const dummySkillScores: SkillScore[] = [
+export const dummySkillScores: SkillLevel[] = [
   {
     score: 1,
     label: "Novice",

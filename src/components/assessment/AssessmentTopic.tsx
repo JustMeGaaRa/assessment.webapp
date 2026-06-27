@@ -1,7 +1,7 @@
-import type { Topic } from "../../types";
+import type { TopicState } from "../../types";
 
 interface AssessmentTopicProps {
-  topic: Topic;
+  topic: TopicState;
   selectedStack: string;
   score: number | undefined;
   note: string;

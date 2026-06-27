@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import type {
   ModuleState,
   ProfileState,
-  ProficiencyLevel,
+  ProficiencyLevelState,
   FileStatus,
 } from "../types";
 import { parseAssessmentData, validateCsvContent } from "../utils/csvHelpers";
@@ -14,7 +14,7 @@ interface UseConfigImportProps {
   existingMatrix: ModuleState[];
   existingProfiles: ProfileState[];
   existingStacks: string[];
-  existingLevelMappings: ProficiencyLevel[];
+  existingLevelMappings: ProficiencyLevelState[];
 }
 
 export const useConfigImport = ({
@@ -59,7 +59,7 @@ export const useConfigImport = ({
     matrix: ModuleState[];
     profiles: ProfileState[];
     stacks: string[];
-    levelMappings?: ProficiencyLevel[];
+    levelMappings?: ProficiencyLevelState[];
   } | null>(null);
 
   const processFile = async (

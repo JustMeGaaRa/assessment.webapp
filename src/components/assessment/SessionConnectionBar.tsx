@@ -97,7 +97,8 @@ export const SessionConnectionBar = ({
 
   const handleCopyLink = () => {
     if (!hostPeerId) return;
-    const url = `${window.location.origin}/assessment/${assessmentId}?s=${hostPeerId}`;
+    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const url = `${origin}/assessment/${assessmentId}?s=${hostPeerId}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -183,7 +184,7 @@ export const SessionConnectionBar = ({
                     className="text-slate-400 group-hover:text-indigo-500"
                   />
                   <span className="truncate max-w-[180px]">
-                    {window.location.origin}/assessment/{assessmentId}...
+                    {typeof window !== "undefined" ? window.location.origin : ""}/assessment/{assessmentId}...
                   </span>
                 </div>
                 {copied ? (

@@ -1,7 +1,8 @@
 import { describe, test, expect } from "vitest";
 import dotenv from "dotenv";
 import path from "path";
-import { generateAssessmentSummary } from "../../api/evaluateAssessment";
+import { generateAssessmentSummary } from "../../src/lib/evaluateAssessment";
+import { CompetencyMatrix } from "../../src/lib/matrix/types";
 
 // Load environment variables from .env.local
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
@@ -75,10 +76,10 @@ code.
 
 [00:02:31] ASSESSOR: You too. Stopping the recording.
       `;
-    const matrix = {
+    const matrix: CompetencyMatrix = {
       topics: [
-        { topicName: "Programming Language" },
-        { topicName: "Runtime & Framework" },
+        { topicName: "Programming Language", genericDescription: "" },
+        { topicName: "Runtime & Framework", genericDescription: "" },
       ],
       stacks: [
         {
@@ -131,5 +132,5 @@ code.
     );
 
     expect(result).toBeDefined();
-  });
+  }, 30000);
 });

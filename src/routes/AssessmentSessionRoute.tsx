@@ -1,11 +1,16 @@
 import { useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import {
+  useParams,
+  useSearchParams,
+  useRouter,
+  usePathname,
+} from "next/navigation";
 import { type PeerSessionState } from "../hooks/usePeerSession";
-import { AssessmentSessionPage } from "../pages/AssessmentSession";
+import { AssessmentSessionPage } from "../views/AssessmentSession";
 import type {
   AssessmentSessionState,
   AssessorFeedbackState,
-  ProficiencyLevel,
+  ProficiencyLevelState,
   ModuleState,
   ProfileState,
 } from "../types";
@@ -26,7 +31,7 @@ interface AssessmentSessionRouteProps {
   guestSession: PeerSessionState;
   setGuestAssessmentId: (id: string | null) => void;
 
-  levelMappings?: ProficiencyLevel[];
+  levelMappings?: ProficiencyLevelState[];
   onCreateAssessment: (assessment: AssessmentSessionState) => void;
   onCreateEvaluation: (evaluation: AssessorFeedbackState) => void;
   onUpdateAssessment: (
@@ -53,10 +58,13 @@ export const AssessmentSessionRoute = ({
   onUpdateAssessment,
   setHostedSessionId,
 }: AssessmentSessionRouteProps) => {
-  const { assessmentId } = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const params = useParams();
+  const assessmentId = params?.assessmentId as string;
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const assessment = assessments.find((a) => a.id === assessmentId);
-  const sessionIdParam = searchParams.get("s");
+  const sessionIdParam = searchParams?.get("s");
 
   const isGuestView = !!sessionIdParam;
   const isActivelyHostingThis = hostedSessionId === assessmentId;
@@ -110,9 +118,13 @@ export const AssessmentSessionRoute = ({
   // Handle Session Closed by Host
   useEffect(() => {
     if (guestSession.error === "The session was closed by the host.") {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.delete("s");
-      setSearchParams(newParams);
+      const current = new URLSearchParams(
+        Array.from(searchParams?.entries() || []),
+      );
+      current.delete("s");
+      router.replace(
+        `${pathname}${current.toString() ? `?${current.toString()}` : ""}`,
+      );
       // We also strictly ensure our local state is cleared, though App.tsx handles onSessionClosed
       setGuestHostId(null);
       setGuestAssessmentId(null);
@@ -120,7 +132,8 @@ export const AssessmentSessionRoute = ({
   }, [
     guestSession.error,
     searchParams,
-    setSearchParams,
+    router,
+    pathname,
     setGuestHostId,
     setGuestAssessmentId,
   ]);
@@ -162,9 +175,13 @@ export const AssessmentSessionRoute = ({
     setGuestAssessmentId(null);
 
     // Remove the 's' parameter from URL to prevent auto-rejoin logic
-    const newParams = new URLSearchParams(searchParams);
-    newParams.delete("s");
-    setSearchParams(newParams);
+    const current = new URLSearchParams(
+      Array.from(searchParams?.entries() || []),
+    );
+    current.delete("s");
+    router.replace(
+      `${pathname}${current.toString() ? `?${current.toString()}` : ""}`,
+    );
   };
 
   const profile = assessment

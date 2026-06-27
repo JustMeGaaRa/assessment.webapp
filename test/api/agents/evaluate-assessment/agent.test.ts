@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { evaluateAssessment } from "../../../../api/_agents/evaluate-assessment/agent";
+import { evaluateAssessment } from "../../../../src/lib/agents/evaluate-assessment/agent";
 import dotenv from "dotenv";
 import path from "path";
 
@@ -78,5 +78,5 @@ describe("evaluateAssessment", () => {
     const result = await evaluateAssessment(matrix, skillLevels, summary);
 
     expect(result).toBeDefined();
-  });
+  }, 30000);
 });

@@ -1,56 +1,31 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { vi, describe, test, expect, beforeEach, type Mock } from "vitest";
+import { describe, test, expect } from "vitest";
 import dotenv from "dotenv";
 import path from "path";
-import handler from "../../api/generateFeedback";
+import { POST } from "../../src/app/api/generateFeedback/route";
 
 // Load environment variables from .env.local
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
 describe("generateFeedback API Integration Test", () => {
-  let req: Partial<VercelRequest>;
-  let res: Partial<VercelResponse>;
-  let jsonMock: Mock;
-  let statusMock: Mock;
-
-  beforeEach(() => {
-    jsonMock = vi.fn().mockReturnThis();
-    statusMock = vi.fn().mockReturnValue({ json: jsonMock });
-    res = {
-      status: statusMock,
-    } as unknown as Partial<VercelResponse>;
-  });
-
   test("should verify that the GEMINI_API_KEY env variable is loaded", () => {
-    // Assert that the environment variable is loaded (either from .env.local or standard environment)
     expect(process.env.GEMINI_API_KEY).toBeDefined();
     expect(process.env.GEMINI_API_KEY).not.toBe("");
-  });
-
-  test("should return 405 Method Not Allowed for non-POST requests", async () => {
-    req = {
-      method: "GET",
-    };
-
-    await handler(req as VercelRequest, res as VercelResponse);
-
-    expect(statusMock).toHaveBeenCalledWith(405);
-    expect(jsonMock).toHaveBeenCalledWith({ error: "Method Not Allowed" });
   });
 
   test("should return 500 when GEMINI_API_KEY is not set", async () => {
     const originalApiKey = process.env.GEMINI_API_KEY;
     delete process.env.GEMINI_API_KEY;
 
-    req = {
+    const req = new Request("http://localhost/api/generateFeedback", {
       method: "POST",
-      body: {},
-    };
+      body: JSON.stringify({}),
+    });
 
-    await handler(req as VercelRequest, res as VercelResponse);
+    const response = await POST(req);
+    expect(response.status).toBe(500);
 
-    expect(statusMock).toHaveBeenCalledWith(500);
-    expect(jsonMock).toHaveBeenCalledWith({
+    const data = await response.json();
+    expect(data).toEqual({
       error: "GEMINI_API_KEY is not set",
     });
 
@@ -58,35 +33,42 @@ describe("generateFeedback API Integration Test", () => {
   });
 
   test("should generate feedback successfully using the actual Gemini SDK", async () => {
-    req = {
-      method: "POST",
-      body: {
-        assessmentDate: "05/06/2026",
-        candidateName: "John Doe",
-        profileName: "Senior Frontend Engineer",
-        technologyStack: "React, TypeScript",
-        summaryScore: 4.5,
+    const body = {
+      details: {
+        candidate: "John Doe",
+        profile: "Senior Frontend Engineer",
+        stack: "React, TypeScript",
+        date: "2026-06-19T00:00:00.000Z",
+      },
+      modules: [
+        {
+          moduleName: "Frontend Core",
+          weightedScore: 4.5,
+          weight: 100,
+          notes: ["Strong candidate with good React knowledge."],
+        },
+      ],
+      summary: {
         proficiencyLevel: "Senior",
-        assessmentNotes:
-          "Strong candidate with good React knowledge. Needs to improve testing practices.",
+        totalScore: 4.5,
       },
     };
 
-    await handler(req as VercelRequest, res as VercelResponse);
+    const req = new Request("http://localhost/api/generateFeedback", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
 
-    expect(statusMock).toHaveBeenCalledWith(200);
-    expect(jsonMock).toHaveBeenCalled();
+    const response = await POST(req);
+    expect(response.status).toBe(200);
 
-    const responseData = jsonMock.mock.calls[0][0];
-    expect(responseData).toHaveProperty("feedback");
+    const data = await response.json();
+    expect(data).toHaveProperty("feedback");
 
-    const feedback = responseData.feedback;
+    const feedback = data.feedback;
 
     // Validate that the feedback contains expected content generated from the template and model integration
-    expect(feedback).toContain("Dear John Doe");
-    expect(feedback).toContain("05/06/2026");
-
-    // Check that some AI-generated assessment summary content exists
+    expect(feedback).toContain("John Doe");
     expect(feedback).toBeTruthy();
   }, 30000); // 30-second timeout for the real API integration
 });

@@ -1,7 +1,7 @@
-import type { Topic } from "../../types";
+import type { TopicState } from "../../types";
 
 interface LibraryModuleTopicProps {
-  topic: Topic;
+  topic: TopicState;
   activeStack: string;
 }
 

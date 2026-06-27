@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { summarizeTranscript } from "../../../../api/_agents/summarize-transcript/agent";
+import { summarizeTranscript } from "../../../../src/lib/agents/summarize-transcript/agent";
 import dotenv from "dotenv";
 import path from "path";
 
@@ -77,5 +77,5 @@ code.
     const result = await summarizeTranscript(transcript);
 
     expect(result).toBeDefined();
-  });
+  }, 30000);
 });

@@ -1,9 +1,9 @@
 import type {
   ModuleState,
   ProfileState,
-  Topic,
+  TopicState,
   AppDataState,
-  ProficiencyLevel,
+  ProficiencyLevelState,
 } from "../types";
 
 import Papa from "papaparse";
@@ -122,7 +122,7 @@ export const parseAssessmentData = (
         }
       }
 
-      const topic: Topic = {
+      const topic: TopicState = {
         id: topicId,
         name: topicName,
         weight: 1, // Default weight, not specified in CSV requirement, assuming 1 or logic
@@ -204,7 +204,7 @@ export const parseAssessmentData = (
   }
 
   // 4. Parse Levels
-  const levelMappings: ProficiencyLevel[] = [];
+  const levelMappings: ProficiencyLevelState[] = [];
   const levelsFile = files.find((f) => f.type === "levels");
   if (levelsFile) {
     const rows = parseCSV(levelsFile.content);

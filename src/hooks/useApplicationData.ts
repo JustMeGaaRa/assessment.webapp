@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type {
   AssessmentSessionState,
   AssessorFeedbackState,
-  ProficiencyLevel,
+  ProficiencyLevelState,
   ModuleState,
   ProfileState,
 } from "../types";
@@ -13,76 +13,104 @@ const ASSESSOR_EVALUATIONS_KEY = "assessment_evaluations";
 const ASSESSMENT_SESSIONS_KEY = "assessment_groups";
 
 export const useApplicationData = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   // Master Data State with Persistence
-  const [matrix, setMatrix] = useState<ModuleState[]>(() => {
-    const saved = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
-    return saved ? JSON.parse(saved).matrix : [];
-  });
+  const [matrix, setMatrix] = useState<ModuleState[]>([]);
+  const [profiles, setProfiles] = useState<ProfileState[]>([]);
+  const [stacks, setStacks] = useState<string[]>([]);
+  const [levelMappings, setLevelMappings] = useState<ProficiencyLevelState[]>(
+    [],
+  );
 
-  const [profiles, setProfiles] = useState<ProfileState[]>(() => {
-    const saved = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
-    return saved ? JSON.parse(saved).profiles : [];
-  });
+  // Assessment Groups State
+  const [assessments, setAssessments] = useState<AssessmentSessionState[]>([]);
 
-  const [stacks, setStacks] = useState<string[]>(() => {
-    const saved = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
-    return saved ? Object.values(JSON.parse(saved).stacks) : [];
-  });
+  // Assessment Evaluations State
+  const [evaluations, setEvaluations] = useState<AssessorFeedbackState[]>([]);
 
-  const [levelMappings, setLevelMappings] = useState<ProficiencyLevel[]>(() => {
-    const saved = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
-    return saved ? JSON.parse(saved).levelMappings || [] : [];
-  });
+  // Assessor Name State
+  const [assessorName, setAssessorName] = useState("");
+
+  // Load state from localStorage once mounted
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedLibrary = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
+      if (savedLibrary) {
+        try {
+          const parsed = JSON.parse(savedLibrary);
+          if (parsed.matrix) setMatrix(parsed.matrix);
+          if (parsed.profiles) setProfiles(parsed.profiles);
+          if (parsed.stacks) {
+            setStacks(
+              Array.isArray(parsed.stacks)
+                ? parsed.stacks
+                : Object.values(parsed.stacks),
+            );
+          }
+          if (parsed.levelMappings) setLevelMappings(parsed.levelMappings);
+        } catch (e) {
+          console.error("Error parsing saved library", e);
+        }
+      }
+
+      const savedSessions = localStorage.getItem(ASSESSMENT_SESSIONS_KEY);
+      if (savedSessions) {
+        try {
+          setAssessments(JSON.parse(savedSessions));
+        } catch (e) {
+          console.error("Error parsing saved sessions", e);
+        }
+      }
+
+      const savedEvaluations = localStorage.getItem(ASSESSOR_EVALUATIONS_KEY);
+      if (savedEvaluations) {
+        try {
+          setEvaluations(JSON.parse(savedEvaluations));
+        } catch (e) {
+          console.error("Error parsing saved evaluations", e);
+        }
+      }
+
+      const savedName = localStorage.getItem("assessor_name");
+      if (savedName) {
+        setAssessorName(savedName);
+      }
+
+      setIsLoaded(true);
+    }
+  }, []);
 
   // Persist changes
   useEffect(() => {
-    if (matrix.length > 0) {
-      localStorage.setItem(
-        ASSESSMENT_LIBRARY_KEY,
-        JSON.stringify({ matrix, profiles, stacks, levelMappings }),
-      );
-    }
-  }, [matrix, profiles, stacks, levelMappings]);
-
-  // Assessment Groups State
-  const [assessments, setAssessments] = useState<AssessmentSessionState[]>(
-    () => {
-      const saved = localStorage.getItem(ASSESSMENT_SESSIONS_KEY);
-      return saved ? JSON.parse(saved) : [];
-    },
-  );
+    if (!isLoaded || typeof window === "undefined") return;
+    localStorage.setItem(
+      ASSESSMENT_LIBRARY_KEY,
+      JSON.stringify({ matrix, profiles, stacks, levelMappings }),
+    );
+  }, [matrix, profiles, stacks, levelMappings, isLoaded]);
 
   useEffect(() => {
+    if (!isLoaded || typeof window === "undefined") return;
     localStorage.setItem(ASSESSMENT_SESSIONS_KEY, JSON.stringify(assessments));
-  }, [assessments]);
-
-  // Assessment Evaluations State
-  const [evaluations, setEvaluations] = useState<AssessorFeedbackState[]>(
-    () => {
-      const saved = localStorage.getItem(ASSESSOR_EVALUATIONS_KEY);
-      return saved ? JSON.parse(saved) : [];
-    },
-  );
+  }, [assessments, isLoaded]);
 
   useEffect(() => {
+    if (!isLoaded || typeof window === "undefined") return;
     localStorage.setItem(ASSESSOR_EVALUATIONS_KEY, JSON.stringify(evaluations));
-  }, [evaluations]);
-
-  // Assessor Name State
-  const [assessorName, setAssessorName] = useState(() => {
-    return localStorage.getItem("assessor_name") || "";
-  });
+  }, [evaluations, isLoaded]);
 
   // Persist assessor name
   useEffect(() => {
+    if (!isLoaded || typeof window === "undefined") return;
     localStorage.setItem("assessor_name", assessorName);
-  }, [assessorName]);
+  }, [assessorName, isLoaded]);
 
   const handleDataLoad = (
     m: ModuleState[],
     p: ProfileState[],
     s: string[],
-    l?: ProficiencyLevel[],
+    l?: ProficiencyLevelState[],
   ) => {
     setMatrix(m);
     setProfiles(p);

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import {
   Calendar,
   Layers,
@@ -6,20 +6,20 @@ import {
   ShieldCheck,
   ClipboardList,
 } from "lucide-react";
-import type { AssessorFeedbackState, ProficiencyLevel } from "../../types";
+import type { AssessorFeedbackState, ProficiencyLevelState } from "../../types";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
 
 interface AssessmentSessionCardProps {
   session: AssessorFeedbackState;
-  levelMappings?: ProficiencyLevel[];
+  levelMappings?: ProficiencyLevelState[];
 }
 
 export const AssessmentSessionCard = ({
   session,
   levelMappings,
 }: AssessmentSessionCardProps) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <Card
@@ -28,7 +28,7 @@ export const AssessmentSessionCard = ({
         const url = `/assessment/${session.assessmentId ?? session.id}${
           session.hostId ? `?s=${session.hostId}` : ""
         }`;
-        navigate(url);
+        router.push(url);
       }}
       className="min-h-[220px] flex flex-col"
     >

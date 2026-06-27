@@ -1,4 +1,4 @@
-export interface Topic {
+export interface TopicState {
   id: string;
   name: string;
   weight: number;
@@ -9,7 +9,7 @@ export interface ModuleState {
   id: string;
   title: string;
   description: string;
-  topics: Topic[];
+  topics: TopicState[];
 }
 
 export interface ProfileState {
@@ -20,7 +20,7 @@ export interface ProfileState {
   weights: Record<string, number>;
 }
 
-export interface ProficiencyLevel {
+export interface ProficiencyLevelState {
   level: string;
   minScore: number;
   maxScore: number;
@@ -30,7 +30,7 @@ export interface AppDataState {
   matrix: ModuleState[];
   profiles: ProfileState[];
   stacks: string[];
-  levelMappings?: ProficiencyLevel[];
+  levelMappings?: ProficiencyLevelState[];
 }
 
 export type FileStatus = "idle" | "uploading" | "parsing" | "done" | "error";
@@ -64,84 +64,4 @@ export interface AssessorFeedbackState {
   notes: Record<string, string>; // { topicId, note }
   finalScore?: number;
   hostId?: string; // Optional: Link to host if this is a guest view
-}
-
-// types that represent assessor scoring hierarchy
-export interface AssessorTopicScore {
-  topicId: string;
-  score: number;
-  notes: string;
-}
-
-export interface AssessorModuleScores {
-  moduleId: string;
-  evaluationId: string;
-  topics: Record<string, AssessorTopicScore>;
-}
-
-export interface AssessorEvaluationScores {
-  evaluationId: string;
-  modules: Record<string, AssessorModuleScores>;
-}
-
-export interface AssessmentScores {
-  assessmentId: string;
-  date: Date;
-  candidate: {
-    name: string;
-  };
-  profile: {
-    profileId: string;
-    title: string;
-  };
-  stack: {
-    name: string;
-  };
-  evaluations: Record<string, AssessorEvaluationScores>;
-}
-
-// types that represent assessment summary hierarchy
-export interface ModuleSummaryBreakdown {
-  moduleId: string;
-  evaluations: Record<string, AssessorModuleScores>;
-}
-
-export interface AssessmentSummaryBreakdown {
-  assessmentId: string;
-  modules: Record<string, ModuleSummaryBreakdown>;
-}
-
-// calculated statistics
-export interface AssessorEvaluationModuleStatistics {
-  moduleId: string;
-  averageScore: number;
-  weightedScore: number;
-  weight: number;
-  notes: string[];
-}
-
-export interface AggregatedAssessorStatistics {
-  moduleId: string;
-  averageScore: number;
-  weightedScore: number;
-  weight: number;
-  assessorEvaluationStatistics: Record<
-    string,
-    AssessorEvaluationModuleStatistics
-  >;
-  assessorNotes: Record<string, string[]>;
-}
-
-export interface AssessmentStatistics {
-  assessmentId: string;
-  totalScore: number;
-  proficiencyLevel?: string;
-  moduleStatistics: Record<string, AggregatedAssessorStatistics>;
-}
-
-export interface SkillScore {
-  score: number;
-  label: string;
-  description: string;
-  criteria: string;
 }

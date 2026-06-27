@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Sparkles, Copy, ChevronDown, ChevronUp } from "lucide-react";
-import type { ConsolidatedAssessmentSummary } from "../../../lib/types";
+import type { ConsolidatedAssessmentSummary } from "@lib/types";
 
 export interface AssessmentFeedbackProps {
   summary: ConsolidatedAssessmentSummary;
@@ -115,7 +115,7 @@ export const AssessmentFeedback = ({ summary }: AssessmentFeedbackProps) => {
 
           <div className="flex justify-end">
             <button
-              onClick={handleGenerateFeedback} // Regenerate
+              onClick={handleGenerateFeedback}
               disabled={loading}
               className="text-sm text-slate-500 hover:text-indigo-600 underline"
             >
