@@ -1,4 +1,4 @@
-import type { SkillLevel } from "@lib/types";
+import type { SkillLevel } from "@lib/matrix/types";
 import { BookOpen, Zap, Shield, Star, Sparkles } from "lucide-react";
 import type { ComponentType } from "react";
 

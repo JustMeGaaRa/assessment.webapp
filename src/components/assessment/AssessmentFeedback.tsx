@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Sparkles, Copy, ChevronDown, ChevronUp } from "lucide-react";
-import type { ConsolidatedAssessmentSummary } from "@lib/types";
+import type { ConsolidatedAssessmentSummary } from "@lib/matrix/types";
 
 export interface AssessmentFeedbackProps {
   summary: ConsolidatedAssessmentSummary;

@@ -4,8 +4,8 @@ import {
   IndividualAssessmentScore,
   DiscussionSummary,
   IndividualAssessmentScoreSchema,
-} from "../types";
-import { CompetencyMatrix, SkillLevel } from "../../../lib/types";
+} from "@agents/types";
+import { CompetencyMatrix, SkillLevel } from "@lib/matrix/types";
 import { systemPrompt } from "./prompt";
 
 export async function evaluateAssessment(

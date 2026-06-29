@@ -3,8 +3,8 @@ import { generateText, Output } from "ai";
 import {
   ConsolidatedAssessmentResult,
   ConsolidatedAssessmentResultSchema,
-} from "../types";
-import { ConsolidatedAssessmentSummary } from "../../../lib/types";
+} from "@agents/types";
+import { ConsolidatedAssessmentSummary } from "@lib/matrix/types";
 import { systemPrompt } from "./prompt";
 
 export async function generateFeedback(
