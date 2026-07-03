@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import { MessageSquareQuote, Calendar, Box, ShieldCheck } from "lucide-react";
 import {
   AssessmentSessionStatistics,
@@ -50,6 +51,43 @@ const AssessorScoreBar = ({
           style={{ width: `${percentage}%` }}
         />
       </div>
+    </div>
+  );
+};
+
+const ModuleNote = ({ note }: { note: string }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isClampable, setIsClampable] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (el) {
+      if (!isExpanded) {
+        setIsClampable(el.scrollHeight > el.clientHeight);
+      }
+    }
+  }, [note, isExpanded]);
+
+  return (
+    <div
+      onClick={() => isClampable && setIsExpanded(!isExpanded)}
+      className={`flex gap-3 px-4 py-3 bg-white border border-slate-100 rounded-2xl shadow-sm ${
+        isClampable ? "cursor-pointer select-none hover:bg-slate-50 transition-colors" : ""
+      }`}
+    >
+      <MessageSquareQuote
+        size={16}
+        className="text-slate-300 shrink-0 mt-0.5"
+      />
+      <p
+        ref={textRef}
+        className={`text-[11px] text-slate-500 italic font-medium leading-relaxed ${
+          isExpanded ? "" : "line-clamp-3"
+        }`}
+      >
+        "{note}"
+      </p>
     </div>
   );
 };
@@ -119,21 +157,10 @@ const ModuleScoreCard = ({
 
       {/* Module Notes */}
       {notes.length > 0 && (
-        <div className="mt-6 flex gap-3 px-4 py-3 bg-white border border-slate-100 rounded-2xl shadow-sm">
-          <MessageSquareQuote
-            size={16}
-            className="text-slate-300 shrink-0 mt-0.5"
-          />
-          <div className="flex flex-col gap-1">
-            {notes.map((note, idx) => (
-              <p
-                key={idx}
-                className="text-[11px] text-slate-500 italic font-medium leading-relaxed"
-              >
-                "{note}"
-              </p>
-            ))}
-          </div>
+        <div className="mt-6 space-y-3">
+          {notes.map((note, idx) => (
+            <ModuleNote key={idx} note={note} />
+          ))}
         </div>
       )}
     </div>
