@@ -30,7 +30,7 @@ export const AssessmentSessionCard = ({
 }: AssessmentSessionCardProps) => {
   const router = useRouter();
 
-  const completed = assessment.feedbacks.filter((f) => f.status === "completed");
+  const completed = assessment.feedbacks.filter((f) => f.status === "completed" && f.type !== "self");
   const isCompleted =
     assessment.feedbacks.length > 0 &&
     assessment.feedbacks.every((f) => f.status === "completed");

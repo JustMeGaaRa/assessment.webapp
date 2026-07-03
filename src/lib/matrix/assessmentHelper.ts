@@ -108,16 +108,20 @@ function calculateAssessmentModuleStatistics(
     moduleName: moduleId,
     stats: {
       averageScore:
-        moduleStatsPerAssessor.reduce(
-          (total, module) => total + module.stats.averageScore,
-          0,
-        ) / moduleStatsPerAssessor.length,
+        moduleStatsPerAssessor.length > 0
+          ? moduleStatsPerAssessor.reduce(
+              (total, module) => total + module.stats.averageScore,
+              0,
+            ) / moduleStatsPerAssessor.length
+          : 0,
       weightedScore:
-        moduleStatsPerAssessor.reduce(
-          (total, module) => total + module.stats.weightedScore,
-          0,
-        ) / moduleStatsPerAssessor.length,
-      weight: moduleStatsPerAssessor
+        moduleStatsPerAssessor.length > 0
+          ? moduleStatsPerAssessor.reduce(
+              (total, module) => total + module.stats.weightedScore,
+              0,
+            ) / moduleStatsPerAssessor.length
+          : 0,
+      weight: moduleStatsPerAssessor.length > 0
         ? moduleStatsPerAssessor[0]?.stats.weight
         : 0,
     },
@@ -163,11 +167,13 @@ export function calculateAssessmentStatistics(
         0) > 0,
   );
 
+  const nonSelfFeedbacks = assessment.feedbacks.filter((f) => f.type !== "self");
+
   const moduleScores = profileModules.map((module) =>
     calculateAssessmentModuleStatistics(
       profile,
       module.moduleId,
-      assessment.feedbacks,
+      nonSelfFeedbacks,
     ),
   );
 

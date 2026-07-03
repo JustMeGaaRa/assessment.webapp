@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
-import { CheckCircle2, Clock, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, Sparkles, User, ShieldCheck } from "lucide-react";
 
 type BadgeStatus = "completed" | "ongoing" | "rejected";
+type BadgeVariant = "expert" | "llm" | "self" | "default";
 
 interface BadgeProps {
   status?: BadgeStatus;
+  variant?: BadgeVariant;
   icon?: ReactNode;
   children?: ReactNode;
   className?: string;
@@ -22,13 +24,46 @@ const statusIcons: Record<BadgeStatus, ReactNode> = {
   rejected: <XCircle size={12} />,
 };
 
-export const Badge = ({ status, icon, children, className = "" }: BadgeProps) => {
+const variantStyles: Record<BadgeVariant, string> = {
+  expert: "border-blue-100 text-blue-600 bg-blue-50",
+  llm: "border-purple-100 text-purple-600 bg-purple-50",
+  self: "border-teal-100 text-teal-600 bg-teal-50",
+  default: "bg-slate-50 border-slate-100 text-slate-500",
+};
+
+const variantIcons: Record<BadgeVariant, ReactNode> = {
+  expert: <ShieldCheck size={12} />,
+  llm: <Sparkles size={12} />,
+  self: <User size={12} />,
+  default: null,
+};
+
+const variantLabels: Record<BadgeVariant, string> = {
+  expert: "Expert",
+  llm: "AI / LLM",
+  self: "Self Evaluation",
+  default: "",
+};
+
+export const Badge = ({ status, variant, icon, children, className = "" }: BadgeProps) => {
   const isStatus = status !== undefined;
+  const isVariant = variant !== undefined && variant in variantStyles;
+
   const colorClasses = isStatus
     ? statusStyles[status]
+    : isVariant
+    ? variantStyles[variant!]
     : "bg-slate-50 border-slate-100 text-slate-500";
-  const resolvedIcon = isStatus ? statusIcons[status] : icon;
-  const label = isStatus ? status : children;
+
+  const resolvedIcon = isStatus
+    ? statusIcons[status]
+    : isVariant
+    ? variantIcons[variant!]
+    : icon;
+
+  const label = isStatus
+    ? status
+    : children || (isVariant ? variantLabels[variant!] : "");
 
   return (
     <div

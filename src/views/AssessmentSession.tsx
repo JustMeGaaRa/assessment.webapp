@@ -56,6 +56,7 @@ interface AssessmentSessionPageProps {
     id: string,
     data: Partial<AssessmentSession>,
   ) => void;
+  onDeleteEvaluation?: (evaluationId: string) => void;
   onStartSession: () => void;
   onEndSession: () => void;
   onJoinSession: () => void;
@@ -75,6 +76,7 @@ export const AssessmentSessionPage = ({
   isHost,
   hostPeerId,
   onCreateEvaluation,
+  onDeleteEvaluation,
   onStartSession,
   onEndSession,
   onJoinSession,
@@ -84,6 +86,7 @@ export const AssessmentSessionPage = ({
   const assessmentId = params?.assessmentId as string;
   const router = useRouter();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [evaluationType, setEvaluationType] = useState<"expert" | "self">("expert");
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [transcriptText, setTranscriptText] = useState("");
   const [isEvaluating, setIsEvaluating] = useState(false);
@@ -274,16 +277,25 @@ export const AssessmentSessionPage = ({
     );
   }
 
-  const assessors = evaluations.map((ev, idx) => {
-    const style = colors[idx % colors.length];
-    return {
-      name: ev.assessor.fullname || `Assessor ${idx + 1}`,
-      color: style.color,
-      text: style.text,
-      light: style.light,
-      isCurrentUser: false,
-    };
-  });
+  const hasExistingEvaluation = evaluations.some(
+    (ev) =>
+      ev.assessor.fullname &&
+      assessorName &&
+      ev.assessor.fullname.trim().toLowerCase() === assessorName.trim().toLowerCase()
+  );
+
+  const assessors = evaluations
+    .filter((ev) => ev.type !== "self")
+    .map((ev, idx) => {
+      const style = colors[idx % colors.length];
+      return {
+        name: ev.assessor.fullname || `Assessor ${idx + 1}`,
+        color: style.color,
+        text: style.text,
+        light: style.light,
+        isCurrentUser: false,
+      };
+    });
 
   const assessmentStatistics = calculateAssessmentStatistics(
     profile,
@@ -334,7 +346,7 @@ export const AssessmentSessionPage = ({
     const newEvaluationId = crypto.randomUUID();
     const newEvaluation: IndividualAssessmentScore = {
       feedbackId: newEvaluationId,
-      type: "expert",
+      type: evaluationType,
       assessor: {
         fullname: assessorName,
       },
@@ -485,7 +497,12 @@ export const AssessmentSessionPage = ({
           <ActionCard
             icon={<Plus size={24} />}
             title="Add Evaluation"
-            description="Create new feedback"
+            description={
+              hasExistingEvaluation
+                ? "You have already added an evaluation"
+                : "Create new feedback"
+            }
+            disabled={hasExistingEvaluation}
             onClick={() => setIsAddModalOpen(true)}
           />
 
@@ -515,6 +532,7 @@ export const AssessmentSessionPage = ({
               evalSession={evalSession}
               assessmentId={assessmentId}
               profile={profile}
+              onDelete={onDeleteEvaluation}
             />
           ))}
         </div>
@@ -522,7 +540,10 @@ export const AssessmentSessionPage = ({
         {/* Add Evaluation Modal */}
         <Modal
           isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
+          onClose={() => {
+            setIsAddModalOpen(false);
+            setEvaluationType("expert");
+          }}
           title="New Evaluation"
         >
           <div className="space-y-4">
@@ -531,9 +552,27 @@ export const AssessmentSessionPage = ({
               <strong>{candidateName}</strong> as{" "}
               <strong>{assessorName || "Unknown Assessor"}</strong>.
             </p>
-            <div className="flex justify-end gap-3">
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold uppercase text-slate-400 tracking-wider">
+                Evaluation Type
+              </label>
+              <select
+                value={evaluationType}
+                onChange={(e) => setEvaluationType(e.target.value as "expert" | "self")}
+                className="w-full p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all bg-white font-sans text-sm text-slate-700"
+              >
+                <option value="expert">Expert Evaluation</option>
+                <option value="self">Self Evaluation</option>
+              </select>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-2">
               <button
-                onClick={() => setIsAddModalOpen(false)}
+                onClick={() => {
+                  setIsAddModalOpen(false);
+                  setEvaluationType("expert");
+                }}
                 className="px-4 py-2 text-slate-600 font-bold hover:bg-slate-100 rounded-xl"
               >
                 Cancel

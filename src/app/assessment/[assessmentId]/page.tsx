@@ -21,6 +21,7 @@ export default function AssessmentRoute() {
     createAssessment,
     createEvaluation,
     updateAssessment,
+    deleteEvaluation,
     matrix,
     profiles,
     assessorName,
@@ -50,6 +51,7 @@ export default function AssessmentRoute() {
       onCreateAssessment={createAssessment}
       onCreateEvaluation={createEvaluation}
       onUpdateAssessment={updateAssessment}
+      onDeleteEvaluation={deleteEvaluation}
       matrix={matrix}
       profiles={profiles}
       assessorName={assessorName}

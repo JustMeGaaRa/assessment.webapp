@@ -11,6 +11,7 @@ interface ActionCardProps {
     accept: string;
     onChange: ChangeEventHandler<HTMLInputElement>;
   };
+  disabled?: boolean;
 }
 
 const variantStyles = {
@@ -31,20 +32,35 @@ export const ActionCard = ({
   onClick,
   variant = "indigo",
   fileInput,
+  disabled = false,
 }: ActionCardProps) => {
   const styles = variantStyles[variant];
 
   const handleClick = () => {
+    if (disabled) return;
     if (fileInput) {
       document.getElementById(fileInput.id)?.click();
     }
     onClick?.();
   };
 
+  const borderClass = disabled
+    ? "border-slate-200 bg-slate-50/50 cursor-not-allowed opacity-60"
+    : styles.border;
+
+  const iconClass = disabled
+    ? "bg-slate-100 text-slate-400"
+    : styles.icon;
+
+  const scaleClass = disabled
+    ? ""
+    : "group-hover:scale-110";
+
   return (
     <button
       onClick={handleClick}
-      className={`h-full min-h-[220px] bg-slate-50 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center p-6 transition-all group text-center ${styles.border}`}
+      disabled={disabled}
+      className={`h-full min-h-[220px] bg-slate-50 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center p-6 transition-all group text-center ${borderClass}`}
     >
       {fileInput && (
         <input
@@ -53,15 +69,16 @@ export const ActionCard = ({
           className="hidden"
           accept={fileInput.accept}
           onChange={fileInput.onChange}
+          disabled={disabled}
         />
       )}
       <div
-        className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${styles.icon}`}
+        className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 transition-transform ${scaleClass} ${iconClass}`}
       >
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-slate-800 mb-2">{title}</h3>
-      <p className="text-sm text-slate-500 font-medium max-w-[200px]">{description}</p>
+      <h3 className={`text-lg font-bold mb-2 ${disabled ? "text-slate-400" : "text-slate-800"}`}>{title}</h3>
+      <p className={`text-sm font-medium max-w-[200px] ${disabled ? "text-slate-400" : "text-slate-500"}`}>{description}</p>
     </button>
   );
 };

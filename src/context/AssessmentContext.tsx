@@ -30,6 +30,7 @@ interface AssessmentContextType {
   createEvaluation: (assessmentId: string, evaluation: IndividualAssessmentScore) => void;
   updateAssessment: (id: string, data: Partial<AssessmentSession>) => void;
   updateEvaluation: (id: string, data: Partial<IndividualAssessmentScore>) => void;
+  deleteEvaluation: (assessmentId: string, evaluationId: string) => void;
   backupApplicationState: () => void;
   restoreApplicationState: (data: BackupData) => void;
 
@@ -65,6 +66,7 @@ export const AssessmentProvider = ({
     createEvaluation,
     updateAssessment,
     updateEvaluation,
+    deleteEvaluation,
     backupApplicationState,
     restoreApplicationState,
   } = useApplicationData();
@@ -87,6 +89,9 @@ export const AssessmentProvider = ({
     onSyncReceived: () => {},
     onEvaluationReceived: (assessmentId: string, ev: IndividualAssessmentScore) => {
       createEvaluation(assessmentId, ev);
+    },
+    onEvaluationDeleted: (assessmentId: string, evaluationId: string) => {
+      deleteEvaluation(assessmentId, evaluationId);
     },
     onAssessmentUpdateReceived: (assessmentId: string, update: Partial<AssessmentDetails>) => {
       updateAssessment(assessmentId, { details: update as AssessmentDetails });
@@ -116,6 +121,9 @@ export const AssessmentProvider = ({
     onEvaluationReceived: (assessmentId: string, ev: IndividualAssessmentScore) => {
       createEvaluation(assessmentId, ev);
     },
+    onEvaluationDeleted: (assessmentId: string, evaluationId: string) => {
+      deleteEvaluation(assessmentId, evaluationId);
+    },
     onAssessmentUpdateReceived: (assessmentId: string, update: Partial<AssessmentDetails>) => {
       updateAssessment(assessmentId, { details: update as AssessmentDetails });
     },
@@ -140,6 +148,7 @@ export const AssessmentProvider = ({
         createEvaluation,
         updateAssessment,
         updateEvaluation,
+        deleteEvaluation,
         backupApplicationState,
         restoreApplicationState,
 

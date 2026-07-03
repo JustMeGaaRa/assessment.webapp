@@ -233,6 +233,22 @@ export const useApplicationData = () => {
     );
   };
 
+  const deleteEvaluation = (
+    assessmentId: string,
+    evaluationId: string,
+  ) => {
+    setAssessments((prev) =>
+      prev.map((a) =>
+        a.assessmentId === assessmentId
+          ? {
+              ...a,
+              feedbacks: a.feedbacks.filter((f) => f.feedbackId !== evaluationId),
+            }
+          : a
+      )
+    );
+  };
+
   const backupApplicationState = () => {
     const backup = createBackup(
       matrix,
@@ -282,6 +298,7 @@ export const useApplicationData = () => {
     createEvaluation,
     updateAssessment,
     updateEvaluation,
+    deleteEvaluation,
     backupApplicationState,
     restoreApplicationState,
   };

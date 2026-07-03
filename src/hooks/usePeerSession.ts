@@ -35,6 +35,13 @@ export type PeerMessage =
       };
     }
   | {
+      type: "DELETE_EVALUATION";
+      payload: {
+        assessmentId: string;
+        evaluationId: string;
+      };
+    }
+  | {
       type: "HELLO";
       payload: { peerId: string; nametag: string };
     }
@@ -62,6 +69,7 @@ interface UsePeerSessionProps {
     proficiencyLevels: ProficiencyLevel[],
   ) => void;
   onEvaluationReceived: (assessmentId: string, evaluation: IndividualAssessmentScore) => void;
+  onEvaluationDeleted?: (assessmentId: string, evaluationId: string) => void;
   onAssessmentUpdateReceived: (assessmentId: string, update: Partial<AssessmentDetails>) => void;
   onSessionClosed?: () => void;
 }
@@ -74,6 +82,7 @@ export const usePeerSession = ({
   currentProficiencyLevels,
   onSyncReceived,
   onEvaluationReceived,
+  onEvaluationDeleted,
   onAssessmentUpdateReceived,
   onSessionClosed,
 }: UsePeerSessionProps) => {
@@ -104,6 +113,7 @@ export const usePeerSession = ({
     assessorName,
     onSyncReceived,
     onEvaluationReceived,
+    onEvaluationDeleted,
     onAssessmentUpdateReceived,
     onSessionClosed,
   });
@@ -117,6 +127,7 @@ export const usePeerSession = ({
       assessorName,
       onSyncReceived,
       onEvaluationReceived,
+      onEvaluationDeleted,
       onAssessmentUpdateReceived,
       onSessionClosed,
     };
@@ -127,6 +138,7 @@ export const usePeerSession = ({
     currentProficiencyLevels,
     onSyncReceived,
     onEvaluationReceived,
+    onEvaluationDeleted,
     onAssessmentUpdateReceived,
     onSessionClosed,
     assessorName,
@@ -201,6 +213,14 @@ export const usePeerSession = ({
           stateRef.current.onAssessmentUpdateReceived(
             message.payload.assessmentId,
             message.payload.details,
+          );
+          broadcastToOthers(message);
+          break;
+
+        case "DELETE_EVALUATION":
+          stateRef.current.onEvaluationDeleted?.(
+            message.payload.assessmentId,
+            message.payload.evaluationId,
           );
           broadcastToOthers(message);
           break;
@@ -459,6 +479,13 @@ export const usePeerSession = ({
     [broadcast],
   );
 
+  const sendDeleteEvaluation = useCallback(
+    (assessmentId: string, evaluationId: string) => {
+      broadcast({ type: "DELETE_EVALUATION", payload: { assessmentId, evaluationId } });
+    },
+    [broadcast],
+  );
+
   return {
     peerId,
     status,
@@ -471,5 +498,6 @@ export const usePeerSession = ({
     leaveSession,
     sendUpdateEvaluation,
     sendUpdateAssessment,
+    sendDeleteEvaluation,
   };
 };

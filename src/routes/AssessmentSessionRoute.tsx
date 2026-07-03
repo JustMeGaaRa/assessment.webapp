@@ -37,6 +37,7 @@ interface AssessmentSessionRouteProps {
     id: string,
     data: Partial<AssessmentSession>,
   ) => void;
+  onDeleteEvaluation: (assessmentId: string, evaluationId: string) => void;
 }
 
 export const AssessmentSessionRoute = ({
@@ -54,6 +55,7 @@ export const AssessmentSessionRoute = ({
   onCreateAssessment,
   onCreateEvaluation,
   onUpdateAssessment,
+  onDeleteEvaluation,
   setHostedSessionId,
 }: AssessmentSessionRouteProps) => {
   const params = useParams();
@@ -134,6 +136,11 @@ export const AssessmentSessionRoute = ({
     activeSession.sendUpdateEvaluation(assessmentId, ev);
   };
 
+  const handleDeleteEvaluation = (evaluationId: string) => {
+    onDeleteEvaluation(assessmentId, evaluationId);
+    activeSession.sendDeleteEvaluation?.(assessmentId, evaluationId);
+  };
+
   const handleUpdateAssessment = (
     id: string,
     data: Partial<AssessmentSession>,
@@ -200,6 +207,7 @@ export const AssessmentSessionRoute = ({
       onCreateAssessment={onCreateAssessment}
       onCreateEvaluation={handleCreateEvaluation}
       onUpdateAssessment={handleUpdateAssessment}
+      onDeleteEvaluation={handleDeleteEvaluation}
       matrix={sessionMatrix}
       profile={profile}
       assessorName={assessorName}

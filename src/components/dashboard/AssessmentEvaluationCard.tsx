@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { Calendar, MessageSquareText } from "lucide-react";
+import { Calendar, MessageSquareText, Trash2 } from "lucide-react";
 import type { IndividualAssessmentScore, Profile } from "../../lib/matrix/types";
 import { calculateIndividualScore } from "../../lib/matrix/assessmentHelper";
 import { Card } from "../ui/Card";
@@ -9,12 +9,14 @@ interface AssessmentEvaluationCardProps {
   evalSession: IndividualAssessmentScore;
   assessmentId?: string;
   profile?: Profile;
+  onDelete?: (evaluationId: string) => void;
 }
 
 export const AssessmentEvaluationCard = ({
   evalSession,
   assessmentId,
   profile,
+  onDelete,
 }: AssessmentEvaluationCardProps) => {
   const router = useRouter();
 
@@ -23,6 +25,15 @@ export const AssessmentEvaluationCard = ({
       router.push(`/assessment/${assessmentId}/evaluation/${evalSession.feedbackId}`);
     } else {
       console.warn("No assessment ID found for navigation");
+    }
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!onDelete) return;
+    const assessor = evalSession.assessor.fullname || "this assessor";
+    if (confirm(`Are you sure you want to delete the evaluation feedback from ${assessor}?`)) {
+      onDelete(evalSession.feedbackId);
     }
   };
 
@@ -37,11 +48,21 @@ export const AssessmentEvaluationCard = ({
       onClick={handleCardClick}
       className="min-h-[220px] flex flex-col"
     >
-      <Card.Header>
-        <div className="flex gap-2">
+      <Card.Header className="flex justify-between items-start gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Badge status={evalSession.status} />
+          <Badge variant={evalSession.type} />
           <Badge icon={<MessageSquareText size={12} />}>Feedback</Badge>
         </div>
+        {onDelete && (
+          <button
+            onClick={handleDelete}
+            className="text-slate-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors shrink-0"
+            title="Delete evaluation"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
       </Card.Header>
 
       <Card.Body className="flex-1 pt-0">
