@@ -94,6 +94,11 @@ export const AssessmentModule = ({
             {matrix.stacks
               .filter((x) => x.stackName === selectedStack)
               .flatMap((x) => x.topics)
+              .filter(
+                (x) =>
+                  module.topics.find((t) => t.topicId === x.topicId) !==
+                  undefined,
+              )
               .map((topic) => (
                 <AssessmentTopic
                   key={topic.topicName}
