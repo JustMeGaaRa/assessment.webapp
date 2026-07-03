@@ -1,10 +1,10 @@
-import type { ProficiencyLevelState } from "../../types";
+import type { ProficiencyLevel } from "../../lib/matrix/types";
 import { TrendingUp, TrendingDown, Award } from "lucide-react";
 import { Card } from "../ui/Card";
 import { scoreStyles } from "./skillScoresData";
 
 interface LibraryLevelsProps {
-  levelMappings: ProficiencyLevelState[];
+  levelMappings: ProficiencyLevel[];
 }
 
 export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
@@ -23,9 +23,9 @@ export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
     );
   }
 
-  // Sort mappings by minScore to ensure logical order
+  // Sort mappings by scoreThreshold to ensure logical order
   const sortedMappings = [...levelMappings].sort(
-    (a, b) => a.minScore - b.minScore,
+    (a, b) => a.scoreThreshold - b.scoreThreshold,
   );
 
   return (
@@ -34,6 +34,12 @@ export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
         // Map index to a score style (1 to 5) for consistent colors
         const styleIndex = (index % 5) + 1;
         const style = scoreStyles[styleIndex] || scoreStyles[1];
+
+        const minScore = mapping.scoreThreshold;
+        const maxScore =
+          index < sortedMappings.length - 1
+            ? sortedMappings[index + 1].scoreThreshold
+            : 5.0;
 
         return (
           <Card
@@ -58,7 +64,7 @@ export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
                     </span>
                   </div>
                   <h3 className="text-xl font-bold text-slate-800 group-hover:text-slate-900 transition-colors truncate">
-                    {mapping.level}
+                    {mapping.title}
                   </h3>
                 </div>
                 <div
@@ -70,7 +76,7 @@ export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
 
               {/* Description Placeholder / Label */}
               <p className="text-slate-500 text-sm mb-6 leading-relaxed">
-                Candidate score profile required to reach {mapping.level} level.
+                Candidate score profile required to reach {mapping.title} level.
               </p>
 
               {/* Divider */}
@@ -84,7 +90,7 @@ export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
                     <span>Min Score</span>
                   </div>
                   <div className="text-2xl font-black text-slate-700">
-                    {mapping.minScore}
+                    {minScore}
                   </div>
                 </div>
                 <div className="w-px h-10 bg-slate-200" />
@@ -94,7 +100,7 @@ export const LibraryLevels = ({ levelMappings }: LibraryLevelsProps) => {
                     <TrendingUp size={12} className={style.text} />
                   </div>
                   <div className="text-2xl font-black text-slate-700">
-                    {mapping.maxScore}
+                    {maxScore}
                   </div>
                 </div>
               </div>

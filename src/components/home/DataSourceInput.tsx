@@ -7,7 +7,7 @@ import {
   UploadCloud,
   Link as LinkIcon,
 } from "lucide-react";
-import type { FileStatus } from "../../types";
+import { type FileStatus } from "./ImportForm";
 
 type DataSourceMode = "file" | "url";
 

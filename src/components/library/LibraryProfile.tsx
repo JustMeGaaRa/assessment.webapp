@@ -1,11 +1,11 @@
 import { Settings2 } from "lucide-react";
-import type { ModuleState, ProfileState } from "../../types";
+import type { CompetenceMatrix, Profile } from "../../lib/matrix/types";
 import { Card } from "../ui/Card";
 import { ProgressBar } from "../ui/ProgressBar";
 
 interface LibraryProfileProps {
-  profile: ProfileState;
-  matrix: ModuleState[];
+  profile: Profile;
+  matrix: CompetenceMatrix;
 }
 
 export const LibraryProfile = ({ profile, matrix }: LibraryProfileProps) => {
@@ -18,7 +18,7 @@ export const LibraryProfile = ({ profile, matrix }: LibraryProfileProps) => {
           </div>
           <Settings2 size={18} className="text-slate-300" />
         </div>
-        <h3 className="text-xl font-bold text-slate-800">{profile.title}</h3>
+        <h3 className="text-xl font-bold text-slate-800">{profile.profileName}</h3>
         <p className="text-slate-500 text-sm">{profile.description}</p>
       </Card.Header>
       <Card.Body>
@@ -26,21 +26,24 @@ export const LibraryProfile = ({ profile, matrix }: LibraryProfileProps) => {
           Module Weight Distribution
         </h4>
         <div className="space-y-4">
-          {Object.entries(profile.weights)
-            .filter(([, weight]) => Number(weight) > 0)
-            .map(([modId, weight]) => {
-              const module = matrix.find((m) => m.id === modId);
+          {profile.modules
+            .filter((m) => Number(m.weight) > 0)
+            .map((pm) => {
+              const module = matrix.modules.find((m) => m.moduleId === pm.moduleId);
               return (
-                <div key={modId}>
+                <div key={pm.moduleId}>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="font-medium text-slate-700">
-                      {module?.title || modId}
+                      {module?.moduleName || pm.moduleId}
                     </span>
                     <span className="font-bold text-slate-900">
-                      {weight as number}%
+                      {pm.weight}%
                     </span>
                   </div>
-                  <ProgressBar value={weight as number} fillClassName="bg-indigo-500" />
+                  <ProgressBar
+                    value={pm.weight}
+                    fillClassName="bg-indigo-500"
+                  />
                 </div>
               );
             })}

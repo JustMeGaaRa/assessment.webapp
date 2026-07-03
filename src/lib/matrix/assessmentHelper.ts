@@ -3,80 +3,25 @@ import type {
   AssessmentSessionStatistics,
   AssessmentModuleStatistics,
   Stats,
+  Profile,
+  ProficiencyLevel,
+  CompetenceMatrix,
 } from "./types";
-import {
-  ProficiencyLevelState,
-  ModuleState,
-  ProfileState,
-  AssessorFeedbackState,
-  AssessmentSessionState,
-} from "../../types";
 import {
   IndividualModuleScore,
   IndividualAssessmentScore,
   AssessmentSession,
 } from "@lib/matrix/types";
 
-export function getIndividualFeedbackScores(
-  modulesState: ModuleState[],
-  feedbackState: AssessorFeedbackState,
-): IndividualAssessmentScore {
-  return {
-    feedbackId: feedbackState.id,
-    assessor: {
-      fullname: feedbackState.assessorName ?? "Anonymous",
-    },
-    modules: getIndividualModuleScores(modulesState, feedbackState),
-  };
-}
-
-export function getIndividualModuleScores(
-  modulesState: ModuleState[],
-  feedbackState: AssessorFeedbackState,
-): IndividualModuleScore[] {
-  return modulesState.map((module) => ({
-    moduleName: module.id,
-    topics: module.topics.map((topic) => ({
-      topicName: topic.name,
-      score: feedbackState.scores[topic.id],
-      notes: feedbackState.notes[topic.id],
-    })),
-  }));
-}
-
-export function getAssessmentSession(
-  assessmentState: AssessmentSessionState,
-  modulesState: ModuleState[],
-  feedbackState: AssessorFeedbackState[],
-): AssessmentSession {
-  return {
-    assessmentId: assessmentState.id,
-    details: {
-      date: new Date(assessmentState.date),
-      candidate: {
-        fullname: assessmentState.candidateName,
-      },
-      profile: {
-        profileId: assessmentState.profileId,
-        title: assessmentState.profileTitle,
-      },
-      stack: assessmentState.stack,
-    },
-    feedbacks: feedbackState.map(
-      (evaluation) => getIndividualFeedbackScores(modulesState, evaluation),
-      {},
-    ),
-  };
-}
-
-export function calculateModuleStatistics(
-  profileState: ProfileState,
+function calculateModuleStatistics(
+  profile: Profile,
   assessorName: string,
   module: IndividualModuleScore | undefined,
 ): AssessorModuleStatistics {
   // NOTE: the module is undefined when assessor didn't provide any score in this module
   if (!module) {
     return {
+      moduleId: "",
       moduleName: "",
       assessorName: assessorName,
       stats: {
@@ -93,10 +38,12 @@ export function calculateModuleStatistics(
   );
   const scoredTopics = module.topics.length;
   const averageScore = scoredTopics > 0 ? totalScore / scoredTopics : 0;
-  const weight = profileState.weights[module.moduleName] || 0;
-  const weightedScore = (averageScore * weight) / 100;
+  const weight =
+    profile.modules.find((x) => x.moduleId === module.moduleId)?.weight ?? 0;
+  const weightedScore = (averageScore * weight) / 100.0;
 
   return {
+    moduleId: module.moduleId,
     moduleName: module.moduleName,
     assessorName: assessorName,
     stats: {
@@ -108,12 +55,12 @@ export function calculateModuleStatistics(
 }
 
 export function calculateAssessorFeedbackScore(
-  profileState: ProfileState,
+  profileState: Profile,
   assessorName: string,
   assessorModuleScores: IndividualModuleScore[],
 ): Stats {
-  const moduleStats = assessorModuleScores.map((feedback) =>
-    calculateModuleStatistics(profileState, assessorName, feedback),
+  const moduleStats = assessorModuleScores.map((module) =>
+    calculateModuleStatistics(profileState, assessorName, module),
   );
 
   return {
@@ -126,13 +73,25 @@ export function calculateAssessorFeedbackScore(
       moduleStats.reduce(
         (total, module) => total + module.stats.weightedScore,
         0,
-      ) / moduleStats.length,
+      ),
     weight: moduleStats ? moduleStats[0]?.stats.weight : 0,
   };
 }
 
+export function calculateIndividualScore(
+  profile: Profile,
+  evaluation: IndividualAssessmentScore,
+): number {
+  const stats = calculateAssessorFeedbackScore(
+    profile,
+    evaluation.assessor.fullname,
+    evaluation.modules,
+  );
+  return stats.weightedScore;
+}
+
 function calculateAssessmentModuleStatistics(
-  profileState: ProfileState,
+  profileState: Profile,
   moduleId: string,
   assessorFeedbacks: IndividualAssessmentScore[],
 ): AssessmentModuleStatistics {
@@ -140,11 +99,12 @@ function calculateAssessmentModuleStatistics(
     calculateModuleStatistics(
       profileState,
       feedback.assessor.fullname,
-      feedback.modules.find((x) => x.moduleName === moduleId),
+      feedback.modules.find((x) => x.moduleId === moduleId),
     ),
   );
 
   return {
+    moduleId: moduleId,
     moduleName: moduleId,
     stats: {
       averageScore:
@@ -170,7 +130,7 @@ function calculateAssessmentModuleStatistics(
     notes: assessorFeedbacks
       .map((feedback) => {
         const notes = feedback.modules
-          .filter((module) => module.moduleName === moduleId)
+          .filter((module) => module.moduleId === moduleId)
           .flatMap((x) => x.topics.flatMap((y) => y.notes))
           .filter((note) => note !== undefined && note !== "");
         return notes.length > 0
@@ -183,28 +143,30 @@ function calculateAssessmentModuleStatistics(
 
 function findProficiencyLevel(
   totalScore: number,
-  proficiencyLevels: ProficiencyLevelState[] | undefined,
+  proficiencyLevels: ProficiencyLevel[] | undefined,
 ) {
-  const targetProficiency = proficiencyLevels?.find(
-    (level) => totalScore >= level.minScore && totalScore < level.maxScore,
-  );
+  const targetProficiency = proficiencyLevels
+    ?.sort((a, b) => b.scoreThreshold - a.scoreThreshold)
+    ?.find((level) => totalScore >= level.scoreThreshold);
   return targetProficiency?.level;
 }
 
 export function calculateAssessmentStatistics(
-  profile: ProfileState,
-  modules: ModuleState[],
-  proficiencyLevels: ProficiencyLevelState[] | undefined,
+  profile: Profile,
+  modules: CompetenceMatrix,
+  proficiencyLevels: ProficiencyLevel[] | undefined,
   assessment: AssessmentSession,
 ): AssessmentSessionStatistics {
-  const profileModules = modules.filter(
-    (module) => profile.weights[module.id] > 0,
+  const profileModules = modules.modules.filter(
+    (module) =>
+      (profile.modules.find((x) => x.moduleId === module.moduleId)?.weight ??
+        0) > 0,
   );
 
   const moduleScores = profileModules.map((module) =>
     calculateAssessmentModuleStatistics(
       profile,
-      module.id,
+      module.moduleId,
       assessment.feedbacks,
     ),
   );

@@ -2,9 +2,9 @@ import type {
   ModuleState,
   ProfileState,
   TopicState,
-  AppDataState,
+  MatrixDataState,
   ProficiencyLevelState,
-} from "../types";
+} from "../lib/state/v1/types";
 
 import Papa from "papaparse";
 
@@ -72,7 +72,7 @@ export const parseAssessmentData = (
     content: string;
     type: "profiles" | "topics" | "modules" | "levels";
   }[],
-): AppDataState => {
+): MatrixDataState => {
   let matrix: ModuleState[] = [];
   const profiles: ProfileState[] = [];
   const stacks: string[] = [];

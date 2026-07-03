@@ -1,32 +1,31 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
-import type { AssessorFeedbackState, ModuleState } from "../types";
 
 // --- JSON Helpers ---
 
-export const exportSessionToJSON = (session: AssessorFeedbackState) => {
+export const exportSessionToJSON = (session: any, candidateName: string = "session") => {
   const blob = new Blob([JSON.stringify(session, null, 2)], {
     type: "application/json",
   });
   saveAs(
     blob,
-    `assessment_${session.candidateName.replace(/\s+/g, "_").toLowerCase()}_${session.date}.json`,
+    `assessment_${candidateName.replace(/\s+/g, "_").toLowerCase()}_${session.date || new Date().toISOString()}.json`,
   );
 };
 
 export const importSessionFromJSON = (
   file: File,
-): Promise<AssessorFeedbackState> => {
+): Promise<any> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const json = JSON.parse(e.target?.result as string);
-        // Basic validation
-        if (!json.id || !json.candidateName || !json.scores) {
+        if (!json.id && !json.feedbackId) {
           throw new Error("Invalid assessment file format");
         }
-        resolve(json as AssessorFeedbackState);
+        resolve(json);
       } catch (err) {
         reject(err);
       }
@@ -39,19 +38,18 @@ export const importSessionFromJSON = (
 // --- CSV Helpers (Full Assessment Level) ---
 
 export const exportAssessmentToCSV = (
-  session: AssessorFeedbackState,
-  matrix: ModuleState[],
+  session: any,
+  matrix: any[],
 ) => {
-  // Flatten all topics from all modules
   const data = matrix.flatMap((module) =>
-    module.topics.map((topic) => ({
-      "Module ID": module.id,
-      "Module Title": module.title,
-      "Topic ID": topic.id,
-      Topic: topic.name,
-      "Stack Mapping": topic.mappings?.[session.stack] || "",
-      Score: session.scores[topic.id] ?? "",
-      Note: session.notes[topic.id] ?? "",
+    module.topics.map((topic: any) => ({
+      "Module ID": module.id || module.moduleId,
+      "Module Title": module.title || module.moduleName,
+      "Topic ID": topic.id || topic.topicId,
+      Topic: topic.name || topic.topicName,
+      "Stack Mapping": topic.mappings?.[session.stack] || topic.technologyDescription || "",
+      Score: (session.scores ? session.scores[topic.id || topic.topicId] : undefined) ?? "",
+      Note: (session.notes ? session.notes[topic.id || topic.topicId] : undefined) ?? "",
     })),
   );
 
@@ -59,7 +57,7 @@ export const exportAssessmentToCSV = (
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   saveAs(
     blob,
-    `assessment_scores_${session.candidateName.replace(/\s+/g, "_").toLowerCase()}_${session.date}.csv`,
+    `assessment_scores_${(session.candidateName || "session").replace(/\s+/g, "_").toLowerCase()}_${session.date}.csv`,
   );
 };
 
@@ -78,16 +76,13 @@ export const parseAssessmentCSV = (
           const scores: Record<string, number> = {};
           const notes: Record<string, string> = {};
 
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           results.data.forEach((row: any) => {
             const id = row["Topic ID"];
             if (id) {
-              // Parse Score
               const scoreVal = parseInt(row["Score"]);
               if (!isNaN(scoreVal) && scoreVal >= 0 && scoreVal <= 5) {
                 scores[id] = scoreVal;
               }
-              // Parse Note (Optional, but good to restore if present)
               if (row["Note"]) {
                 notes[id] = row["Note"];
               }

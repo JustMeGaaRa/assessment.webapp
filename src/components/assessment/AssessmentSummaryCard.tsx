@@ -3,8 +3,9 @@ import {
   AssessmentSessionStatistics,
   AssessmentModuleStatistics,
   AssessmentSession,
+  CompetenceMatrix,
+  CompetenceMatrixModule,
 } from "@lib/matrix/types";
-import type { ModuleState } from "../../types";
 import { Card } from "../ui/Card";
 
 export interface Assessor {
@@ -58,7 +59,7 @@ const ModuleScoreCard = ({
   moduleStats,
   assessors,
 }: {
-  module: ModuleState;
+  module: CompetenceMatrixModule;
   moduleStats: AssessmentModuleStatistics | undefined;
   assessors: Assessor[];
 }) => {
@@ -78,7 +79,7 @@ const ModuleScoreCard = ({
       <div className="flex justify-between items-start mb-6">
         <div className="flex-1 pr-4">
           <h4 className="font-black text-slate-800 text-base tracking-tight mb-1.5">
-            {module.title}
+            {module.moduleName}
           </h4>
           <p className="text-xs text-slate-400 font-medium leading-relaxed">
             {module.description}
@@ -148,7 +149,7 @@ export const AssessmentSummaryCard = ({
   statistics,
 }: {
   assessors: Assessor[];
-  matrix: ModuleState[];
+  matrix: CompetenceMatrix;
   assessment: AssessmentSession;
   statistics: AssessmentSessionStatistics;
 }) => {
@@ -211,12 +212,12 @@ export const AssessmentSummaryCard = ({
 
         {/* Modules Performance Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 items-start">
-          {matrix.map((module) => (
+          {matrix.modules.map((module) => (
             <ModuleScoreCard
-              key={module.id}
+              key={module.moduleId}
               module={module}
               moduleStats={statistics.modules.find(
-                (x) => x.moduleName === module.id,
+                (x) => x.moduleId === module.moduleId,
               )}
               assessors={assessors}
             />

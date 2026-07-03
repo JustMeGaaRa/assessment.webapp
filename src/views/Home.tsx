@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { parseBackup, type BackupData } from "../utils/backupHelper";
-import type {
-  ModuleState,
-  ProfileState,
-  AssessorFeedbackState,
-  AssessmentSessionState,
-  ProficiencyLevelState,
-} from "../types";
+import {
+  AssessmentSession,
+  CompetenceMatrix,
+  ProficiencyLevel,
+  Profile,
+} from "../lib/matrix/types";
 import { ImportForm } from "../components/home/ImportForm";
 import { SessionForm } from "../components/home/SessionForm";
 import { Modal } from "../components/ui/Modal";
@@ -21,20 +20,17 @@ import { AssessmentFiltersToolbar } from "../components/home/AssessmentFiltersTo
 import { AssessmentGrid } from "../components/home/AssessmentGrid";
 
 interface HomePageProps {
-  assessments: AssessmentSessionState[];
-  evaluations: AssessorFeedbackState[];
-  onCreateAssessment: (assessment: AssessmentSessionState) => void;
-  onCreateSession: (session: AssessorFeedbackState) => void;
+  assessments: AssessmentSession[];
+  onCreateAssessment: (assessment: AssessmentSession) => void;
   onDataLoad: (
-    matrix: ModuleState[],
-    profiles: ProfileState[],
-    stacks: string[],
-    levelMappings?: ProficiencyLevelState[],
+    matrix: CompetenceMatrix,
+    profiles: Profile[],
+    levelMappings: ProficiencyLevel[],
   ) => void;
   existingStacks: string[];
-  existingProfiles: ProfileState[];
-  existingMatrix: ModuleState[];
-  existingLevelMappings: ProficiencyLevelState[];
+  existingProfiles: Profile[];
+  existingMatrix: CompetenceMatrix;
+  existingLevelMappings: ProficiencyLevel[];
   hasData: boolean;
   assessorName: string;
   setAssessorName: (name: string) => void;
@@ -47,7 +43,6 @@ interface HomePageProps {
 
 export const HomePage = ({
   assessments,
-  evaluations,
   onCreateAssessment,
   onDataLoad,
   existingStacks,
@@ -78,8 +73,8 @@ export const HomePage = ({
   const [selectedProfileId, setLocalProfileId] = useState("");
 
   const hasProfiles = existingProfiles.length > 0;
-  const hasTopics = existingMatrix.length > 0;
-  const hasModules = existingMatrix.some((m) => !!m.description);
+  const hasTopics = existingMatrix.modules.length > 0;
+  const hasModules = existingMatrix.modules.some((m) => !!m.description);
   const hasLevelMappings = existingLevelMappings.length > 0;
 
   // Hook for CSV Config Import logic
@@ -89,12 +84,11 @@ export const HomePage = ({
     hasData,
     existingMatrix,
     existingProfiles,
-    existingStacks,
     existingLevelMappings,
   });
 
   const currentStacks = configImport.parsedContext
-    ? configImport.parsedContext.stacks
+    ? configImport.parsedContext.matrix.stacks.map((s) => s.stackName)
     : existingStacks;
   const currentProfiles = configImport.parsedContext
     ? configImport.parsedContext.profiles
@@ -115,7 +109,7 @@ export const HomePage = ({
       setSelectedStackKey(currentStacks[0]);
     }
     if (!selectedProfileId && currentProfiles.length > 0) {
-      setLocalProfileId(currentProfiles[0].id);
+      setLocalProfileId(currentProfiles[0].profileId);
     }
     setIsSessionModalOpen(true);
   };
@@ -128,22 +122,27 @@ export const HomePage = ({
       onDataLoad(
         configImport.parsedContext.matrix,
         configImport.parsedContext.profiles,
-        configImport.parsedContext.stacks,
         configImport.parsedContext.levelMappings,
       );
     }
 
     const assessmentId = crypto.randomUUID();
-    const profile = currentProfiles.find((p) => p.id === selectedProfileId);
+    const profile = currentProfiles.find((p) => p.profileId === selectedProfileId);
 
-    const newAssessment: AssessmentSessionState = {
-      id: assessmentId,
-      candidateName: name,
-      profileId: selectedProfileId,
-      profileTitle: profile?.title || "Unknown Profile",
-      stack: selectedStackKey,
-      date: new Date().toISOString(),
-      locked: false,
+    const newAssessment: AssessmentSession = {
+      assessmentId: assessmentId,
+      details: {
+        candidate: {
+          fullname: name,
+        },
+        date: new Date(),
+        profile: {
+          profileId: selectedProfileId,
+          title: profile?.profileName || "Unknown Profile",
+        },
+        stack: selectedStackKey,
+      },
+      feedbacks: [],
     };
 
     onCreateAssessment(newAssessment);
@@ -155,7 +154,6 @@ export const HomePage = ({
       onDataLoad(
         configImport.parsedContext.matrix,
         configImport.parsedContext.profiles,
-        configImport.parsedContext.stacks,
         configImport.parsedContext.levelMappings,
       );
     }
@@ -274,6 +272,7 @@ export const HomePage = ({
               {/* Active / Ongoing Session */}
               <OngoingAssessmentsSection
                 assessments={assessments}
+                profiles={currentProfiles}
                 hostedSessionId={hostedSessionId}
                 guestAssessmentId={guestAssessmentId}
                 guestHostId={guestHostId}
@@ -310,9 +309,9 @@ export const HomePage = ({
               {/* Candidates Assessments Grid */}
               <AssessmentGrid
                 displayAssessments={filters.displayAssessments}
-                evaluations={evaluations}
                 currentLevelMappings={currentLevelMappings}
                 handleOpenSessionModal={handleOpenSessionModal}
+                profiles={currentProfiles}
               />
             </>
           )}

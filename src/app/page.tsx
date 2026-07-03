@@ -2,13 +2,23 @@
 
 import { useAssessment } from "@/context/AssessmentContext";
 import { HomePage } from "@/views/Home";
+import { useSyncExternalStore } from "react";
+
+const emptySubscribe = () => () => {};
+function useMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
 
 export default function HomeRoute() {
+  const mounted = useMounted();
+
   const {
     assessments,
-    evaluations,
     createAssessment,
-    createEvaluation,
     handleDataLoad,
     stacks,
     profiles,
@@ -23,19 +33,27 @@ export default function HomeRoute() {
     guestHostId,
   } = useAssessment();
 
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="animate-pulse text-slate-400 font-medium">
+          Loading dashboard...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <HomePage
       assessments={assessments}
-      evaluations={evaluations}
       onCreateAssessment={createAssessment}
-      onCreateSession={createEvaluation}
       onDataLoad={handleDataLoad}
       existingStacks={stacks}
       existingProfiles={profiles}
       existingMatrix={matrix}
       existingLevelMappings={levelMappings}
       hasData={
-        matrix.length > 0 &&
+        matrix.modules.length > 0 &&
         assessorName !== "" &&
         assessorName !== undefined
       }

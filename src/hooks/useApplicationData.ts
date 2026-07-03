@@ -1,158 +1,212 @@
-import { useEffect, useState } from "react";
-import type {
-  AssessmentSessionState,
-  AssessorFeedbackState,
-  ProficiencyLevelState,
-  ModuleState,
-  ProfileState,
-} from "../types";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import {
+  AssessmentSession,
+  CompetenceMatrix,
+  ProficiencyLevel,
+  Profile,
+  SkillLevel,
+  IndividualAssessmentScore,
+} from "@lib/matrix/types";
+import { AppDataStateV1 } from "@lib/state/v1/types";
+import { getApplicationState } from "@lib/state/v2/mappers";
 import { createBackup, type BackupData } from "../utils/backupHelper";
+import { AppDataStateV2 } from "@lib/state/v2/types";
 
-const ASSESSMENT_LIBRARY_KEY = "assessment_matrix_data";
-const ASSESSOR_EVALUATIONS_KEY = "assessment_evaluations";
-const ASSESSMENT_SESSIONS_KEY = "assessment_groups";
+const emptySubscribe = () => () => {};
+function useMounted() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+}
+
+function loadInitialState() {
+  if (typeof window === "undefined") {
+    return {
+      matrix: { modules: [], stacks: [] },
+      profiles: [],
+      proficiencyLevels: [],
+      skillLevels: [],
+      assessments: [],
+      assessorName: "",
+    };
+  }
+
+  const savedStateV2 = localStorage.getItem("assessment_state_v2");
+  if (savedStateV2) {
+    try {
+      const parsed = JSON.parse(savedStateV2);
+      if (parsed.version === 2) {
+        const assessments: AssessmentSession[] = (parsed.assessments || []).map((a: AssessmentSession) => ({
+          ...a,
+          details: {
+            ...a.details,
+            date: new Date(a.details.date),
+          },
+          feedbacks: (a.feedbacks || []).map((f: IndividualAssessmentScore) => ({
+            ...f,
+            date: f.date ? new Date(f.date) : undefined,
+          })),
+        }));
+        return {
+          matrix: parsed.matrix || { modules: [], stacks: [] },
+          profiles: parsed.profiles || [],
+          proficiencyLevels: parsed.proficiencyLevels || [],
+          skillLevels: parsed.skillLevels || [],
+          assessments,
+          assessorName: localStorage.getItem("assessor_name") || "",
+        };
+      }
+    } catch (e) {
+      console.error("Error parsing saved v2 state", e);
+    }
+  }
+
+  // Fallback V1 keys migration
+  const savedLibrary = localStorage.getItem("assessment_matrix_data");
+  const savedSessions = localStorage.getItem("assessment_groups");
+  const savedEvaluations = localStorage.getItem("assessment_evaluations");
+
+  if (savedLibrary || savedSessions || savedEvaluations) {
+    try {
+      const libraryParsed = savedLibrary ? JSON.parse(savedLibrary) : {};
+      const assessmentsParsed = savedSessions ? JSON.parse(savedSessions) : [];
+      const evaluationsParsed = savedEvaluations ? JSON.parse(savedEvaluations) : [];
+
+      const appStateV1: AppDataStateV1 = {
+        version: 1,
+        timestamp: new Date(),
+        library: {
+          matrix: libraryParsed.matrix || [],
+          profiles: libraryParsed.profiles || [],
+          stacks: libraryParsed.stacks || [],
+          levelMappings: libraryParsed.levelMappings || [],
+        },
+        assessments: assessmentsParsed,
+        evaluations: evaluationsParsed,
+      };
+
+      const appStateV2 = getApplicationState(appStateV1);
+      
+      // Persist the migrated V2 state
+      localStorage.setItem("assessment_state_v2", JSON.stringify(appStateV2));
+
+      // Clean up the V1 keys
+      localStorage.removeItem("assessment_matrix_data");
+      localStorage.removeItem("assessment_groups");
+      localStorage.removeItem("assessment_evaluations");
+
+      return {
+        matrix: appStateV2.matrix,
+        profiles: appStateV2.profiles,
+        proficiencyLevels: appStateV2.proficiencyLevels,
+        skillLevels: appStateV2.skillLevels,
+        assessments: appStateV2.assessments,
+        assessorName: localStorage.getItem("assessor_name") || "",
+      };
+    } catch (e) {
+      console.error("Error migrating state from v1 to v2", e);
+    }
+  }
+
+  return {
+    matrix: { modules: [], stacks: [] },
+    profiles: [],
+    proficiencyLevels: [],
+    skillLevels: [],
+    assessments: [],
+    assessorName: localStorage.getItem("assessor_name") || "",
+  };
+}
 
 export const useApplicationData = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [initialData] = useState(() => loadInitialState());
+  const mounted = useMounted();
 
   // Master Data State with Persistence
-  const [matrix, setMatrix] = useState<ModuleState[]>([]);
-  const [profiles, setProfiles] = useState<ProfileState[]>([]);
-  const [stacks, setStacks] = useState<string[]>([]);
-  const [levelMappings, setLevelMappings] = useState<ProficiencyLevelState[]>(
-    [],
-  );
+  const [matrix, setMatrix] = useState<CompetenceMatrix>(initialData.matrix);
+  const [profiles, setProfiles] = useState<Profile[]>(initialData.profiles);
+  const [proficiencyLevels, setProficiencyLevels] = useState<ProficiencyLevel[]>(initialData.proficiencyLevels);
+  const [skillLevels, setSkillLevels] = useState<SkillLevel[]>(initialData.skillLevels);
 
-  // Assessment Groups State
-  const [assessments, setAssessments] = useState<AssessmentSessionState[]>([]);
-
-  // Assessment Evaluations State
-  const [evaluations, setEvaluations] = useState<AssessorFeedbackState[]>([]);
+  // Assessment Sessions State
+  const [assessments, setAssessments] = useState<AssessmentSession[]>(initialData.assessments);
 
   // Assessor Name State
-  const [assessorName, setAssessorName] = useState("");
-
-  // Load state from localStorage once mounted
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedLibrary = localStorage.getItem(ASSESSMENT_LIBRARY_KEY);
-      if (savedLibrary) {
-        try {
-          const parsed = JSON.parse(savedLibrary);
-          if (parsed.matrix) setMatrix(parsed.matrix);
-          if (parsed.profiles) setProfiles(parsed.profiles);
-          if (parsed.stacks) {
-            setStacks(
-              Array.isArray(parsed.stacks)
-                ? parsed.stacks
-                : Object.values(parsed.stacks),
-            );
-          }
-          if (parsed.levelMappings) setLevelMappings(parsed.levelMappings);
-        } catch (e) {
-          console.error("Error parsing saved library", e);
-        }
-      }
-
-      const savedSessions = localStorage.getItem(ASSESSMENT_SESSIONS_KEY);
-      if (savedSessions) {
-        try {
-          setAssessments(JSON.parse(savedSessions));
-        } catch (e) {
-          console.error("Error parsing saved sessions", e);
-        }
-      }
-
-      const savedEvaluations = localStorage.getItem(ASSESSOR_EVALUATIONS_KEY);
-      if (savedEvaluations) {
-        try {
-          setEvaluations(JSON.parse(savedEvaluations));
-        } catch (e) {
-          console.error("Error parsing saved evaluations", e);
-        }
-      }
-
-      const savedName = localStorage.getItem("assessor_name");
-      if (savedName) {
-        setAssessorName(savedName);
-      }
-
-      setIsLoaded(true);
-    }
-  }, []);
+  const [assessorName, setAssessorName] = useState(initialData.assessorName);
 
   // Persist changes
   useEffect(() => {
-    if (!isLoaded || typeof window === "undefined") return;
-    localStorage.setItem(
-      ASSESSMENT_LIBRARY_KEY,
-      JSON.stringify({ matrix, profiles, stacks, levelMappings }),
-    );
-  }, [matrix, profiles, stacks, levelMappings, isLoaded]);
-
-  useEffect(() => {
-    if (!isLoaded || typeof window === "undefined") return;
-    localStorage.setItem(ASSESSMENT_SESSIONS_KEY, JSON.stringify(assessments));
-  }, [assessments, isLoaded]);
-
-  useEffect(() => {
-    if (!isLoaded || typeof window === "undefined") return;
-    localStorage.setItem(ASSESSOR_EVALUATIONS_KEY, JSON.stringify(evaluations));
-  }, [evaluations, isLoaded]);
+    if (!mounted || typeof window === "undefined") return;
+    const stateV2: AppDataStateV2 = {
+      version: 2,
+      timestamp: new Date(),
+      matrix,
+      profiles,
+      proficiencyLevels,
+      skillLevels,
+      assessments,
+    };
+    localStorage.setItem("assessment_state_v2", JSON.stringify(stateV2));
+  }, [matrix, profiles, proficiencyLevels, skillLevels, assessments, mounted]);
 
   // Persist assessor name
   useEffect(() => {
-    if (!isLoaded || typeof window === "undefined") return;
+    if (!mounted || typeof window === "undefined") return;
     localStorage.setItem("assessor_name", assessorName);
-  }, [assessorName, isLoaded]);
+  }, [assessorName, mounted]);
 
   const handleDataLoad = (
-    m: ModuleState[],
-    p: ProfileState[],
-    s: string[],
-    l?: ProficiencyLevelState[],
+    m: CompetenceMatrix,
+    p: Profile[],
+    l: ProficiencyLevel[],
+    s?: SkillLevel[],
   ) => {
     setMatrix(m);
     setProfiles(p);
-    setStacks(s);
-    if (l) setLevelMappings(l);
-    localStorage.setItem(
-      ASSESSMENT_LIBRARY_KEY,
-      JSON.stringify({
-        matrix: m,
-        profiles: p,
-        stacks: s,
-        levelMappings: l || levelMappings,
-      }),
-    );
+    setProficiencyLevels(l);
+    if (s) setSkillLevels(s);
   };
 
-  const createAssessment = (assessment: AssessmentSessionState) => {
+  const createAssessment = (assessment: AssessmentSession) => {
     setAssessments((prev) => {
-      if (prev.some((a) => a.id === assessment.id)) {
-        return prev.map((a) => (a.id === assessment.id ? assessment : a));
+      if (prev.some((a) => a.assessmentId === assessment.assessmentId)) {
+        return prev.map((a) => (a.assessmentId === assessment.assessmentId ? assessment : a));
       }
       return [assessment, ...prev];
     });
   };
 
-  const createEvaluation = (evaluation: AssessorFeedbackState) => {
-    setEvaluations((prev) => {
-      if (prev.some((e) => e.id === evaluation.id)) {
-        return prev.map((e) => (e.id === evaluation.id ? evaluation : e));
-      }
-      return [evaluation, ...prev];
-    });
+  const createEvaluation = (assessmentId: string, evaluation: IndividualAssessmentScore) => {
+    setAssessments((prev) =>
+      prev.map((a) =>
+        a.assessmentId === assessmentId
+          ? {
+              ...a,
+              feedbacks: a.feedbacks.some((f) => f.feedbackId === evaluation.feedbackId)
+                ? a.feedbacks.map((f) => (f.feedbackId === evaluation.feedbackId ? evaluation : f))
+                : [...a.feedbacks, evaluation],
+            }
+          : a
+      )
+    );
   };
 
   const updateAssessment = (
     assessmentId: string,
-    assessmentUpdate: Partial<AssessmentSessionState>,
+    assessmentUpdate: Partial<AssessmentSession>,
   ) => {
     setAssessments((prev) =>
       prev.map((assessment) =>
-        assessment.id === assessmentId
-          ? { ...assessment, ...assessmentUpdate }
+        assessment.assessmentId === assessmentId
+          ? {
+              ...assessment,
+              ...assessmentUpdate,
+              details: assessmentUpdate.details
+                ? { ...assessment.details, ...assessmentUpdate.details }
+                : assessment.details,
+            }
           : assessment,
       ),
     );
@@ -160,22 +214,32 @@ export const useApplicationData = () => {
 
   const updateEvaluation = (
     evaluationId: string,
-    evaluationUpdate: Partial<AssessorFeedbackState>,
+    evaluationUpdate: Partial<IndividualAssessmentScore>,
   ) => {
-    setEvaluations((prev) =>
-      prev.map((evaluation) =>
-        evaluation.id === evaluationId
-          ? { ...evaluation, ...evaluationUpdate }
-          : evaluation,
-      ),
+    setAssessments((prev) =>
+      prev.map((a) => {
+        if (a.feedbacks.some((f) => f.feedbackId === evaluationId)) {
+          return {
+            ...a,
+            feedbacks: a.feedbacks.map((f) =>
+              f.feedbackId === evaluationId
+                ? { ...f, ...evaluationUpdate }
+                : f
+            ),
+          };
+        }
+        return a;
+      })
     );
   };
 
   const backupApplicationState = () => {
     const backup = createBackup(
-      { matrix, profiles, stacks },
+      matrix,
+      proficiencyLevels,
+      profiles,
+      skillLevels,
       assessments,
-      evaluations,
       assessorName,
     );
     const blob = new Blob([JSON.stringify(backup, null, 2)], {
@@ -192,13 +256,11 @@ export const useApplicationData = () => {
   };
 
   const restoreApplicationState = (data: BackupData) => {
-    setMatrix(data.library.matrix);
-    setProfiles(data.library.profiles);
-    setStacks(data.library.stacks);
-    if (data.library.levelMappings)
-      setLevelMappings(data.library.levelMappings);
+    setMatrix(data.matrix);
+    setProfiles(data.profiles);
+    setProficiencyLevels(data.proficiencyLevels);
+    setSkillLevels(data.skillLevels);
     setAssessments(data.assessments);
-    setEvaluations(data.evaluations);
     setAssessorName(data.assessorName || "");
   };
 
@@ -207,14 +269,12 @@ export const useApplicationData = () => {
     setMatrix,
     profiles,
     setProfiles,
-    stacks,
-    setStacks,
-    levelMappings,
-    setLevelMappings,
+    proficiencyLevels,
+    setProficiencyLevels,
+    skillLevels,
+    setSkillLevels,
     assessments,
     setAssessments,
-    evaluations,
-    setEvaluations,
     assessorName,
     setAssessorName,
     handleDataLoad,

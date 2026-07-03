@@ -1,8 +1,7 @@
-import type { TopicState } from "../../types";
+import { TechnologyTopic } from "@lib/matrix";
 
 interface AssessmentTopicProps {
-  topic: TopicState;
-  selectedStack: string;
+  topic: TechnologyTopic;
   score: number | undefined;
   note: string;
   onScore: (id: string, score: number) => void;
@@ -12,7 +11,6 @@ interface AssessmentTopicProps {
 
 export const AssessmentTopic = ({
   topic,
-  selectedStack,
   score,
   note,
   onScore,
@@ -24,13 +22,11 @@ export const AssessmentTopic = ({
       <div className="flex-1 min-w-0">
         <div className="font-semibold text-slate-700 mb-2 flex flex-col">
           <span className="text-base text-balance leading-snug">
-            {topic.name}
+            {topic.topicName}
           </span>
-          {topic.mappings && topic.mappings[selectedStack] && (
-            <span className="text-indigo-600 text-sm font-bold mt-1 flex items-center gap-1.5">
-              {topic.mappings[selectedStack]}
-            </span>
-          )}
+          <span className="text-indigo-600 text-sm font-bold mt-1 flex items-center gap-1.5">
+            {topic.technologyDescription}
+          </span>
         </div>
         <input
           type="text"
@@ -41,7 +37,7 @@ export const AssessmentTopic = ({
           }
           className="w-full text-xs text-slate-500 bg-transparent border-none focus:ring-0 p-0 placeholder:italic disabled:opacity-50 disabled:cursor-not-allowed"
           value={note}
-          onChange={(e) => onNote(topic.id, e.target.value)}
+          onChange={(e) => onNote(topic.topicName, e.target.value)}
           disabled={isReadOnly}
         />
       </div>
@@ -51,7 +47,7 @@ export const AssessmentTopic = ({
             <div key={num} className="relative group/tooltip">
               <button
                 disabled={isReadOnly}
-                onClick={() => onScore(topic.id, num)}
+                onClick={() => onScore(topic.topicName, num)}
                 className={`w-10 h-10 md:w-8 md:h-8 rounded-xl md:rounded-lg text-sm md:text-xs font-bold transition-all border relative z-0 disabled:cursor-not-allowed disabled:opacity-70 flex-shrink-0 touch-manipulation
                 ${
                   score === num

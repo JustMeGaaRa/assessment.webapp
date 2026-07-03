@@ -16,7 +16,7 @@ export const AssessmentFeedback = ({ summary }: AssessmentFeedbackProps) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/generateFeedback", {
+      const response = await fetch("/api/assessment/feedback", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

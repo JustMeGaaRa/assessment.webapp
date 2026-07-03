@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { ArrowLeft, Book } from "lucide-react";
-import type {
-  ModuleState,
-  ProfileState,
-  ProficiencyLevelState,
-} from "../types";
+import {
+  CompetenceMatrix,
+  Profile,
+  ProficiencyLevel,
+} from "../lib/matrix/types";
 import { LibraryTabs } from "../components/library/LibraryTabs";
 import { LibraryModule } from "../components/library/LibraryModule";
 import { LibraryProfile } from "../components/library/LibraryProfile";
@@ -15,10 +15,10 @@ import { FilterChip } from "../components/ui/FilterChip";
 import { useRouter } from "next/navigation";
 
 interface AssessmentLibraryPageProps {
-  matrix: ModuleState[];
-  profiles: ProfileState[];
+  matrix: CompetenceMatrix;
+  profiles: Profile[];
   stacks: string[];
-  levelMappings?: ProficiencyLevelState[];
+  levelMappings?: ProficiencyLevel[];
 }
 
 export const AssessmentLibraryPage = ({
@@ -85,10 +85,11 @@ export const AssessmentLibraryPage = ({
             </div>
 
             <div className="grid grid-cols-1 gap-6">
-              {matrix.map((module) => (
+              {matrix.modules.map((module) => (
                 <LibraryModule
-                  key={module.id}
+                  key={module.moduleId}
                   module={module}
+                  matrix={matrix}
                   activeStack={activeStack}
                 />
               ))}
@@ -97,10 +98,9 @@ export const AssessmentLibraryPage = ({
         ) : activeTab === "profiles" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {profiles
-              //   .filter((p) => p.stack === activeStack)
               .map((profile) => (
                 <LibraryProfile
-                  key={profile.id}
+                  key={profile.profileId}
                   profile={profile}
                   matrix={matrix}
                 />

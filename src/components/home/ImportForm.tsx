@@ -1,5 +1,6 @@
 import { DataSourceInput } from "./DataSourceInput";
-import type { FileStatus } from "../../types";
+
+export type FileStatus = "idle" | "uploading" | "parsing" | "done" | "error";
 
 interface ImportFormProps {
   profFile: File | null;

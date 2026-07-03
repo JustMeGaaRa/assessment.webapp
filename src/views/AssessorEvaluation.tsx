@@ -11,31 +11,31 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import type {
-  ModuleState,
-  AssessorFeedbackState,
-  ProfileState,
-} from "../types";
-import { AssessmentEvaluationStats } from "../components/assessment/AssessmentStats";
-import { AssessmentModule } from "../components/assessment/AssessmentModule";
-import { PageHeader } from "../components/ui/PageHeader";
+import { AssessmentEvaluationStats } from "@/components/assessment/AssessmentStats";
+import { AssessmentModule } from "@/components/assessment/AssessmentModule";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { useRouter } from "next/navigation";
-import { exportSessionToJSON } from "../utils/fileHelpers";
+import { exportSessionToJSON } from "@/utils/fileHelpers";
 import {
   calculateAssessorFeedbackScore,
-  getIndividualModuleScores,
-} from "../lib/matrix/assessmentHelper";
+  CompetenceMatrix,
+  CompetenceMatrixModule,
+  Profile,
+  IndividualAssessmentScore,
+} from "@lib/matrix";
 import {
   dummySkillScores,
   scoreStyles,
-} from "../components/library/skillScoresData";
+} from "@/components/library/skillScoresData";
 
 interface AssessorEvaluationPageProps {
-  evaluation: AssessorFeedbackState;
-  modules: ModuleState[];
-  profile: ProfileState;
-  onUpdate: (data: Partial<AssessorFeedbackState>) => void;
+  evaluation: IndividualAssessmentScore;
+  modules: CompetenceMatrix;
+  profile: Profile;
+  onUpdate: (data: Partial<IndividualAssessmentScore>) => void;
   isLocked?: boolean;
+  candidateName: string;
+  stack: string;
 }
 
 export const AssessorEvaluationPage = ({
@@ -44,12 +44,16 @@ export const AssessorEvaluationPage = ({
   profile,
   onUpdate,
   isLocked = false,
+  candidateName,
+  stack,
 }: AssessorEvaluationPageProps) => {
   const router = useRouter();
 
   // Initialize with first module expanded if available
   const [expandedModules, setExpandedModules] = useState<Set<string>>(() => {
-    return modules.length > 0 ? new Set([modules[0].id]) : new Set();
+    return modules.modules.length > 0
+      ? new Set([modules.modules[0].moduleId])
+      : new Set();
   });
   const [showReference, setShowReference] = useState(true);
 
@@ -60,26 +64,47 @@ export const AssessorEvaluationPage = ({
     setExpandedModules(newSet);
   };
 
-  const handleScore = (topicId: string, score: number) => {
+  const handleScore = (topicName: string, score: number) => {
     if (isLocked) return;
-    onUpdate({
-      scores: { ...evaluation.scores, [topicId]: score },
+    const updatedModules = evaluation.modules.map((m) => {
+      if (m.topics.some((t) => t.topicName === topicName)) {
+        return {
+          ...m,
+          topics: m.topics.map((t) =>
+            t.topicName === topicName ? { ...t, score } : t
+          ),
+        };
+      }
+      return m;
     });
+    onUpdate({ modules: updatedModules });
   };
 
-  const handleNote = (topicId: string, note: string) => {
+  const handleNote = (topicName: string, note: string) => {
     if (isLocked) return;
-    onUpdate({
-      notes: { ...evaluation.notes, [topicId]: note },
+    const updatedModules = evaluation.modules.map((m) => {
+      if (m.topics.some((t) => t.topicName === topicName)) {
+        return {
+          ...m,
+          topics: m.topics.map((t) =>
+            t.topicName === topicName ? { ...t, notes: note } : t
+          ),
+        };
+      }
+      return m;
     });
+    onUpdate({ modules: updatedModules });
   };
 
   const resetAssessment = () => {
     if (isLocked) return;
     if (window.confirm("Are you sure you want to clear all scores?")) {
+      const resetModules = evaluation.modules.map((m) => ({
+        ...m,
+        topics: m.topics.map((t) => ({ ...t, score: 0, notes: "" })),
+      }));
       onUpdate({
-        scores: {},
-        notes: {},
+        modules: resetModules,
       });
     }
   };
@@ -89,35 +114,36 @@ export const AssessorEvaluationPage = ({
     if (window.confirm("Mark this assessment as completed?")) {
       onUpdate({
         status: "completed",
-        finalScore: evaluationStats.totalScore,
       });
     }
   };
 
-  // --- JSON Handlers ---
   const handleExportJSON = () => {
     exportSessionToJSON(evaluation);
   };
 
-  // Calculations
-  const getScoredTopicsInModule = (module: ModuleState) => {
-    return module.topics.filter((topic) => evaluation.scores[topic.id] > 0)
-      .length;
+  const getScoredTopicsInModule = (module: CompetenceMatrixModule) => {
+    const evalModule = evaluation.modules.find(
+      (m) => m.moduleId === module.moduleId
+    );
+    return evalModule
+      ? evalModule.topics.filter((topic) => topic.score > 0).length
+      : 0;
   };
 
-  const feedbacks = getIndividualModuleScores(modules, evaluation);
   const stats = calculateAssessorFeedbackScore(
     profile,
-    evaluation.assessorName ?? "Anonmyous",
-    feedbacks,
+    evaluation.assessor.fullname ?? "Anonymous",
+    evaluation.modules,
   );
+
   const evaluationStats = {
     totalScore: stats.weightedScore,
-    completedTopics: modules.reduce(
+    completedTopics: modules.modules.reduce(
       (total, module) => total + getScoredTopicsInModule(module),
       0,
     ),
-    totalTopics: modules.reduce(
+    totalTopics: modules.modules.reduce(
       (total, module) => total + module.topics.length,
       0,
     ),
@@ -127,6 +153,14 @@ export const AssessorEvaluationPage = ({
     isLocked ||
     evaluation.status === "completed" ||
     evaluation.status === "rejected";
+
+  const scoresMap = evaluation.modules
+    .flatMap((m) => m.topics)
+    .reduce<Record<string, number>>((acc, curr) => ({ ...acc, [curr.topicName]: curr.score }), {});
+
+  const notesMap = evaluation.modules
+    .flatMap((m) => m.topics)
+    .reduce<Record<string, string>>((acc, curr) => ({ ...acc, [curr.topicName]: curr.notes }), {});
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8 pb-32 md:pb-40">
@@ -144,7 +178,6 @@ export const AssessorEvaluationPage = ({
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {/* Lock Indicator */}
             {isLocked && (
               <div
                 className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold shadow-sm"
@@ -155,7 +188,6 @@ export const AssessorEvaluationPage = ({
               </div>
             )}
 
-            {/* JSON Export */}
             <div className="flex gap-1 items-center bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
               <button
                 onClick={handleExportJSON}
@@ -194,15 +226,14 @@ export const AssessorEvaluationPage = ({
         />
 
         <AssessmentEvaluationStats
-          candidate={evaluation.candidateName}
-          assessorName={evaluation.assessorName ?? "Unknown"}
-          date={evaluation.date}
-          profile={evaluation.profileTitle}
-          stack={evaluation.stack}
+          candidate={candidateName}
+          assessorName={evaluation.assessor.fullname ?? "Unknown"}
+          date={evaluation.date ? evaluation.date.toISOString() : new Date().toISOString()}
+          profile={profile.profileName}
+          stack={stack}
           stats={evaluationStats}
         />
 
-        {/* Skill Score Reference Rubric */}
         <div className="mb-6 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden transition-all duration-300">
           <button
             onClick={() => setShowReference(!showReference)}
@@ -235,7 +266,6 @@ export const AssessorEvaluationPage = ({
                       key={skill.score}
                       className="border border-slate-100 rounded-xl p-3 bg-white flex flex-col relative overflow-hidden shadow-xs hover:shadow-sm transition-all group"
                     >
-                      {/* Top Accent Gradient Bar */}
                       <div
                         className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${style.gradient}`}
                       />
@@ -269,26 +299,26 @@ export const AssessorEvaluationPage = ({
 
         {/* Modules List */}
         <div className="space-y-4">
-          {modules.map((module) => {
-            const isExpanded = expandedModules.has(module.id);
+          {modules.modules.map((module) => {
+            const isExpanded = expandedModules.has(module.moduleId);
             const completedTopics = getScoredTopicsInModule(module);
             const totalTopics = module.topics.length;
             const moduleStats = {
-              moduleId: module.id,
               completed: completedTopics,
               total: totalTopics,
             };
 
             return (
               <AssessmentModule
-                key={module.id}
+                key={module.moduleId}
                 module={module}
+                matrix={modules}
                 isExpanded={isExpanded}
                 stats={moduleStats}
                 onToggle={toggleModule}
-                selectedStack={evaluation.stack}
-                scores={evaluation.scores}
-                notes={evaluation.notes}
+                selectedStack={stack}
+                scores={scoresMap}
+                notes={notesMap}
                 onScore={handleScore}
                 onNote={handleNote}
                 isReadOnly={isReadOnly}
@@ -297,7 +327,7 @@ export const AssessorEvaluationPage = ({
           })}
         </div>
 
-        {/* Action Bar - Floating - Only show if NOT locked, or maybe show simplified view? */}
+        {/* Action Bar */}
         {!isLocked && (
           <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-8 pointer-events-none">
             <div className="max-w-7xl mx-auto pointer-events-auto">

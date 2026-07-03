@@ -13,7 +13,7 @@ export const DiscussionSummarySchema = z.object({
 
 export type DiscussionSummary = z.infer<typeof DiscussionSummarySchema>;
 
-export const IndividualAssessmentScoreSchema = z.object({
+export const GeminiAssessmentScoreSchema = z.object({
   topics: z.array(
     z.object({
       name: z
@@ -36,9 +36,7 @@ export const IndividualAssessmentScoreSchema = z.object({
   ),
 });
 
-export type IndividualAssessmentScore = z.infer<
-  typeof IndividualAssessmentScoreSchema
->;
+export type GeminiAssessmentScore = z.infer<typeof GeminiAssessmentScoreSchema>;
 
 export const ConsolidatedAssessmentResultSchema = z.object({
   candidateName: z.string().describe("Full name of the candidate"),

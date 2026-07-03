@@ -1,19 +1,33 @@
-import type { ModuleState } from "../../types";
+import type {
+  CompetenceMatrix,
+  CompetenceMatrixModule,
+  TechnologyTopic,
+} from "../../lib/matrix/types";
 import { LibraryModuleTopic } from "./LibraryModuleTopic";
 import { Card } from "../ui/Card";
 
 interface LibraryModuleProps {
-  module: ModuleState;
+  module: CompetenceMatrixModule;
+  matrix: CompetenceMatrix;
   activeStack: string;
 }
 
-export const LibraryModule = ({ module, activeStack }: LibraryModuleProps) => {
+export const LibraryModule = ({
+  module,
+  matrix,
+  activeStack,
+}: LibraryModuleProps) => {
   return (
     <Card>
-      <Card.Header border className="px-4 py-3 md:px-6 md:py-4 bg-slate-50 flex justify-between items-center">
+      <Card.Header
+        border
+        className="px-4 py-3 md:px-6 md:py-4 bg-slate-50 flex justify-between items-center"
+      >
         <div>
-          <h3 className="text-lg font-bold text-slate-800">{module.title}</h3>
-          <p className="text-xs text-slate-500 font-medium">{module.description}</p>
+          <h3 className="text-lg font-bold text-slate-800">{module.moduleName}</h3>
+          <p className="text-xs text-slate-500 font-medium">
+            {module.description}
+          </p>
         </div>
         <div className="text-[10px] font-black uppercase tracking-widest text-indigo-500 bg-indigo-50 px-2 py-1 rounded">
           {module.topics.length} Topics
@@ -33,13 +47,22 @@ export const LibraryModule = ({ module, activeStack }: LibraryModuleProps) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {module.topics.map((topic) => (
-              <LibraryModuleTopic
-                key={topic.id}
-                topic={topic}
-                activeStack={activeStack}
-              />
-            ))}
+            {module.topics.map((topic) => {
+              const stack = matrix.stacks.find((s) => s.stackName === activeStack);
+              const techTopic = stack?.topics.find((t) => t.topicId === topic.topicId);
+              const displayTopic: TechnologyTopic = {
+                type: "technology-topic",
+                topicId: topic.topicId,
+                topicName: topic.topicName,
+                technologyDescription: techTopic?.technologyDescription || topic.description,
+              };
+              return (
+                <LibraryModuleTopic
+                  key={topic.topicId}
+                  topic={displayTopic}
+                />
+              );
+            })}
           </tbody>
         </table>
       </Card.Body>

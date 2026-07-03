@@ -6,7 +6,7 @@ import { generateFeedback } from "@agents/generate-feedback/agent";
 import type { ConsolidatedAssessmentSummary } from "@lib/matrix/types";
 
 export async function POST(request: Request) {
-  console.log("Request received at /api/generateFeedback");
+  console.log("Request received at /api/assessment/feedback");
 
   if (!process.env.GEMINI_API_KEY) {
     return NextResponse.json(

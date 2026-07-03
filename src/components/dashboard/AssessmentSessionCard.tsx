@@ -6,27 +6,53 @@ import {
   ShieldCheck,
   ClipboardList,
 } from "lucide-react";
-import type { AssessorFeedbackState, ProficiencyLevelState } from "../../types";
+import type {
+  AssessmentSession,
+  ProficiencyLevel,
+  Profile,
+} from "../../lib/matrix/types";
+import { calculateIndividualScore } from "../../lib/matrix/assessmentHelper";
 import { Card } from "../ui/Card";
 import { Badge } from "../ui/Badge";
 
 interface AssessmentSessionCardProps {
-  session: AssessorFeedbackState;
-  levelMappings?: ProficiencyLevelState[];
+  assessment: AssessmentSession;
+  levelMappings?: ProficiencyLevel[];
+  hostId?: string;
+  profiles?: Profile[];
 }
 
 export const AssessmentSessionCard = ({
-  session,
+  assessment,
   levelMappings,
+  hostId,
+  profiles,
 }: AssessmentSessionCardProps) => {
   const router = useRouter();
+
+  const completed = assessment.feedbacks.filter((f) => f.status === "completed");
+  const isCompleted =
+    assessment.feedbacks.length > 0 &&
+    assessment.feedbacks.every((f) => f.status === "completed");
+
+  const profile = profiles?.find(
+    (p) => p.profileId === assessment.details.profile.profileId
+  );
+  const totalScore = completed.reduce(
+    (acc, curr) =>
+      acc + (profile ? calculateIndividualScore(profile, curr) : 0),
+    0
+  );
+  const avgScore = completed.length > 0 ? totalScore / completed.length : undefined;
+
+  const status = isCompleted ? "completed" : "ongoing";
 
   return (
     <Card
       hoverable
       onClick={() => {
-        const url = `/assessment/${session.assessmentId ?? session.id}${
-          session.hostId ? `?s=${session.hostId}` : ""
+        const url = `/assessment/${assessment.assessmentId}${
+          hostId ? `?s=${hostId}` : ""
         }`;
         router.push(url);
       }}
@@ -35,7 +61,7 @@ export const AssessmentSessionCard = ({
       <Card.Header>
         <div className="flex justify-between items-start">
           <div className="flex gap-2">
-            <Badge status={session.status} />
+            <Badge status={status} />
             <Badge icon={<ClipboardList size={12} />}>Assessment</Badge>
           </div>
           <ChevronRight
@@ -47,38 +73,36 @@ export const AssessmentSessionCard = ({
 
       <Card.Body className="flex-1 pt-0">
         <h3 className="text-lg font-bold text-slate-800 mb-4 line-clamp-1">
-          {session.candidateName}
+          {assessment.details.candidate.fullname}
         </h3>
 
         <div className="space-y-2.5 text-sm text-slate-500">
           <div className="flex items-center gap-2">
             <Calendar size={16} className="text-slate-400" />
-            <span>{new Date(session.date).toLocaleDateString()}</span>
+            <span>{new Date(assessment.details.date).toLocaleDateString()}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <ShieldCheck size={16} className="text-slate-400" />
-            {session.status === "completed" &&
-            session.finalScore !== undefined &&
+            {status === "completed" &&
+            avgScore !== undefined &&
             levelMappings &&
             levelMappings.length > 0 ? (
               <span>
-                {levelMappings.find(
-                  (l) =>
-                    session.finalScore! >= l.minScore &&
-                    session.finalScore! < l.maxScore,
-                )?.level || "N/A"}
+                {levelMappings
+                  .sort((a, b) => b.scoreThreshold - a.scoreThreshold)
+                  .find((l) => avgScore >= l.scoreThreshold)?.title || "N/A"}
                 <span className="mx-1.5 text-slate-300">•</span>
-                {session.profileTitle}
+                {assessment.details.profile.title}
               </span>
             ) : (
-              <span>{session.profileTitle}</span>
+              <span>{assessment.details.profile.title}</span>
             )}
           </div>
 
           <div className="flex items-center gap-2">
             <Layers size={16} className="text-slate-400" />
-            <span>{session.stack}</span>
+            <span>{assessment.details.stack}</span>
           </div>
         </div>
       </Card.Body>

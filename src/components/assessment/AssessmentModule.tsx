@@ -1,17 +1,17 @@
 import { ChevronRight } from "lucide-react";
-import type { ModuleState } from "../../types";
 import { AssessmentTopic } from "./AssessmentTopic";
 import { Card } from "../ui/Card";
 import { ProgressBar } from "../ui/ProgressBar";
+import { CompetenceMatrix, CompetenceMatrixModule } from "@lib/matrix";
 
 export interface AssessmentModuleStats {
-  moduleId: string;
   completed: number;
   total: number;
 }
 
 interface AssessmentModuleProps {
-  module: ModuleState;
+  module: CompetenceMatrixModule;
+  matrix: CompetenceMatrix;
   isExpanded: boolean;
   stats: AssessmentModuleStats;
   onToggle: (id: string) => void;
@@ -25,6 +25,7 @@ interface AssessmentModuleProps {
 
 export const AssessmentModule = ({
   module,
+  matrix,
   isExpanded,
   stats,
   onToggle,
@@ -45,7 +46,7 @@ export const AssessmentModule = ({
         className={`p-4 md:p-5 flex items-start md:items-center gap-3 md:gap-4 cursor-pointer select-none hover:bg-slate-50 transition-colors ${
           isExpanded ? "bg-slate-50/50 border-b border-slate-100" : ""
         }`}
-        onClick={() => onToggle(module.id)}
+        onClick={() => onToggle(module.moduleId)}
       >
         <div
           className={`mt-1 md:mt-0 transition-transform duration-200 ${
@@ -58,7 +59,7 @@ export const AssessmentModule = ({
         <div className="flex-1 min-w-0">
           <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 mb-1">
             <h2 className="text-base md:text-lg font-bold text-slate-800 leading-tight">
-              {module.title}
+              {module.moduleName}
             </h2>
             {stats && (
               <span className="self-start md:self-auto text-[10px] md:text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full font-medium whitespace-nowrap">
@@ -73,7 +74,11 @@ export const AssessmentModule = ({
 
         {stats && (
           <div className="flex-shrink-0">
-            <ProgressBar value={percentage} showLabel className="w-16 md:w-20" />
+            <ProgressBar
+              value={percentage}
+              showLabel
+              className="w-16 md:w-20"
+            />
           </div>
         )}
       </div>
@@ -86,18 +91,20 @@ export const AssessmentModule = ({
             <div className="w-1/2 text-right">Scoring (0-5)</div>
           </div>
           <div>
-            {module.topics.map((topic) => (
-              <AssessmentTopic
-                key={topic.id}
-                topic={topic}
-                selectedStack={selectedStack}
-                score={scores[topic.id]}
-                note={notes[topic.id]}
-                onScore={onScore}
-                onNote={onNote}
-                isReadOnly={isReadOnly}
-              />
-            ))}
+            {matrix.stacks
+              .filter((x) => x.stackName === selectedStack)
+              .flatMap((x) => x.topics)
+              .map((topic) => (
+                <AssessmentTopic
+                  key={topic.topicName}
+                  topic={topic}
+                  score={scores[topic.topicName]}
+                  note={notes[topic.topicName]}
+                  onScore={onScore}
+                  onNote={onNote}
+                  isReadOnly={isReadOnly}
+                />
+              ))}
           </div>
         </div>
       )}

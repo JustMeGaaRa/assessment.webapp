@@ -8,16 +8,33 @@ export interface SkillLevel {
 }
 
 export interface ProficiencyLevel {
-  // TODO: add attributes
   level: string;
+  title: string;
+  scoreThreshold: number;
+  description: string;
 }
 
-export interface GenericTopic {
+export interface Profile {
+  profileId: string;
+  profileName: string;
+  stack?: string;
+  description?: string;
+  modules: Array<{
+    moduleId: string;
+    weight: number;
+  }>;
+}
+
+export interface TopicDefinition {
+  type: "topic-definition";
+  topicId: string;
   topicName: string;
-  genericDescription: string;
+  description: string;
 }
 
 export interface TechnologyTopic {
+  type: "technology-topic";
+  topicId: string;
   topicName: string;
   technologyDescription: string;
 }
@@ -27,8 +44,15 @@ export interface TechnologyStack {
   topics: TechnologyTopic[];
 }
 
-export interface CompetencyMatrix {
-  topics: GenericTopic[];
+export interface CompetenceMatrixModule {
+  moduleId: string;
+  moduleName: string;
+  description?: string;
+  topics: TopicDefinition[];
+}
+
+export interface CompetenceMatrix {
+  modules: CompetenceMatrixModule[];
   stacks: TechnologyStack[];
 }
 
@@ -46,6 +70,7 @@ export interface AssessmentDetails {
 }
 
 export interface IndividualTopicScore {
+  topicId: string;
   topicName: string;
   score: number;
   reasoning?: string;
@@ -53,16 +78,20 @@ export interface IndividualTopicScore {
 }
 
 export interface IndividualModuleScore {
+  moduleId: string;
   moduleName: string;
   topics: Array<IndividualTopicScore>;
 }
 
 export interface IndividualAssessmentScore {
   feedbackId: string;
+  type: "expert" | "self" | "llm";
   assessor: {
     fullname: string;
   };
   modules: Array<IndividualModuleScore>;
+  status?: "ongoing" | "completed" | "rejected";
+  date?: Date;
 }
 
 export interface AssessmentSession {
@@ -75,6 +104,7 @@ export interface ConsolidatedAssessmentSummary {
   assessmentId: string;
   details: AssessmentDetails;
   modules: Array<{
+    moduleId: string;
     moduleName: string;
     weightedScore: number;
     weight: number;
@@ -94,12 +124,14 @@ export interface Stats {
 }
 
 export interface AssessorModuleStatistics {
+  moduleId: string;
   moduleName: string;
   assessorName: string;
   stats: Stats;
 }
 
 export interface AssessmentModuleStatistics {
+  moduleId: string;
   moduleName: string;
   assessorStats: Array<{
     assessor: {
@@ -120,3 +152,12 @@ export interface AssessmentSessionStatistics {
     totalScore: number;
   };
 }
+
+// CONSOLIDATED TYPES
+// class AssessmentSessionResult {
+//   public constructor(public readonly session: AssessmentSession) {}
+// }
+
+// const assessment: AssessmentSessionResult = new AssessmentSessionResult({
+
+// })

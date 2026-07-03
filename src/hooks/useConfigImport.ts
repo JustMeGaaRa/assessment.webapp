@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
-import type {
-  ModuleState,
-  ProfileState,
-  ProficiencyLevelState,
-  FileStatus,
-} from "../types";
+import type { FileStatus } from "../lib/state/v1/types";
+import {
+  CompetenceMatrix,
+  Profile,
+  ProficiencyLevel,
+} from "@lib/matrix/types";
 import { parseAssessmentData, validateCsvContent } from "../utils/csvHelpers";
+import { getCompetencyMatrix, getProfile, getProficiencyLevel } from "@lib/state/v2/mappers";
 
 interface UseConfigImportProps {
   hasProfiles: boolean;
   hasTopics: boolean;
   hasData: boolean;
-  existingMatrix: ModuleState[];
-  existingProfiles: ProfileState[];
-  existingStacks: string[];
-  existingLevelMappings: ProficiencyLevelState[];
+  existingMatrix: CompetenceMatrix;
+  existingProfiles: Profile[];
+  existingLevelMappings: ProficiencyLevel[];
 }
 
 export const useConfigImport = ({
@@ -23,7 +23,6 @@ export const useConfigImport = ({
   hasData,
   existingMatrix,
   existingProfiles,
-  existingStacks,
   existingLevelMappings,
 }: UseConfigImportProps) => {
   // Profiles
@@ -56,10 +55,9 @@ export const useConfigImport = ({
 
   // Parsed Context Output
   const [parsedContext, setParsedContext] = useState<{
-    matrix: ModuleState[];
-    profiles: ProfileState[];
-    stacks: string[];
-    levelMappings?: ProficiencyLevelState[];
+    matrix: CompetenceMatrix;
+    profiles: Profile[];
+    levelMappings: ProficiencyLevel[];
   } | null>(null);
 
   const processFile = async (
@@ -308,18 +306,19 @@ export const useConfigImport = ({
         }
 
         try {
-          const data = parseAssessmentData(filesToRead);
+          const dataV1 = parseAssessmentData(filesToRead);
+
+          let matrix = getCompetencyMatrix(dataV1.matrix);
+          let profiles = dataV1.profiles.map(getProfile);
+          let levelMappings = dataV1.levelMappings?.map(getProficiencyLevel) ?? [];
 
           if (hasData) {
-            if (data.matrix.length === 0) data.matrix = existingMatrix;
-            if (data.profiles.length === 0) data.profiles = existingProfiles;
-            if (Object.keys(data.stacks).length === 0)
-              data.stacks = existingStacks;
-            if (!data.levelMappings || data.levelMappings.length === 0)
-              data.levelMappings = existingLevelMappings;
+            if (matrix.modules.length === 0) matrix = existingMatrix;
+            if (profiles.length === 0) profiles = existingProfiles;
+            if (levelMappings.length === 0) levelMappings = existingLevelMappings;
           }
 
-          setParsedContext(data);
+          setParsedContext({ matrix, profiles, levelMappings });
         } catch (e) {
           console.error("Failed to parse", e);
         }
@@ -338,7 +337,6 @@ export const useConfigImport = ({
     hasData,
     existingMatrix,
     existingProfiles,
-    existingStacks,
     existingLevelMappings,
     hasProfiles,
     hasTopics,

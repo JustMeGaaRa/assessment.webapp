@@ -1,13 +1,13 @@
+import { GeminiAssessmentScore } from "@agents/types";
 import { evaluateAssessment } from "./agents/evaluate-assessment/agent";
 import { summarizeTranscript } from "./agents/summarize-transcript/agent";
-import { CompetencyMatrix, SkillLevel } from "./matrix/types";
-import type { IndividualAssessmentScore } from "@agents/types";
+import { SkillLevel, TechnologyStack } from "./matrix/types";
 
 export async function generateAssessmentSummary(
   transcript: string,
-  assessmentMatrix: CompetencyMatrix,
+  technologyStack: TechnologyStack,
   skillScores: SkillLevel[],
-): Promise<IndividualAssessmentScore> {
+): Promise<GeminiAssessmentScore> {
   const summary = await summarizeTranscript(transcript);
-  return evaluateAssessment(assessmentMatrix, skillScores, summary);
+  return evaluateAssessment(technologyStack, skillScores, summary);
 }

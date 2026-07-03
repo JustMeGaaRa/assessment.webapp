@@ -1,28 +1,28 @@
 import { google } from "@ai-sdk/google";
 import { generateText, Output } from "ai";
 import {
-  IndividualAssessmentScore,
   DiscussionSummary,
-  IndividualAssessmentScoreSchema,
+  GeminiAssessmentScore,
+  GeminiAssessmentScoreSchema,
 } from "@agents/types";
-import { CompetencyMatrix, SkillLevel } from "@lib/matrix/types";
+import { SkillLevel, TechnologyStack } from "@lib/matrix/types";
 import { systemPrompt } from "./prompt";
 
 export async function evaluateAssessment(
-  assessmentMatrix: CompetencyMatrix,
+  technologyStack: TechnologyStack,
   skillScores: SkillLevel[],
   discussionSummary: DiscussionSummary,
-): Promise<IndividualAssessmentScore> {
+): Promise<GeminiAssessmentScore> {
   const userPrompt = `
-    <assessment_matrix_json>
-    ${JSON.stringify(assessmentMatrix)}
-    </assessment_matrix_json>
+    <technology_stack_json>
+    ${JSON.stringify(technologyStack)}
+    </technology_stack_json>
     <skill_scores_json>
     ${JSON.stringify(skillScores)}
     </skill_scores_json>
-    <assessment_summary_json>
+    <discussion_summary_json>
     ${JSON.stringify(discussionSummary)}
-    </assessment_summary_json>
+    </discussion_summary_json>
   `;
 
   const result = await generateText({
@@ -30,7 +30,7 @@ export async function evaluateAssessment(
     system: systemPrompt,
     prompt: userPrompt,
     output: Output.object({
-      schema: IndividualAssessmentScoreSchema,
+      schema: GeminiAssessmentScoreSchema,
     }),
   });
 

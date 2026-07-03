@@ -26,11 +26,19 @@ export interface ProficiencyLevelState {
   maxScore: number;
 }
 
-export interface AppDataState {
+export interface MatrixDataState {
   matrix: ModuleState[];
   profiles: ProfileState[];
   stacks: string[];
   levelMappings?: ProficiencyLevelState[];
+}
+
+export interface AppDataStateV1 {
+  version: number;
+  timestamp: Date;
+  library: MatrixDataState;
+  assessments: AssessmentSessionState[];
+  evaluations: AssessorFeedbackState[];
 }
 
 export type FileStatus = "idle" | "uploading" | "parsing" | "done" | "error";

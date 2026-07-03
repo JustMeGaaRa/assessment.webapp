@@ -1,5 +1,5 @@
 import { User, ArrowRight, Layers, Users } from "lucide-react";
-import type { ProfileState } from "../../types";
+import type { Profile } from "../../lib/matrix/types";
 
 interface SessionFormProps {
   name: string;
@@ -9,7 +9,7 @@ interface SessionFormProps {
   selectedProfileId: string;
   setSelectedProfileId: (id: string) => void;
   currentStacks: string[];
-  currentProfiles: ProfileState[];
+  currentProfiles: Profile[];
   handleStart: (e: React.FormEvent) => void;
   isFormValid: boolean;
 }
@@ -77,8 +77,8 @@ export const SessionForm = ({
               className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
             >
               {currentProfiles.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.title}
+                <option key={p.profileId} value={p.profileId}>
+                  {p.profileName}
                 </option>
               ))}
             </select>

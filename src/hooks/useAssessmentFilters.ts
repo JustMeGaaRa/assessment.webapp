@@ -1,9 +1,12 @@
 import { useState } from "react";
-import type { AssessmentSessionState, ProfileState } from "../types";
+import type {
+  AssessmentSession,
+  Profile,
+} from "../lib/matrix/types";
 
 interface UseAssessmentFiltersProps {
-  assessments: AssessmentSessionState[];
-  currentProfiles: ProfileState[];
+  assessments: AssessmentSession[];
+  currentProfiles: Profile[];
   currentStacks: string[];
   hostedSessionId?: string | null;
 }
@@ -43,46 +46,46 @@ export const useAssessmentFilters = ({
 
   const getProfileCount = (profileId: string) => {
     return assessments
-      .filter((a) => a.id !== hostedSessionId)
+      .filter((a) => a.assessmentId !== hostedSessionId)
       .filter((a) => {
-        const matchesName = a.candidateName
+        const matchesName = a.details.candidate.fullname
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
         const matchesStack =
-          selectedStacks.length === 0 || selectedStacks.includes(a.stack);
-        return matchesName && matchesStack && a.profileId === profileId;
+          selectedStacks.length === 0 || selectedStacks.includes(a.details.stack);
+        return matchesName && matchesStack && a.details.profile.profileId === profileId;
       }).length;
   };
 
   const getStackCount = (stack: string) => {
     return assessments
-      .filter((a) => a.id !== hostedSessionId)
+      .filter((a) => a.assessmentId !== hostedSessionId)
       .filter((a) => {
-        const matchesName = a.candidateName
+        const matchesName = a.details.candidate.fullname
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
         const matchesProfile =
           selectedProfiles.length === 0 ||
-          selectedProfiles.includes(a.profileId);
-        return matchesName && matchesProfile && a.stack === stack;
+          selectedProfiles.includes(a.details.profile.profileId);
+        return matchesName && matchesProfile && a.details.stack === stack;
       }).length;
   };
 
   const unifiedChips = [
     ...currentProfiles.map((p) => {
       const totalCount = assessments.filter(
-        (a) => a.id !== hostedSessionId && a.profileId === p.id,
+        (a) => a.assessmentId !== hostedSessionId && a.details.profile.profileId === p.profileId,
       ).length;
       return {
         type: "profile" as const,
-        id: p.id,
-        label: p.title,
+        id: p.profileId,
+        label: p.profileName,
         popularity: totalCount,
       };
     }),
     ...currentStacks.map((s) => {
       const totalCount = assessments.filter(
-        (a) => a.id !== hostedSessionId && a.stack === s,
+        (a) => a.assessmentId !== hostedSessionId && a.details.stack === s,
       ).length;
       return {
         type: "stack" as const,
@@ -96,26 +99,26 @@ export const useAssessmentFilters = ({
   );
 
   const filteredAssessments = assessments
-    .filter((a) => a.id !== hostedSessionId)
+    .filter((a) => a.assessmentId !== hostedSessionId)
     .filter((assessment) => {
-      const matchesName = assessment.candidateName
+      const matchesName = assessment.details.candidate.fullname
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
       const matchesProfile =
         selectedProfiles.length === 0 ||
-        selectedProfiles.includes(assessment.profileId);
+        selectedProfiles.includes(assessment.details.profile.profileId);
       const matchesStack =
         selectedStacks.length === 0 ||
-        selectedStacks.includes(assessment.stack);
+        selectedStacks.includes(assessment.details.stack);
       return matchesName && matchesProfile && matchesStack;
     });
 
   const sortedAssessments = [...filteredAssessments].sort((a, b) => {
     let comparison = 0;
     if (sortBy === "name") {
-      comparison = a.candidateName.localeCompare(b.candidateName);
+      comparison = a.details.candidate.fullname.localeCompare(b.details.candidate.fullname);
     } else if (sortBy === "date") {
-      comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+      comparison = a.details.date.getTime() - b.details.date.getTime();
     }
     return sortOrder === "asc" ? comparison : -comparison;
   });

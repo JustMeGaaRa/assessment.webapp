@@ -7,19 +7,18 @@ import {
 } from "next/navigation";
 import { type PeerSessionState } from "../hooks/usePeerSession";
 import { AssessmentSessionPage } from "../views/AssessmentSession";
-import type {
-  AssessmentSessionState,
-  AssessorFeedbackState,
-  ProficiencyLevelState,
-  ModuleState,
-  ProfileState,
-} from "../types";
+import {
+  AssessmentSession,
+  CompetenceMatrix,
+  ProficiencyLevel,
+  Profile,
+  IndividualAssessmentScore,
+} from "../lib/matrix/types";
 
 interface AssessmentSessionRouteProps {
-  assessments: AssessmentSessionState[];
-  evaluations: AssessorFeedbackState[];
-  matrix: ModuleState[];
-  profiles: ProfileState[];
+  assessments: AssessmentSession[];
+  matrix: CompetenceMatrix;
+  profiles: Profile[];
   assessorName: string;
 
   hostedSessionId: string | null;
@@ -31,18 +30,17 @@ interface AssessmentSessionRouteProps {
   guestSession: PeerSessionState;
   setGuestAssessmentId: (id: string | null) => void;
 
-  levelMappings?: ProficiencyLevelState[];
-  onCreateAssessment: (assessment: AssessmentSessionState) => void;
-  onCreateEvaluation: (evaluation: AssessorFeedbackState) => void;
+  levelMappings?: ProficiencyLevel[];
+  onCreateAssessment: (assessment: AssessmentSession) => void;
+  onCreateEvaluation: (assessmentId: string, evaluation: IndividualAssessmentScore) => void;
   onUpdateAssessment: (
     id: string,
-    data: Partial<AssessmentSessionState>,
+    data: Partial<AssessmentSession>,
   ) => void;
 }
 
 export const AssessmentSessionRoute = ({
   assessments,
-  evaluations,
   matrix,
   profiles,
   assessorName,
@@ -63,20 +61,15 @@ export const AssessmentSessionRoute = ({
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const assessment = assessments.find((a) => a.id === assessmentId);
+  const assessment = assessments.find((a) => a.assessmentId === assessmentId);
   const sessionIdParam = searchParams?.get("s");
 
   const isGuestView = !!sessionIdParam;
   const isActivelyHostingThis = hostedSessionId === assessmentId;
 
   // Decide which session interface to use
-  // If not a guest view (no ?s= param), we are the Host (or potential Host)
   const activeSession = !isGuestView ? hostSession : guestSession;
 
-  // Determine display status
-  // If we are a Host View, but not actively hosting THIS assessment, show disconnected
-  // so the user can see the "Start Session" button.
-  // If we are hosting another session, this will effectively allow overriding it.
   const displayStatus =
     !isGuestView && !isActivelyHostingThis
       ? "disconnected"
@@ -90,7 +83,6 @@ export const AssessmentSessionRoute = ({
         : sessionIdParam || undefined;
 
   // Auto-join logic if we have the link and we are ready
-  // Only auto-join if we are NOT the host, we have a session param, and we are not connected/connecting
   useEffect(() => {
     if (
       isGuestView &&
@@ -98,7 +90,7 @@ export const AssessmentSessionRoute = ({
       guestSession.status === "disconnected" &&
       assessorName &&
       !guestSession.error &&
-      !guestHostId // Don't try to join if we think we are already joined/joining
+      !guestHostId
     ) {
       guestSession.joinSession(sessionIdParam);
       setGuestHostId(sessionIdParam);
@@ -125,7 +117,6 @@ export const AssessmentSessionRoute = ({
       router.replace(
         `${pathname}${current.toString() ? `?${current.toString()}` : ""}`,
       );
-      // We also strictly ensure our local state is cleared, though App.tsx handles onSessionClosed
       setGuestHostId(null);
       setGuestAssessmentId(null);
     }
@@ -138,17 +129,17 @@ export const AssessmentSessionRoute = ({
     setGuestAssessmentId,
   ]);
 
-  const handleCreateEvaluation = (ev: AssessorFeedbackState) => {
-    onCreateEvaluation(ev);
-    activeSession.sendUpdateEvaluation(ev);
+  const handleCreateEvaluation = (ev: IndividualAssessmentScore) => {
+    onCreateEvaluation(assessmentId, ev);
+    activeSession.sendUpdateEvaluation(assessmentId, ev);
   };
 
   const handleUpdateAssessment = (
     id: string,
-    data: Partial<AssessmentSessionState>,
+    data: Partial<AssessmentSession>,
   ) => {
     onUpdateAssessment(id, data);
-    activeSession.sendUpdateAssessment(data);
+    activeSession.sendUpdateAssessment(id, data.details || {});
   };
 
   const handleStartSession = async () => {
@@ -174,7 +165,6 @@ export const AssessmentSessionRoute = ({
     setGuestHostId(null);
     setGuestAssessmentId(null);
 
-    // Remove the 's' parameter from URL to prevent auto-rejoin logic
     const current = new URLSearchParams(
       Array.from(searchParams?.entries() || []),
     );
@@ -185,16 +175,23 @@ export const AssessmentSessionRoute = ({
   };
 
   const profile = assessment
-    ? profiles.find((p) => p.id === assessment.profileId)
+    ? profiles.find((p) => p.profileId === assessment.details.profile.profileId)
     : undefined;
 
-  const profileModules = profile
-    ? matrix.filter((m) => profile.weights[m.id] > 0)
-    : [];
+  const sessionMatrix: CompetenceMatrix = {
+    modules: profile
+      ? matrix.modules.filter(
+          (m) =>
+            (profile.modules.find((pm) => pm.moduleId === m.moduleId)?.weight ??
+              0) > 0,
+        )
+      : [],
+    stacks: matrix.stacks,
+  };
 
-  const assessmentEvaluations = evaluations.filter(
-    (evaluation) => evaluation.assessmentId === assessmentId,
-  );
+  const assessmentEvaluations = assessment?.feedbacks || [];
+
+  if (!assessment || !profile) return null;
 
   return (
     <AssessmentSessionPage
@@ -203,7 +200,7 @@ export const AssessmentSessionRoute = ({
       onCreateAssessment={onCreateAssessment}
       onCreateEvaluation={handleCreateEvaluation}
       onUpdateAssessment={handleUpdateAssessment}
-      matrix={profileModules}
+      matrix={sessionMatrix}
       profile={profile}
       assessorName={assessorName}
       levelMappings={levelMappings}

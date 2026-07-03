@@ -3,34 +3,33 @@
 import React, { createContext, useContext, useState } from "react";
 import { useApplicationData } from "../hooks/useApplicationData";
 import { usePeerSession, type PeerSessionState } from "../hooks/usePeerSession";
-import type {
-  AssessmentSessionState,
-  AssessorFeedbackState,
-  ModuleState,
-  ProfileState,
-  ProficiencyLevelState,
-} from "../types";
+import {
+  AssessmentSession,
+  CompetenceMatrix,
+  ProficiencyLevel,
+  Profile,
+  IndividualAssessmentScore,
+  AssessmentDetails,
+} from "../lib/matrix/types";
 import { BackupData } from "@/utils/backupHelper";
 
 interface AssessmentContextType {
-  matrix: ModuleState[];
-  profiles: ProfileState[];
+  matrix: CompetenceMatrix;
+  profiles: Profile[];
   stacks: string[];
-  levelMappings: ProficiencyLevelState[];
-  assessments: AssessmentSessionState[];
-  evaluations: AssessorFeedbackState[];
+  levelMappings: ProficiencyLevel[];
+  assessments: AssessmentSession[];
   assessorName: string;
   setAssessorName: (name: string) => void;
   handleDataLoad: (
-    matrix: ModuleState[],
-    profiles: ProfileState[],
-    stacks: string[],
-    levelMappings?: ProficiencyLevelState[],
+    matrix: CompetenceMatrix,
+    profiles: Profile[],
+    levelMappings: ProficiencyLevel[],
   ) => void;
-  createAssessment: (assessment: AssessmentSessionState) => void;
-  createEvaluation: (evaluation: AssessorFeedbackState) => void;
-  updateAssessment: (id: string, data: Partial<AssessmentSessionState>) => void;
-  updateEvaluation: (id: string, data: Partial<AssessorFeedbackState>) => void;
+  createAssessment: (assessment: AssessmentSession) => void;
+  createEvaluation: (assessmentId: string, evaluation: IndividualAssessmentScore) => void;
+  updateAssessment: (id: string, data: Partial<AssessmentSession>) => void;
+  updateEvaluation: (id: string, data: Partial<IndividualAssessmentScore>) => void;
   backupApplicationState: () => void;
   restoreApplicationState: (data: BackupData) => void;
 
@@ -57,10 +56,8 @@ export const AssessmentProvider = ({
   const {
     matrix,
     profiles,
-    stacks,
-    levelMappings,
+    proficiencyLevels,
     assessments,
-    evaluations,
     assessorName,
     setAssessorName,
     handleDataLoad,
@@ -72,6 +69,8 @@ export const AssessmentProvider = ({
     restoreApplicationState,
   } = useApplicationData();
 
+  const stacks = matrix.stacks.map((s) => s.stackName);
+
   const [hostedSessionId, setHostedSessionId] = useState<string | null>(null);
   const [guestHostId, setGuestHostId] = useState<string | null>(null);
   const [guestAssessmentId, setGuestAssessmentId] = useState<string | null>(
@@ -81,22 +80,16 @@ export const AssessmentProvider = ({
   // Host Session Hook
   const hostSession = usePeerSession({
     assessorName,
-    currentAssessment: assessments.find((a) => a.id === hostedSessionId),
-    currentEvaluations: evaluations.filter(
-      (e) => e.assessmentId === hostedSessionId,
-    ),
+    currentAssessment: assessments.find((a) => a.assessmentId === hostedSessionId),
     currentMatrix: matrix,
     currentProfiles: profiles,
-    currentStacks: stacks,
-    onSyncReceived: (
-      _a: AssessmentSessionState,
-      evaluations: AssessorFeedbackState[],
-    ) => {
-      evaluations.forEach((ev) => createEvaluation(ev));
+    currentProficiencyLevels: proficiencyLevels,
+    onSyncReceived: () => {},
+    onEvaluationReceived: (assessmentId: string, ev: IndividualAssessmentScore) => {
+      createEvaluation(assessmentId, ev);
     },
-    onEvaluationReceived: (ev: AssessorFeedbackState) => createEvaluation(ev),
-    onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => {
-      if (hostedSessionId) updateAssessment(hostedSessionId, update);
+    onAssessmentUpdateReceived: (assessmentId: string, update: Partial<AssessmentDetails>) => {
+      updateAssessment(assessmentId, { details: update as AssessmentDetails });
     },
     onSessionClosed: () => {
       setHostedSessionId(null);
@@ -107,26 +100,24 @@ export const AssessmentProvider = ({
   const guestSession = usePeerSession({
     assessorName,
     onSyncReceived: (
-      syncedAssessment: AssessmentSessionState,
-      syncedEvaluations: AssessorFeedbackState[],
-      syncedMatrix: ModuleState[],
-      syncedProfiles: ProfileState[],
-      syncedStacks: string[],
+      syncedAssessment: AssessmentSession,
+      syncedMatrix: CompetenceMatrix,
+      syncedProfiles: Profile[],
+      syncedProficiencyLevels: ProficiencyLevel[],
     ) => {
       if (syncedAssessment) {
         createAssessment(syncedAssessment);
-        setGuestAssessmentId(syncedAssessment.id);
+        setGuestAssessmentId(syncedAssessment.assessmentId);
       }
-      if (syncedMatrix && syncedProfiles && syncedStacks) {
-        handleDataLoad(syncedMatrix, syncedProfiles, syncedStacks);
+      if (syncedMatrix && syncedProfiles && syncedProficiencyLevels) {
+        handleDataLoad(syncedMatrix, syncedProfiles, syncedProficiencyLevels);
       }
-      syncedEvaluations.forEach((ev) => createEvaluation(ev));
     },
-    onEvaluationReceived: (ev: AssessorFeedbackState) => createEvaluation(ev),
-    onAssessmentUpdateReceived: (update: Partial<AssessmentSessionState>) => {
-      if (update.id) {
-        updateAssessment(update.id, update);
-      }
+    onEvaluationReceived: (assessmentId: string, ev: IndividualAssessmentScore) => {
+      createEvaluation(assessmentId, ev);
+    },
+    onAssessmentUpdateReceived: (assessmentId: string, update: Partial<AssessmentDetails>) => {
+      updateAssessment(assessmentId, { details: update as AssessmentDetails });
     },
     onSessionClosed: () => {
       setGuestHostId(null);
@@ -140,9 +131,8 @@ export const AssessmentProvider = ({
         matrix,
         profiles,
         stacks,
-        levelMappings,
+        levelMappings: proficiencyLevels,
         assessments,
-        evaluations,
         assessorName,
         setAssessorName,
         handleDataLoad,
