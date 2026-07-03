@@ -285,7 +285,6 @@ export const AssessmentSessionPage = ({
   );
 
   const assessors = evaluations
-    .filter((ev) => ev.type !== "self")
     .map((ev, idx) => {
       const style = colors[idx % colors.length];
       return {

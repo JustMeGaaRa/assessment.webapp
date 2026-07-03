@@ -71,7 +71,7 @@ export const AssessorEvaluationPage = ({
         return {
           ...m,
           topics: m.topics.map((t) =>
-            t.topicName === topicName ? { ...t, score } : t
+            t.topicName === topicName ? { ...t, score } : t,
           ),
         };
       }
@@ -87,7 +87,7 @@ export const AssessorEvaluationPage = ({
         return {
           ...m,
           topics: m.topics.map((t) =>
-            t.topicName === topicName ? { ...t, notes: note } : t
+            t.topicName === topicName ? { ...t, notes: note } : t,
           ),
         };
       }
@@ -124,7 +124,7 @@ export const AssessorEvaluationPage = ({
 
   const getScoredTopicsInModule = (module: CompetenceMatrixModule) => {
     const evalModule = evaluation.modules.find(
-      (m) => m.moduleId === module.moduleId
+      (m) => m.moduleId === module.moduleId,
     );
     return evalModule
       ? evalModule.topics.filter((topic) => topic.score > 0).length
@@ -156,11 +156,15 @@ export const AssessorEvaluationPage = ({
 
   const scoresMap = evaluation.modules
     .flatMap((m) => m.topics)
-    .reduce<Record<string, number>>((acc, curr) => ({ ...acc, [curr.topicName]: curr.score }), {});
+    .reduce<
+      Record<string, number>
+    >((acc, curr) => ({ ...acc, [curr.topicName]: curr.score }), {});
 
   const notesMap = evaluation.modules
     .flatMap((m) => m.topics)
-    .reduce<Record<string, string>>((acc, curr) => ({ ...acc, [curr.topicName]: curr.notes }), {});
+    .reduce<
+      Record<string, string>
+    >((acc, curr) => ({ ...acc, [curr.topicName]: curr.notes }), {});
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 md:p-8 pb-32 md:pb-40">
@@ -187,6 +191,29 @@ export const AssessorEvaluationPage = ({
                 <span>Read Only</span>
               </div>
             )}
+
+            <button
+              onClick={() => {
+                const newType = evaluation.type === "self" ? "expert" : "self";
+                onUpdate({ type: newType });
+              }}
+              className="flex items-center gap-3 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold shadow-sm hover:border-indigo-300 transition-all select-none disabled:opacity-75 disabled:cursor-not-allowed group/toggle"
+            >
+              <span className="text-slate-600 group-hover/toggle:text-indigo-600 transition-colors">
+                Self-Feedback
+              </span>
+              <div
+                className={`relative w-8 h-4.5 rounded-full transition-colors duration-200 ease-in-out shrink-0 ${
+                  evaluation.type === "self" ? "bg-indigo-600" : "bg-slate-200"
+                }`}
+              >
+                <div
+                  className={`absolute top-0.5 left-0.5 w-3.5 h-3.5 bg-white rounded-full shadow-sm transition-transform duration-200 ease-in-out ${
+                    evaluation.type === "self" ? "translate-x-3.5" : ""
+                  }`}
+                />
+              </div>
+            </button>
 
             <div className="flex gap-1 items-center bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
               <button
@@ -228,7 +255,11 @@ export const AssessorEvaluationPage = ({
         <AssessmentEvaluationStats
           candidate={candidateName}
           assessorName={evaluation.assessor.fullname ?? "Unknown"}
-          date={evaluation.date ? evaluation.date.toISOString() : new Date().toISOString()}
+          date={
+            evaluation.date
+              ? evaluation.date.toISOString()
+              : new Date().toISOString()
+          }
           profile={profile.profileName}
           stack={stack}
           stats={evaluationStats}

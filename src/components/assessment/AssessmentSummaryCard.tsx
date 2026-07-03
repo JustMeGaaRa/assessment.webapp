@@ -6,6 +6,7 @@ import {
   AssessmentSession,
   CompetenceMatrix,
   CompetenceMatrixModule,
+  IndividualAssessmentScore,
 } from "@lib/matrix/types";
 import { Card } from "../ui/Card";
 
@@ -96,10 +97,12 @@ const ModuleScoreCard = ({
   module,
   moduleStats,
   assessors,
+  feedbacks,
 }: {
   module: CompetenceMatrixModule;
   moduleStats: AssessmentModuleStatistics | undefined;
   assessors: Assessor[];
+  feedbacks: IndividualAssessmentScore[];
 }) => {
   if (!moduleStats) {
     return null;
@@ -109,7 +112,18 @@ const ModuleScoreCard = ({
   const weight = moduleStats.stats.weight;
   const weightedPoints = moduleStats.stats.weightedScore.toFixed(2);
 
-  const notes = moduleStats.notes;
+  // Derive notes for all assessors (including self-feedback) from feedbacks
+  const notes = feedbacks
+    .map((feedback) => {
+      const evalModule = feedback.modules.find((m) => m.moduleId === module.moduleId);
+      const moduleNotes = evalModule?.topics
+        .flatMap((t) => t.notes)
+        .filter((note) => note !== undefined && note !== "") || [];
+      return moduleNotes.length > 0
+        ? `${feedback.assessor.fullname}: ${moduleNotes.join("; ")}`
+        : undefined;
+    })
+    .filter((note): note is string => note !== undefined);
 
   return (
     <div className="relative group bg-slate-50/50 p-6 rounded-3xl border border-slate-100 hover:bg-slate-50 hover:shadow-md transition-all duration-300">
@@ -141,10 +155,12 @@ const ModuleScoreCard = ({
       {/* Stacked Assessor Bars */}
       <div className="space-y-4 mb-4">
         {assessors.map((assessor) => {
-          const score =
-            moduleStats.assessorStats.find(
-              (x) => x.assessor.fullname === assessor.name,
-            )?.module?.averageScore ?? 0;
+          const feedback = feedbacks.find((f) => f.assessor.fullname === assessor.name);
+          const evalModule = feedback?.modules.find((m) => m.moduleId === module.moduleId);
+          const nonZeroTopics = evalModule?.topics.filter((t) => t.score !== undefined && t.score !== 0) || [];
+          const totalScore = nonZeroTopics.reduce((total, topic) => total + (topic.score ?? 0), 0);
+          const scoredTopics = nonZeroTopics.length;
+          const score = scoredTopics > 0 ? totalScore / scoredTopics : 0;
           return (
             <AssessorScoreBar
               key={assessor.name}
@@ -247,6 +263,7 @@ export const AssessmentSummaryCard = ({
                 (x) => x.moduleId === module.moduleId,
               )}
               assessors={assessors}
+              feedbacks={assessment.feedbacks}
             />
           ))}
         </div>
