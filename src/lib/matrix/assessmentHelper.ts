@@ -32,11 +32,14 @@ function calculateModuleStatistics(
     };
   }
 
-  const totalScore = module.topics.reduce(
+  const nonZeroTopics = module.topics.filter(
+    (topic) => topic.score !== undefined && topic.score !== 0,
+  );
+  const totalScore = nonZeroTopics.reduce(
     (total, topic) => total + (topic.score ?? 0),
     0,
   );
-  const scoredTopics = module.topics.length;
+  const scoredTopics = nonZeroTopics.length;
   const averageScore = scoredTopics > 0 ? totalScore / scoredTopics : 0;
   const weight =
     profile.modules.find((x) => x.moduleId === module.moduleId)?.weight ?? 0;
