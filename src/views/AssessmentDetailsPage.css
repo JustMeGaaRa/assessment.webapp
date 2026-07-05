@@ -1,12 +1,11 @@
 .assessment-details-page {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-}
-
-.assessment-details-heading {
   margin-top: 4rem;
 }
 
-.assessment-details-title {
+.assessment-details-inner {
+}
+
+.assessment-details-content {
 }
