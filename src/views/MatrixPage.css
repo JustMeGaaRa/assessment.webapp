@@ -1,0 +1,12 @@
+.matrix-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.matrix-page-heading {
+  margin-top: 4rem;
+}
+
+.matrix-page-title {
+}

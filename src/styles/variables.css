@@ -1,0 +1,96 @@
+:root {
+  /* Neutral */
+  --dark: #1e1d28;
+  --white: #ffffff;
+
+  /* Brand (primary lime-green) */
+  --green: #68fb84; /* brand/300 */
+  --green-hover: #4be96a; /* brand/400 */
+
+  /* Semantic aliases */
+  --bg-light: #eef1f5; /* gray-steel/300 */
+  --tag-bg: #f8f9fb; /* gray-steel/100 */
+  --border: #d2d9e2; /* gray-steel/500 */
+  --border-light: #e1e6ed; /* gray-steel/400 */
+  --gray-text: #717375; /* gray/700 */
+  --gray-nav: #555658; /* gray/800 */
+  --gray-light: #aaabac; /* gray/500 */
+  --gray-muted: #c6c7c8; /* gray/400 */
+  --blue-focus: #3271d7; /* blue/600 */
+
+  /* Gray scale */
+  --gray-100: #f9f9f9;
+  --gray-200: #f1f1f2;
+  --gray-300: #e2e2e3;
+  --gray-400: #c6c7c8;
+  --gray-500: #aaabac;
+  --gray-600: #8f9193;
+  --gray-700: #717375;
+  --gray-800: #555658;
+  --gray-900: #38393a;
+  --gray-1000: #1c1d1e;
+
+  /* Gray Steel scale */
+  --gray-steel-100: #f8f9fb;
+  --gray-steel-200: #f3f5f8;
+  --gray-steel-300: #eef1f5;
+  --gray-steel-400: #e1e6ed;
+  --gray-steel-500: #d2d9e2;
+  --gray-steel-600: #a9b4c2;
+  --gray-steel-700: #8290a2;
+  --gray-steel-800: #5b6a7d;
+  --gray-steel-900: #3a4655;
+  --gray-steel-1000: #1a2027;
+
+  /* Brand scale */
+  --brand-100: #f0fff3;
+  --brand-200: #d6fede;
+  --brand-300: #68fb84;
+  --brand-400: #4be96a;
+  --brand-500: #34d153;
+  --brand-600: #23a93f;
+  --brand-700: #1a8432;
+  --brand-800: #136025;
+  --brand-900: #0e441b;
+  --brand-1000: #07250e;
+
+  /* Blue scale */
+  --blue-100: #f1f6fd;
+  --blue-200: #e1ebfa;
+  --blue-300: #c0d4f5;
+  --blue-400: #9ebef1;
+  --blue-500: #3f81ea;
+  --blue-600: #3271d7;
+  --blue-700: #2a61ba;
+  --blue-800: #224a8a;
+  --blue-900: #183057;
+  --blue-1000: #15253f;
+
+  /* Green scale */
+  --green-100: #ebffee;
+  --green-200: #cff7d3;
+  --green-300: #aff4c6;
+  --green-400: #85e0a3;
+  --green-500: #14ae5c;
+  --green-600: #009951;
+  --green-700: #008043;
+  --green-800: #02542d;
+  --green-900: #024023;
+  --green-1000: #062d1b;
+
+  /* Red scale */
+  --red-100: #fee9e7;
+  --red-200: #fdd3d0;
+  --red-300: #fcb3ad;
+  --red-400: #f4776a;
+  --red-500: #ec221f;
+  --red-600: #c00f0c;
+  --red-700: #900b09;
+  --red-800: #690807;
+  --red-900: #4d0b0a;
+  --red-1000: #300603;
+
+  /* Fonts — variables are set via next/font on <html> */
+  --font-main: var(--font-inter, "Inter", sans-serif);
+  --font-heading: var(--font-space-grotesk, "Space Grotesk", sans-serif);
+}

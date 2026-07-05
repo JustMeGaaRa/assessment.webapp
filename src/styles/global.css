@@ -1,0 +1,43 @@
+@import "./layout.css";
+@import "./variables.css";
+@import "./typography.css";
+
+/* Reset the defaults */
+
+html {
+  scroll-behavior: smooth;
+  background: var(--white);
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  color: var(--dark);
+  background: var(--white);
+  line-height: 1.5;
+}
+
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}

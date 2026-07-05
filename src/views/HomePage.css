@@ -1,0 +1,9 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.recent-assessments {
+  margin-top: 4rem;
+}

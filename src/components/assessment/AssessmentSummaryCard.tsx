@@ -74,7 +74,9 @@ const ModuleNote = ({ note }: { note: string }) => {
     <div
       onClick={() => isClampable && setIsExpanded(!isExpanded)}
       className={`flex gap-3 px-4 py-3 bg-white border border-slate-100 rounded-2xl shadow-sm ${
-        isClampable ? "cursor-pointer select-none hover:bg-slate-50 transition-colors" : ""
+        isClampable
+          ? "cursor-pointer select-none hover:bg-slate-50 transition-colors"
+          : ""
       }`}
     >
       <MessageSquareQuote
@@ -115,10 +117,13 @@ const ModuleScoreCard = ({
   // Derive notes for all assessors (including self-feedback) from feedbacks
   const notes = feedbacks
     .map((feedback) => {
-      const evalModule = feedback.modules.find((m) => m.moduleId === module.moduleId);
-      const moduleNotes = evalModule?.topics
-        .flatMap((t) => t.notes)
-        .filter((note) => note !== undefined && note !== "") || [];
+      const evalModule = feedback.modules.find(
+        (m) => m.moduleId === module.moduleId,
+      );
+      const moduleNotes =
+        evalModule?.topics
+          .flatMap((t) => t.notes)
+          .filter((note) => note !== undefined && note !== "") || [];
       return moduleNotes.length > 0
         ? `${feedback.assessor.fullname}: ${moduleNotes.join("; ")}`
         : undefined;
@@ -155,10 +160,20 @@ const ModuleScoreCard = ({
       {/* Stacked Assessor Bars */}
       <div className="space-y-4 mb-4">
         {assessors.map((assessor) => {
-          const feedback = feedbacks.find((f) => f.assessor.fullname === assessor.name);
-          const evalModule = feedback?.modules.find((m) => m.moduleId === module.moduleId);
-          const nonZeroTopics = evalModule?.topics.filter((t) => t.score !== undefined && t.score !== 0) || [];
-          const totalScore = nonZeroTopics.reduce((total, topic) => total + (topic.score ?? 0), 0);
+          const feedback = feedbacks.find(
+            (f) => f.assessor.fullname === assessor.name,
+          );
+          const evalModule = feedback?.modules.find(
+            (m) => m.moduleId === module.moduleId,
+          );
+          const nonZeroTopics =
+            evalModule?.topics.filter(
+              (t) => t.score !== undefined && t.score !== 0,
+            ) || [];
+          const totalScore = nonZeroTopics.reduce(
+            (total, topic) => total + (topic.score ?? 0),
+            0,
+          );
           const scoredTopics = nonZeroTopics.length;
           const score = scoredTopics > 0 ? totalScore / scoredTopics : 0;
           return (
@@ -208,7 +223,7 @@ export const AssessmentSummaryCard = ({
             <h2 className="text-4xl font-black text-slate-800 tracking-tight leading-none mb-4">
               {assessment.details.candidate.fullname}
             </h2>
-            <div className="space-y-2">
+            <div className="flex flex-row gap-2">
               <div className="flex items-center gap-2 text-sm font-bold text-indigo-600 bg-indigo-50 w-fit px-3 py-1 rounded-lg">
                 <ShieldCheck size={16} />
                 {statistics.summary.proficiencyLevel && (
@@ -219,11 +234,13 @@ export const AssessmentSummaryCard = ({
                 )}
                 {assessment.details.profile.title}
               </div>
-              <div className="flex flex-wrap items-center gap-x-4 text-slate-400 text-xs font-bold uppercase tracking-widest">
+              <div className="flex flex-wrap items-center gap-x-4 bg-slate-100 text-slate-400 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-lg">
                 <span className="flex items-center gap-1.5">
                   <Box size={14} />
                   {assessment.details.stack}
                 </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-4 bg-slate-100 text-slate-400 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-lg">
                 <span className="flex items-center gap-1.5">
                   <Calendar size={14} />
                   {assessment.details.date.toLocaleDateString()}

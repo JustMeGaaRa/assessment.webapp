@@ -1,0 +1,21 @@
+.assessment-card {
+  width: 100%;
+}
+
+.assessment-card-title {
+}
+
+.assessment-card-header {
+}
+
+.assessment-card-content {
+  display: flex;
+}
+
+.assessment-card-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.assessment-card-footer {
+}

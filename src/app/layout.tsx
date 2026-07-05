@@ -1,11 +1,23 @@
 import React from "react";
+import { Inter, Space_Grotesk } from "next/font/google";
 import { AssessmentProvider } from "@/context/AssessmentContext";
-import "../index.css";
+import { Header } from "@/components/ui/Header";
+import "@/styles/global.css";
 
-export const metadata = {
-  title: "Technical Assessment Portal",
-  description:
-    "A modern, streamlined web application for engineering candidate assessments.",
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
+
+export const viewport = {
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -14,9 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="antialiased min-h-screen bg-slate-50">
-        <AssessmentProvider>{children}</AssessmentProvider>
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <body>
+        <AssessmentProvider>
+          <div className={"layout"}>
+            <Header heading="Eastoner Assessments" />
+            <main className={"content"}>{children}</main>
+          </div>
+        </AssessmentProvider>
       </body>
     </html>
   );
