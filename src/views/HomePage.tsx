@@ -4,23 +4,37 @@ import Link from "next/link";
 import { AssessmentSession } from "@lib/matrix";
 import { Button } from "@/components/ui/Button";
 import { AssessmentsSection } from "@/components/ui/AssessmentsSection";
+import { ArrowUpRight } from "lucide-react";
+import { StatisticsSection } from "@/components/ui/StatisticsSection";
 
-export const HomePage: FC<{ assessments: Array<AssessmentSession> }> = ({
-  assessments,
-}) => {
+interface AssessmentStats {
+  total: number;
+  monthly: number;
+  experts: number;
+}
+
+export const HomePage: FC<{
+  recentAssessments: Array<AssessmentSession>;
+  assessmentStats: AssessmentStats;
+}> = ({ recentAssessments, assessmentStats }) => {
   return (
     <div className={"home-page"}>
-      <div className={"recent-assessments"}>
-        <AssessmentsSection
-          title={"Recent Assessments"}
-          assessments={assessments.slice(0, 6)}
-        />
-        <div className={"container"}>
-          <Link href={"/assessments"}>
-            <Button title={"See All"} />
-          </Link>
-        </div>
-      </div>
+      <StatisticsSection
+        title={"Explore the numbers"}
+        assessmentStats={assessmentStats}
+      />
+      <AssessmentsSection
+        title={"Jump back into recent assessments"}
+        assessments={recentAssessments}
+      >
+        <Link href={"/assessments"}>
+          <Button
+            title={"See All"}
+            className={"btn-see-all"}
+            rightIcon={<ArrowUpRight />}
+          />
+        </Link>
+      </AssessmentsSection>
     </div>
   );
 };

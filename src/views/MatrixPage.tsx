@@ -10,7 +10,7 @@ export const MatrixPage: FC = () => {
           <Breadcrumb
             items={[{ label: "Home", href: "/home" }, { label: "Matrix" }]}
           />
-          <h1 className={"matrix-page-title text-h1"}>Competence Matrix</h1>
+          <h2 className={"matrix-page-title text-h2"}>Competence Matrix</h2>
         </div>
       </div>
     </div>

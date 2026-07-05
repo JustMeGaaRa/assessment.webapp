@@ -8,18 +8,18 @@
 }
 
 .breadcrumb a {
-  color: gray;
+  color: var(--gray-steel-900);
   text-decoration: none;
 }
 
 .breadcrumb a:hover {
-  color: skyblue;
-}
-
-.breadcrumb-sep {
-  color: gray;
+  color: var(--green-hover);
 }
 
 .breadcrumb-current {
-  color: black;
+  color: var(--dark);
+}
+
+.breadcrumb-sep {
+  color: var(--gray-steel-800);
 }

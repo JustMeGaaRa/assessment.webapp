@@ -20,11 +20,16 @@ export const AssessmentDetailsPage: FC<{ assessment: AssessmentSession }> = ({
       <section className={"assessment-details"}>
         <div className={"container"}>
           <div className={"assessment-details-inner"}>
-            <h1 className={"assessment-details-title text-h1"}>
+            <h2 className={"assessment-details-title text-h2"}>
               {assessment.details.candidate.fullname}
-            </h1>
+            </h2>
             <div className={"assessment-details-content"}>
-              Assessment details
+              <div className={"assessment-module-breakdown"}>
+                <h4 className="text-h4">Modules breakdown</h4>
+              </div>
+              <div className={"assessment-feedback-list"}>
+                <h4 className="text-h4">Feedbacks</h4>
+              </div>
             </div>
           </div>
         </div>

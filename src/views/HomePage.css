@@ -1,12 +1,14 @@
 .home-page {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 8rem;
+  margin: 4rem 0;
 }
 
-.recent-assessments {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-top: 4rem;
+.btn-see-all {
+  width: 100%;
+  border-top: 1px solid var(--gray-400);
+  border-bottom: 1px solid var(--gray-400);
+  padding: 1rem 0;
+  text-transform: uppercase;
 }

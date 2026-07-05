@@ -1,0 +1,54 @@
+.tag {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--gray-steel-500);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-main);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--gray-steel-900);
+  white-space: nowrap;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.tag--selectable {
+  background: var(--gray-steel-100);
+}
+
+.tag--read-only {
+  background: var(--white);
+}
+
+.tag--clickable {
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.tag--clickable:hover {
+  background: var(--bg-light);
+  border-color: var(--gray-steel-600);
+}
+
+.tag--selected {
+  background: var(--dark);
+  color: var(--white);
+  border-color: var(--dark);
+}
+
+.tag--selected:hover {
+  background: var(--dark);
+  border-color: var(--dark);
+}
+
+.tag--disabled {
+  background: var(--gray-steel-100);
+  border-color: var(--gray-steel-400);
+  color: var(--gray-steel-600);
+  cursor: not-allowed;
+}

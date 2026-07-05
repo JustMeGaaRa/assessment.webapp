@@ -16,7 +16,7 @@ export const Header: FC<{ heading: string }> = ({ heading }) => {
             <Route label="Matrix" route="/matrix" active={false} />
           </nav>
           <div className={"header-actions"}>
-            <Button title={"New assessment"} />
+            <Button title={"New assessment"} variant={"primary"} />
           </div>
         </header>
       </div>

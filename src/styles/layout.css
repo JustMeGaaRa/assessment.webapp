@@ -12,6 +12,7 @@
   height: 100svh;
   overflow: hidden;
   background: var(--white);
+  overflow-y: auto;
 }
 
 .header-sticky {
@@ -26,7 +27,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 0;
-  border-bottom: grey 1px solid;
+  border-bottom: var(--gray-400) 1px solid;
+  background: var(--white);
 }
 
 .header-logo {

@@ -1,21 +1,23 @@
-import { FC } from "react";
+import { FC, PropsWithChildren } from "react";
 import Link from "next/link";
 import { AssessmentCard } from "./AssessmentCard";
 import { AssessmentSession } from "@lib/matrix";
 import "./AssessmentsSection.css";
 
-export const AssessmentsSection: FC<{
-  title: string;
-  assessments: AssessmentSession[];
-}> = ({ title, assessments }) => {
+export const AssessmentsSection: FC<
+  PropsWithChildren<{
+    title: string;
+    assessments: AssessmentSession[];
+  }>
+> = ({ children, title, assessments }) => {
   return (
     <section className={"assessments-section"}>
       <div className={"container"}>
         <div className={"assessment-session-inner"}>
-          <h1 className={"assessments-section-title text-h1"}>{title}</h1>
+          <h2 className={"assessments-section-title text-h2"}>{title}</h2>
 
           <div className={"assessment-list"}>
-            {assessments.slice(0, 6).map((assessment) => (
+            {assessments.map((assessment) => (
               <Link
                 key={assessment.assessmentId}
                 className={"assessment-card-link"}
@@ -25,6 +27,7 @@ export const AssessmentsSection: FC<{
               </Link>
             ))}
           </div>
+          {children}
         </div>
       </div>
     </section>

@@ -1,0 +1,6 @@
+.route {
+}
+
+.route:hover {
+  color: var(--dark);
+}
