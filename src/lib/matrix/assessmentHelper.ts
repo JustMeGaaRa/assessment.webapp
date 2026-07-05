@@ -6,6 +6,7 @@ import type {
   Profile,
   ProficiencyLevel,
   CompetenceMatrix,
+  CompetenceMatrixModule,
 } from "./types";
 import {
   IndividualModuleScore,
@@ -94,20 +95,21 @@ export function calculateIndividualScore(
 
 function calculateAssessmentModuleStatistics(
   profileState: Profile,
-  moduleId: string,
+  module: CompetenceMatrixModule,
   assessorFeedbacks: IndividualAssessmentScore[],
 ): AssessmentModuleStatistics {
   const moduleStatsPerAssessor = assessorFeedbacks.map((feedback) =>
     calculateModuleStatistics(
       profileState,
       feedback.assessor.fullname,
-      feedback.modules.find((x) => x.moduleId === moduleId),
+      feedback.modules.find((x) => x.moduleId === module.moduleId),
     ),
   );
 
   return {
-    moduleId: moduleId,
-    moduleName: moduleId,
+    moduleId: module.moduleId,
+    moduleName: module.moduleName,
+    description: module.description,
     stats: {
       averageScore:
         moduleStatsPerAssessor.length > 0
@@ -137,7 +139,7 @@ function calculateAssessmentModuleStatistics(
     notes: assessorFeedbacks
       .map((feedback) => {
         const notes = feedback.modules
-          .filter((module) => module.moduleId === moduleId)
+          .filter((module) => module.moduleId === module.moduleId)
           .flatMap((x) => x.topics.flatMap((y) => y.notes))
           .filter((note) => note !== undefined && note !== "");
         return notes.length > 0
@@ -175,11 +177,7 @@ export function calculateAssessmentStatistics(
   );
 
   const moduleScores = profileModules.map((module) =>
-    calculateAssessmentModuleStatistics(
-      profile,
-      module.moduleId,
-      nonSelfFeedbacks,
-    ),
+    calculateAssessmentModuleStatistics(profile, module, nonSelfFeedbacks),
   );
 
   const factor = Math.pow(10, 2);

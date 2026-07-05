@@ -133,6 +133,7 @@ export interface AssessorModuleStatistics {
 export interface AssessmentModuleStatistics {
   moduleId: string;
   moduleName: string;
+  description?: string;
   assessorStats: Array<{
     assessor: {
       fullname: string;
