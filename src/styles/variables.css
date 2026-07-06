@@ -90,6 +90,54 @@
   --red-900: #4d0b0a;
   --red-1000: #300603;
 
+  /* Yellow scale */
+  --yellow-100: #fffbeb;
+  --yellow-200: #fff1c2;
+  --yellow-300: #ffe8a3;
+  --yellow-400: #e8b931;
+  --yellow-500: #e5a000;
+  --yellow-600: #bf6a02;
+  --yellow-700: #975102;
+  --yellow-800: #682d03;
+  --yellow-900: #522504;
+  --yellow-1000: #401b01;
+
+  /* Orange scale */
+  --orange-100: #fff6f1;
+  --orange-200: #ffe8db;
+  --orange-300: #ffc9b3;
+  --orange-400: #ff9e6a;
+  --orange-500: #ff5e32;
+  --orange-600: #d93e1a;
+  --orange-700: #973212;
+  --orange-800: #701c0b;
+  --orange-900: #521005;
+  --orange-1000: #3d0801;
+
+  /* Purple scale */
+  --purple-100: #f9f0ff;
+  --purple-200: #f3e6fd;
+  --purple-300: #e8d1f7;
+  --purple-400: #d1a9f1;
+  --purple-500: #a04df4;
+  --purple-600: #8b23e7;
+  --purple-700: #6813bf;
+  --purple-800: #4a0b8c;
+  --purple-900: #320666;
+  --purple-1000: #210442;
+
+  /* Pink scale */
+  --pink-100: #ffe6f3;
+  --pink-200: #ffd1e6;
+  --pink-300: #ffb3d6;
+  --pink-400: #ff8a9e;
+  --pink-500: #ff245e;
+  --pink-600: #e60d49;
+  --pink-700: #b30a38;
+  --pink-800: #7a0726;
+  --pink-900: #570518;
+  --pink-1000: #3d0310;
+
   /* Fonts — variables are set via next/font on <html> */
   --font-main: var(--font-inter, "Inter", sans-serif);
   --font-heading: var(--font-space-grotesk, "Space Grotesk", sans-serif);

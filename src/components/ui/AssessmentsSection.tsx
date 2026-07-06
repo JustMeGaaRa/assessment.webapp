@@ -1,33 +1,33 @@
-import { FC, PropsWithChildren } from "react";
+import { FC } from "react";
 import Link from "next/link";
-import { AssessmentCard } from "./AssessmentCard";
 import { AssessmentSession } from "@lib/matrix";
 import "./AssessmentsSection.css";
+import { ArrowUpRight } from "lucide-react";
+import { Button } from "./Button";
+import { AssessmentList } from "./AssessmentList";
 
-export const AssessmentsSection: FC<
-  PropsWithChildren<{
-    title: string;
-    assessments: AssessmentSession[];
-  }>
-> = ({ children, title, assessments }) => {
+export const AssessmentsSection: FC<{
+  title: string;
+  assessments: AssessmentSession[];
+}> = ({ title, assessments }) => {
   return (
     <section className={"assessments-section"}>
       <div className={"container"}>
-        <div className={"assessment-session-inner"}>
-          <h2 className={"assessments-section-title text-h2"}>{title}</h2>
-
-          <div className={"assessment-list"}>
-            {assessments.map((assessment) => (
-              <Link
-                key={assessment.assessmentId}
-                className={"assessment-card-link"}
-                href={`/assessments/${assessment.assessmentId}`}
-              >
-                <AssessmentCard assessment={assessment} />
-              </Link>
-            ))}
+        <div className={"assessment-section-inner"}>
+          <div className={"assessment-section-header"}>
+            <h2 className={"assessments-section-title text-h2"}>{title}</h2>
+            <Link href={"/assessments"}>
+              <ArrowUpRight size={36} />
+            </Link>
           </div>
-          {children}
+          <AssessmentList assessments={assessments} />
+          <Link href={"/assessments"}>
+            <Button
+              title={"See All"}
+              className={"btn-see-all"}
+              rightIcon={<ArrowUpRight />}
+            />
+          </Link>
         </div>
       </div>
     </section>

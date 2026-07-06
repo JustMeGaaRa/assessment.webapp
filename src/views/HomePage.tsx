@@ -1,10 +1,7 @@
 import { FC } from "react";
 import "./HomePage.css";
-import Link from "next/link";
 import { AssessmentSession } from "@lib/matrix";
-import { Button } from "@/components/ui/Button";
 import { AssessmentsSection } from "@/components/ui/AssessmentsSection";
-import { ArrowUpRight } from "lucide-react";
 import { StatisticsSection } from "@/components/ui/StatisticsSection";
 
 interface AssessmentStats {
@@ -26,15 +23,7 @@ export const HomePage: FC<{
       <AssessmentsSection
         title={"Jump back into recent assessments"}
         assessments={recentAssessments}
-      >
-        <Link href={"/assessments"}>
-          <Button
-            title={"See All"}
-            className={"btn-see-all"}
-            rightIcon={<ArrowUpRight />}
-          />
-        </Link>
-      </AssessmentsSection>
+      />
     </div>
   );
 };

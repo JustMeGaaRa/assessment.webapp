@@ -1,3 +1,3 @@
 export default function NotFound() {
-  return <div>Not Found</div>;
+  return <div className={"container"}>Not Found</div>;
 }

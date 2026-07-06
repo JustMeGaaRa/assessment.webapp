@@ -10,29 +10,48 @@
   gap: 2rem;
 }
 
+.assessment-details-info {
+}
+
 .assessment-details-content {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
+  gap: 4rem;
 }
 
 .assessment-module-breakdown {
   flex: 2 1 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
 }
 
-.assessment-feedback-list {
+.assessment-module-breakdown-heading {
+}
+
+.assessment-module-breakdown-description {
+  color: var(--gray-text);
+}
+
+.assessment-module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.assessment-feedback-sidebar {
   flex: 1 1 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
 }
 
-.separator {
-  border-left: 1px solid;
-  border-color: var(--gray-400);
+.assessment-feedback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: var(--bg-light);
+  padding: 2rem;
 }
 
 @media (min-width: 769px) and (max-width: 1100px) {
@@ -57,76 +76,21 @@
   }
 }
 
-/* Assessment Module */
-
-.assessment-module {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.assessment-module-header {
+/* Legend Panel */
+.legend-panel {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
-.assessment-module-header-left {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.assessment-module-header-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-/* Assessment Feedback Card */
-
-.feedback-card {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  border: 1px solid var(--gray-400);
-  padding: 1rem;
-}
-
-.feedback-card-content {
+.legend-item {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
-.feedback-card-avatar {
-  background-color: var(--gray-400);
-  width: 44px;
-  height: 44px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: var(--gray-100);
-}
-
-.feedback-card-info {
-  flex: 2 1 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.feedback-card-score {
-  display: flex;
-  align-items: center;
-}
-
-.feedback-card-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+.legend-item-color {
+  width: 20px;
+  height: 20px;
 }

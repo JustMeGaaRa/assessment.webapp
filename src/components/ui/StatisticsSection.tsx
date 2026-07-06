@@ -15,7 +15,6 @@ export const StatisticsSection: FC<{
       <div className={"container"}>
         <div className={"statistics-inner"}>
           <h2 className={"statistics-section-title text-h2"}>{title}</h2>
-
           <div className={"statistics-list"}>
             <StatCard
               span={2}
@@ -28,12 +27,6 @@ export const StatisticsSection: FC<{
               value={assessmentStats.experts}
               icon={<UserCheck />}
             />
-            {/* <StatCard
-              title="Proficiency level breakdown"
-              value={<ProficiencyLevelBar
-                proficiencyLevel={assessmentStats.proficiencyLevel}
-              />}
-            /> */}
             <StatCard
               title={"This month"}
               value={assessmentStats.monthly}

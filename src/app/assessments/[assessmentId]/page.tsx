@@ -21,7 +21,7 @@ export default function AssessmentDetailsPageRoute() {
     profiles[0],
     matrix,
     levelMappings,
-    assessments[0],
+    assessments[1],
   );
 
   return (

@@ -57,6 +57,20 @@
   line-height: 22px;
 }
 
+.text-body-2-compact {
+  font-family: var(--font-main);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.text-body-2-compact-semi {
+  font-family: var(--font-main);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+
 .text-label {
   font-family: var(--font-main);
   font-weight: 400;

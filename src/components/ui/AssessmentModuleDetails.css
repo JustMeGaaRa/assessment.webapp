@@ -1,0 +1,48 @@
+.assessment-module {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--gray-400);
+}
+
+.assessment-module-header {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.assessment-module-header-left {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.assessment-module-level {
+  color: var(--gray-text);
+}
+
+.assessment-module-description {
+  color: var(--gray-text);
+}
+
+.assessment-module-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.assessor-stat-row {
+  padding: 0.25rem 0;
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 2fr) 2rem;
+  align-items: center;
+  gap: 1rem;
+}
+
+.assessor-stat-fullname {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--gray-text);
+}

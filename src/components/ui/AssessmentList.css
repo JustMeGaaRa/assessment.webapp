@@ -1,0 +1,12 @@
+.assessment-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+
+.assessment-card-link {
+  flex: 1 1 0;
+  min-width: 240px;
+  max-width: 560px;
+}

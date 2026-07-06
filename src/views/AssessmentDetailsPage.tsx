@@ -2,12 +2,14 @@ import { FC } from "react";
 import "./AssessmentDetailsPage.css";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import {
-  AssessmentModuleStatistics,
   AssessmentSessionStatistics,
   IndividualAssessmentScore,
 } from "@lib/matrix";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { AssessmentModuleDetails } from "@/components/ui/AssessmentModuleDetails";
+import { AssessmentFeedbackCard } from "@/components/ui/AssessmentFeedbackCard";
+import { ColorPalette, UiKitColor } from "@/constants/colors";
 
 export const AssessmentDetailsPage: FC<{
   assessment: AssessmentSessionStatistics;
@@ -16,23 +18,40 @@ export const AssessmentDetailsPage: FC<{
   return (
     <div className={"assessment-details-page"}>
       <div className={"container"}>
-        <Breadcrumb
-          items={[
-            { label: "Home", href: "/home" },
-            { label: "Assessments", href: "/assessments" },
-            { label: assessment.details.candidate.fullname },
-          ]}
-        />
-      </div>
-      <section className={"assessment-details"}>
-        <div className={"container"}>
-          <div className={"assessment-details-inner"}>
+        <div className={"assessment-details-inner"}>
+          <Breadcrumb
+            items={[
+              { label: "Home", href: "/home" },
+              { label: "Assessments", href: "/assessments" },
+              { label: assessment.details.candidate.fullname },
+            ]}
+          />
+          <div className={"assessment-details-info"}>
             <h2 className={"assessment-details-title text-h2"}>
               {assessment.details.candidate.fullname}
             </h2>
-            <div className={"assessment-details-content"}>
-              <div className={"assessment-module-breakdown"}>
-                <h4 className="text-h4">Modules breakdown</h4>
+          </div>
+          <div className={"assessment-details-content"}>
+            <div className={"assessment-module-breakdown"}>
+              <div className={"assessment-module-breakdown-heading"}>
+                <h4 className="assessment-module-breakdown-title text-h3">
+                  Modules breakdown
+                </h4>
+                <p
+                  className={
+                    "assessment-module-breakdown-description text-body"
+                  }
+                >
+                  Each module scored 1–5, compared across every feedback source.
+                </p>
+              </div>
+              <LegendPanel
+                items={feedbacks.map((feedback, index) => ({
+                  color: ColorPalette[index % ColorPalette.length],
+                  label: feedback.assessor.fullname,
+                }))}
+              />
+              <div className={"assessment-module-list"}>
                 {assessment.modules.map((module) => (
                   <AssessmentModuleDetails
                     key={module.moduleId}
@@ -40,73 +59,49 @@ export const AssessmentDetailsPage: FC<{
                   />
                 ))}
               </div>
-              <div className={"separator"} />
+            </div>
+            <div className={"assessment-feedback-sidebar"}>
+              <h4 className="text-h3">Feedbacks</h4>
               <div className={"assessment-feedback-list"}>
-                <h4 className="text-h4">Feedbacks</h4>
-                {feedbacks.map((feedback) => (
-                  <AssessmentFeedbackCard
-                    key={feedback.feedbackId}
-                    assessmentId={assessment.assessmentId}
-                    feedback={feedback}
-                  />
+                {feedbacks.map((feedback, index) => (
+                  <Link
+                    href={`assessments/${assessment.assessmentId}/feedbacks/${feedback.feedbackId}`}
+                  >
+                    <AssessmentFeedbackCard
+                      key={feedback.feedbackId}
+                      feedback={feedback}
+                      avatarColor={ColorPalette[index % ColorPalette.length]}
+                    />
+                  </Link>
                 ))}
+                <Button title={"Create feedback"} variant={"primary"} />
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 };
 
-export const AssessmentModuleDetails: FC<{
-  module: AssessmentModuleStatistics;
-}> = ({ module }) => {
+export const LegendPanel: FC<{
+  items: Array<{ color: UiKitColor; label: string }>;
+}> = ({ items }) => {
   return (
-    <div className={"assessment-module"}>
-      <div className="assessment-module-header">
-        <div className={"assessment-module-header-left"}>
-          <p className={"text-h5"}>{module.moduleName}</p>
-          <p className={"text-body-compact"}>{module.description}</p>
+    <div className={"legend-panel"}>
+      {items.map(({ color, label }, index) => (
+        <div className={"legend-item"} key={index}>
+          <div
+            className={"legend-item-color"}
+            style={{
+              backgroundColor: `var(--${color}-400)`,
+            }}
+          />
+          <span className={"legend-item-text text-body-2-compact-semi"}>
+            {label}
+          </span>
         </div>
-        <div className="assessment-module-header-right">
-          <p className={"text-h5"}>{module.stats.averageScore}</p>
-          <p className={"text-body-compact"}>Competent</p>
-        </div>
-      </div>
-      <div className="assessment-module-content"></div>
-    </div>
-  );
-};
-
-export const AssessmentFeedbackCard: FC<{
-  assessmentId: string;
-  feedback: IndividualAssessmentScore;
-}> = ({ assessmentId, feedback }) => {
-  return (
-    <div className={"feedback-card"}>
-      <div className={"feedback-card-content"}>
-        <div className={"feedback-card-avatar"}>PH</div>
-        <div className={"feedback-card-info"}>
-          <p className={"text-h5"}>{feedback.assessor.fullname}</p>
-          <p className={"text-body-compact"}>
-            {(feedback.date ?? new Date()).toLocaleDateString()}
-          </p>
-        </div>
-        <div className={"feedback-card-score"}>
-          <p className={"text-h4"}>{"3.5"}</p>
-        </div>
-      </div>
-      <div className={"feedback-card-footer"}>
-        <div className={"feedback-card-actions"}>
-          <Link
-            href={`assessments/${assessmentId}/feedbacks/${feedback.feedbackId}`}
-          >
-            Edit Feedback
-          </Link>
-          <ArrowUpRight />
-        </div>
-      </div>
+      ))}
     </div>
   );
 };
