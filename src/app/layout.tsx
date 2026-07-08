@@ -30,7 +30,7 @@ export default function RootLayout({
       <body>
         <AssessmentProvider>
           <div className={"layout"}>
-            <Header heading="Eastoner Assessments" />
+            <Header />
             <main className={"content"}>{children}</main>
           </div>
         </AssessmentProvider>

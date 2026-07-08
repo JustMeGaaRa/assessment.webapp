@@ -8,10 +8,16 @@ import { Badge } from "./Badge";
 export const AssessmentCard: FC<{ assessment: AssessmentSession }> = ({
   assessment,
 }) => {
+  const status = assessment.feedbacks.every((f) => f.status === "completed")
+    ? "completed"
+    : "ongoing";
   return (
     <div className={"assessment-card"}>
       <div className={"assessment-card-content"}>
-        <Badge label={"Ongoing"} colorPalette={"brand"} />
+        <Badge
+          label={status}
+          colorPalette={status === "completed" ? "brand" : "yellow"}
+        />
         <ArrowUpRight size={32} />
       </div>
       <div className="assessment-card-header">

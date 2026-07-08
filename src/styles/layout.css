@@ -15,62 +15,6 @@
   overflow-y: auto;
 }
 
-.header-sticky {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0;
-  border-bottom: var(--gray-400) 1px solid;
-  background: var(--white);
-}
-
-.header-logo {
-  margin: 0;
-
-  text-transform: uppercase;
-  color: var(--gray-nav);
-  letter-spacing: 0.02em;
-  padding: 16px 8px;
-  font-size: 16px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s;
-  position: relative;
-}
-
-.header-nav {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem;
-
-  text-transform: uppercase;
-  color: var(--gray-nav);
-  letter-spacing: 0.02em;
-  padding: 16px 8px;
-  font-size: 16px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s;
-  position: relative;
-}
-
-.header-actions {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem;
-}
-
 .content {
   height: 2000px;
 }
