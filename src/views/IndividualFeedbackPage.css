@@ -1,0 +1,11 @@
+.individual-feedback-page {
+  display: flex;
+  flex-direction: column;
+  padding: 4rem 0;
+}
+
+.individual-feedback-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}

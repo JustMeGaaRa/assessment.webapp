@@ -108,7 +108,7 @@ export const AssessmentDetailsPage: FC<{
               <div className={"assessment-feedback-list"}>
                 {feedbacks.map((feedback, index) => (
                   <Link
-                    href={`assessments/${assessment.assessmentId}/feedbacks/${feedback.feedbackId}`}
+                    href={`/assessments/${assessment.assessmentId}/feedbacks/${feedback.feedbackId}`}
                   >
                     <AssessmentFeedbackCard
                       key={feedback.feedbackId}
@@ -117,12 +117,14 @@ export const AssessmentDetailsPage: FC<{
                     />
                   </Link>
                 ))}
-                <Button variant={"accent"} leftIcon={<PlusIcon />}>
-                  Add expert feedback
-                </Button>
-                <Button variant={"secondary"} leftIcon={<SparklesIcon />}>
-                  Generate AI feedback
-                </Button>
+                <div className={"assessment-feedback-actions"}>
+                  <Button variant={"accent"} leftIcon={<PlusIcon />}>
+                    Add expert feedback
+                  </Button>
+                  <Button variant={"secondary"} leftIcon={<SparklesIcon />}>
+                    Generate AI feedback
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
