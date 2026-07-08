@@ -9,29 +9,12 @@
   cursor: pointer;
 }
 
-.feedback-card:hover {
-}
-
 .feedback-card-row {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: start;
+  justify-content: space-between;
   gap: 1rem;
-}
-
-.feedback-card-avatar {
-  background-color: var(--gray-400);
-  width: 48px;
-  height: 48px;
-
-  /* flex: 1 1 0; */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: var(--gray-100);
 }
 
 .feedback-card-actions {
@@ -45,14 +28,12 @@
   flex-direction: column;
 }
 
-.feedback-assessor-fullname {
-}
-
 .feedback-date {
   color: var(--gray-text);
-}
-
-.feedback-score {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .feedback-card-score {

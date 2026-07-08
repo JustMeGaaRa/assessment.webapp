@@ -123,6 +123,10 @@ export interface Stats {
   weight: number;
 }
 
+export type IndividualAssessmentStats = IndividualAssessmentScore & {
+  stats: Stats;
+};
+
 export interface AssessorModuleStatistics {
   moduleId: string;
   moduleName: string;

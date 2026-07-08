@@ -1,7 +1,7 @@
-import React from "react";
+import { FC } from "react";
 import "./Tag.css";
 
-interface TagProps {
+export const Tag: FC<{
   children: React.ReactNode;
   variant?: "selectable" | "read-only";
   selected?: boolean;
@@ -10,9 +10,7 @@ interface TagProps {
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
   className?: string;
-}
-
-const Tag: React.FC<TagProps> = ({
+}> = ({
   children,
   variant = "selectable",
   selected,
@@ -41,5 +39,3 @@ const Tag: React.FC<TagProps> = ({
     </span>
   );
 };
-
-export default Tag;

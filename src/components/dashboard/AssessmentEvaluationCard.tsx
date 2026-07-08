@@ -1,9 +1,12 @@
 import { useRouter } from "next/navigation";
 import { Calendar, MessageSquareText, Trash2 } from "lucide-react";
-import type { IndividualAssessmentScore, Profile } from "../../lib/matrix/types";
+import type {
+  IndividualAssessmentScore,
+  Profile,
+} from "../../lib/matrix/types";
 import { calculateIndividualScore } from "../../lib/matrix/assessmentHelper";
 import { Card } from "../ui/Card";
-import { Badge } from "../ui/Badge";
+import { Badge } from "../ui/BadgeLegacy";
 
 interface AssessmentEvaluationCardProps {
   evalSession: IndividualAssessmentScore;
@@ -22,7 +25,9 @@ export const AssessmentEvaluationCard = ({
 
   const handleCardClick = () => {
     if (assessmentId) {
-      router.push(`/assessment/${assessmentId}/evaluation/${evalSession.feedbackId}`);
+      router.push(
+        `/assessment/${assessmentId}/evaluation/${evalSession.feedbackId}`,
+      );
     } else {
       console.warn("No assessment ID found for navigation");
     }
@@ -32,15 +37,18 @@ export const AssessmentEvaluationCard = ({
     e.stopPropagation();
     if (!onDelete) return;
     const assessor = evalSession.assessor.fullname || "this assessor";
-    if (confirm(`Are you sure you want to delete the evaluation feedback from ${assessor}?`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete the evaluation feedback from ${assessor}?`,
+      )
+    ) {
       onDelete(evalSession.feedbackId);
     }
   };
 
-  const finalScore =
-    profile
-      ? calculateIndividualScore(profile, evalSession)
-      : undefined;
+  const finalScore = profile
+    ? calculateIndividualScore(profile, evalSession)
+    : undefined;
 
   return (
     <Card
@@ -71,7 +79,11 @@ export const AssessmentEvaluationCard = ({
         </h3>
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <Calendar size={14} />
-          <span>{evalSession.date ? new Date(evalSession.date).toLocaleDateString() : new Date().toLocaleDateString()}</span>
+          <span>
+            {evalSession.date
+              ? new Date(evalSession.date).toLocaleDateString()
+              : new Date().toLocaleDateString()}
+          </span>
         </div>
       </Card.Body>
 

@@ -1,19 +1,108 @@
-.button {
+.btn {
+  position: relative;
   display: inline-flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-
-  padding: 0.75rem 1.25rem;
+  gap: 8px;
   height: 64px;
+  min-width: 64px;
+  padding: 0 32px;
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
-.btn-primary {
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Accent (green) */
+.btn-accent {
   background: var(--green);
   color: var(--dark);
 }
 
-.btn-primary:hover {
+.btn-accent:not(:disabled):not([aria-disabled="true"]):hover {
   background: var(--green-hover);
+}
+
+.btn-accent:not(:disabled):not([aria-disabled="true"]):focus-visible {
+  background: var(--green-hover);
+  outline: 2px solid var(--blue-focus);
+  outline-offset: 4px;
+}
+
+.btn-accent:disabled,
+.btn-accent[aria-disabled="true"] {
+  background: var(--gray-steel-500);
+  color: var(--gray-steel-600);
+}
+
+/* Primary (dark) */
+.btn-primary {
+  background: var(--dark);
+  color: var(--white);
+}
+
+.btn-primary:not(:disabled):not([aria-disabled="true"]):hover {
+  background: var(--green-hover);
+  color: var(--dark);
+}
+
+.btn-primary:not(:disabled):not([aria-disabled="true"]):focus-visible {
+  background: var(--green-hover);
+  color: var(--dark);
+  outline: 2px solid var(--blue-focus);
+  outline-offset: 4px;
+}
+
+.btn-primary:disabled,
+.btn-primary[aria-disabled="true"] {
+  background: var(--gray-steel-500);
+  color: var(--gray-steel-600);
+}
+
+/* Secondary (gray) */
+.btn-secondary {
+  background: var(--gray-steel-500);
+  color: var(--dark);
+}
+
+.btn-secondary:not(:disabled):not([aria-disabled="true"]):hover {
+  background: var(--gray-steel-600);
+}
+
+.btn-secondary:not(:disabled):not([aria-disabled="true"]):focus-visible {
+  background: var(--gray-steel-600);
+  outline: 2px solid var(--blue-focus);
+  outline-offset: 4px;
+}
+
+.btn-secondary:disabled,
+.btn-secondary[aria-disabled="true"] {
+  background: var(--gray-steel-500);
+  color: var(--gray-steel-600);
+}
+
+/* Icon-only modifier (used by IconButton) */
+.btn-icon-only {
+  width: 64px;
+  padding: 0;
+}
+
+.btn-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }

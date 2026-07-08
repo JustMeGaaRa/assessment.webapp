@@ -3,7 +3,10 @@
 import { notFound } from "next/navigation";
 import { useAssessment } from "@/context/AssessmentContext";
 import { AssessmentDetailsPage } from "@/views/AssessmentDetailsPage";
-import { calculateAssessmentStatistics } from "@lib/matrix";
+import {
+  calculateAssessmentStatistics,
+  calculateAssessorFeedbackScore,
+} from "@lib/matrix";
 
 export default function AssessmentDetailsPageRoute() {
   // TODO: use id from params to load from api
@@ -23,11 +26,23 @@ export default function AssessmentDetailsPageRoute() {
     levelMappings,
     assessments[1],
   );
+  const feedbacks = assessments[1].feedbacks.map((feedback) => ({
+    ...feedback,
+    stats: calculateAssessorFeedbackScore(
+      profiles[0],
+      feedback.assessor.fullname,
+      feedback.modules,
+    ),
+  }));
+  const status = assessments[1].feedbacks.every((f) => f.status === "completed")
+    ? "completed"
+    : "ongoing";
 
   return (
     <AssessmentDetailsPage
+      status={status}
       assessment={assessmentSummary}
-      feedbacks={assessments[1].feedbacks}
+      feedbacks={feedbacks}
     />
   );
 }

@@ -13,7 +13,7 @@ import type {
 } from "../../lib/matrix/types";
 import { calculateIndividualScore } from "../../lib/matrix/assessmentHelper";
 import { Card } from "../ui/Card";
-import { Badge } from "../ui/Badge";
+import { Badge } from "../ui/BadgeLegacy";
 
 interface AssessmentSessionCardProps {
   assessment: AssessmentSession;
@@ -30,20 +30,23 @@ export const AssessmentSessionCard = ({
 }: AssessmentSessionCardProps) => {
   const router = useRouter();
 
-  const completed = assessment.feedbacks.filter((f) => f.status === "completed" && f.type !== "self");
+  const completed = assessment.feedbacks.filter(
+    (f) => f.status === "completed" && f.type !== "self",
+  );
   const isCompleted =
     assessment.feedbacks.length > 0 &&
     assessment.feedbacks.every((f) => f.status === "completed");
 
   const profile = profiles?.find(
-    (p) => p.profileId === assessment.details.profile.profileId
+    (p) => p.profileId === assessment.details.profile.profileId,
   );
   const totalScore = completed.reduce(
     (acc, curr) =>
       acc + (profile ? calculateIndividualScore(profile, curr) : 0),
-    0
+    0,
   );
-  const avgScore = completed.length > 0 ? totalScore / completed.length : undefined;
+  const avgScore =
+    completed.length > 0 ? totalScore / completed.length : undefined;
 
   const status = isCompleted ? "completed" : "ongoing";
 
@@ -79,7 +82,9 @@ export const AssessmentSessionCard = ({
         <div className="space-y-2.5 text-sm text-slate-500">
           <div className="flex items-center gap-2">
             <Calendar size={16} className="text-slate-400" />
-            <span>{new Date(assessment.details.date).toLocaleDateString()}</span>
+            <span>
+              {new Date(assessment.details.date).toLocaleDateString()}
+            </span>
           </div>
 
           <div className="flex items-center gap-2">

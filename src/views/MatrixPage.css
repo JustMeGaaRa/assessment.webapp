@@ -1,7 +1,7 @@
 .matrix-page {
   display: flex;
   flex-direction: column;
-  margin-top: 4rem;
+  padding: 4rem 0;
 }
 
 .matrix-page-inner {

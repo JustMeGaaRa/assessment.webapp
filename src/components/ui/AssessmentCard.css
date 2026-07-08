@@ -26,9 +26,6 @@
     0 4px 2px rgba(12, 12, 13, 0.05);
 }
 
-.assessment-card-title {
-}
-
 .assessment-card-date {
   color: var(--gray-steel-800);
 }
@@ -40,18 +37,12 @@
   gap: 0.5rem;
 }
 
-.assessment-card-header {
-}
-
 .assessment-card-content {
   display: flex;
-  flex-grow: 1;
-  border-bottom: 1px solid var(--gray-steel-200);
-}
-
-.assessment-card-inner {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
+  flex-direction: row;
+  align-items: start;
+  justify-content: space-between;
 }
 
 .assessment-card-footer {

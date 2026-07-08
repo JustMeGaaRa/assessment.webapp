@@ -16,17 +16,16 @@ export const AssessmentsSection: FC<{
         <div className={"assessment-section-inner"}>
           <div className={"assessment-section-header"}>
             <h2 className={"assessments-section-title text-h2"}>{title}</h2>
-            <Link href={"/assessments"}>
-              <ArrowUpRight size={36} />
-            </Link>
           </div>
           <AssessmentList assessments={assessments} />
           <Link href={"/assessments"}>
             <Button
-              title={"See All"}
+              variant={"primary"}
               className={"btn-see-all"}
               rightIcon={<ArrowUpRight />}
-            />
+            >
+              See All
+            </Button>
           </Link>
         </div>
       </div>

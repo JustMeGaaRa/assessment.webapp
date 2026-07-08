@@ -3,17 +3,28 @@ import "./AssessmentDetailsPage.css";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import {
   AssessmentSessionStatistics,
-  IndividualAssessmentScore,
+  IndividualAssessmentStats,
 } from "@lib/matrix";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { AssessmentModuleDetails } from "@/components/ui/AssessmentModuleDetails";
 import { AssessmentFeedbackCard } from "@/components/ui/AssessmentFeedbackCard";
-import { ColorPalette, UiKitColor } from "@/constants/colors";
+import { ColorPalette } from "@/constants/colors";
+import { LegendPanel } from "@/components/ui/LegendPanel";
+import { Tag } from "@/components/ui/Tag";
+// import { Avatar } from "@/components/ui/Avatar";
+import {
+  Calendar,
+  Layers,
+  PlusIcon,
+  ShieldCheck,
+  SparklesIcon,
+} from "lucide-react";
 
 export const AssessmentDetailsPage: FC<{
+  status: "ongoing" | "completed";
   assessment: AssessmentSessionStatistics;
-  feedbacks: IndividualAssessmentScore[];
+  feedbacks: IndividualAssessmentStats[];
 }> = ({ assessment, feedbacks }) => {
   return (
     <div className={"assessment-details-page"}>
@@ -26,10 +37,42 @@ export const AssessmentDetailsPage: FC<{
               { label: assessment.details.candidate.fullname },
             ]}
           />
-          <div className={"assessment-details-info"}>
-            <h2 className={"assessment-details-title text-h2"}>
-              {assessment.details.candidate.fullname}
-            </h2>
+          <div className={"assessment-details-header"}>
+            {/* <div style={{ height: "108px", aspectRatio: "1/1" }}>
+              <Avatar
+                label={assessment.details.candidate.fullname}
+                colorPalette={"gray"}
+              />
+            </div> */}
+            <div className={"assessment-details-row"}>
+              <div className={"assessment-details-info"}>
+                <h2 className={"assessment-details-title text-h2"}>
+                  {assessment.details.candidate.fullname}
+                </h2>
+                <span className={"assessment-details-date text-body"}>
+                  <Calendar size={16} />
+                  {assessment.details.date.toLocaleDateString()}
+                </span>
+              </div>
+              <div className={"assessment-details-score text-h1"}>
+                {assessment.summary.totalScore.toFixed(1)}
+              </div>
+            </div>
+            <div className={"assessment-details-row"}>
+              <div className={"assessment-details-tags"}>
+                <Tag leadingIcon={<Layers size={16} />}>
+                  {assessment.details.stack}
+                </Tag>
+                <Tag leadingIcon={<ShieldCheck size={16} />}>
+                  {assessment.details.profile.title}
+                </Tag>
+              </div>
+              {assessment.summary.proficiencyLevel && (
+                <div className={"assessment-details-proficiency text-h4"}>
+                  {assessment.summary.proficiencyLevel}
+                </div>
+              )}
+            </div>
           </div>
           <div className={"assessment-details-content"}>
             <div className={"assessment-module-breakdown"}>
@@ -60,7 +103,7 @@ export const AssessmentDetailsPage: FC<{
                 ))}
               </div>
             </div>
-            <div className={"assessment-feedback-sidebar"}>
+            <div className={"assessment-feedback-panel"}>
               <h4 className="text-h3">Feedbacks</h4>
               <div className={"assessment-feedback-list"}>
                 {feedbacks.map((feedback, index) => (
@@ -74,34 +117,17 @@ export const AssessmentDetailsPage: FC<{
                     />
                   </Link>
                 ))}
-                <Button title={"Create feedback"} variant={"primary"} />
+                <Button variant={"accent"} leftIcon={<PlusIcon />}>
+                  Add expert feedback
+                </Button>
+                <Button variant={"secondary"} leftIcon={<SparklesIcon />}>
+                  Generate AI feedback
+                </Button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-export const LegendPanel: FC<{
-  items: Array<{ color: UiKitColor; label: string }>;
-}> = ({ items }) => {
-  return (
-    <div className={"legend-panel"}>
-      {items.map(({ color, label }, index) => (
-        <div className={"legend-item"} key={index}>
-          <div
-            className={"legend-item-color"}
-            style={{
-              backgroundColor: `var(--${color}-400)`,
-            }}
-          />
-          <span className={"legend-item-text text-body-2-compact-semi"}>
-            {label}
-          </span>
-        </div>
-      ))}
     </div>
   );
 };

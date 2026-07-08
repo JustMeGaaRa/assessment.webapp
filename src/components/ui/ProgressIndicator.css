@@ -1,7 +1,7 @@
 .progress-indicator {
   width: 100%;
   height: 20px;
-  background-color: var(--gray-400);
+  background-color: var(--gray-steel-300);
   overflow: hidden;
 }
 

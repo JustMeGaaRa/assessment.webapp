@@ -1,0 +1,17 @@
+.legend-panel {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+.legend-item-color {
+  width: 20px;
+  height: 20px;
+}

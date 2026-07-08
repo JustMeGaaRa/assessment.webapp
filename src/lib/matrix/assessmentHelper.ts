@@ -173,7 +173,7 @@ export function calculateAssessmentStatistics(
   );
 
   const nonSelfFeedbacks = assessment.feedbacks.filter(
-    (f) => f.type !== "self",
+    (f) => f.type !== "self" && f.status === "completed",
   );
 
   const moduleScores = profileModules.map((module) =>
