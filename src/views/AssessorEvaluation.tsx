@@ -113,7 +113,9 @@ export const AssessorEvaluationPage = ({
     if (isLocked) return;
     if (window.confirm("Mark this assessment as completed?")) {
       onUpdate({
-        status: "completed",
+        // progress: {
+        //   status: "completed",
+        // },
       });
     }
   };
@@ -151,8 +153,8 @@ export const AssessorEvaluationPage = ({
 
   const isReadOnly =
     isLocked ||
-    evaluation.status === "completed" ||
-    evaluation.status === "rejected";
+    evaluation.progress.status === "completed" ||
+    evaluation.progress.status === "rejected";
 
   const scoresMap = evaluation.modules
     .flatMap((m) => m.topics)
@@ -382,8 +384,8 @@ export const AssessorEvaluationPage = ({
                 <div className="flex gap-3">
                   <button
                     disabled={
-                      evaluation.status === "completed" ||
-                      evaluation.status === "rejected"
+                      evaluation.progress.status === "completed" ||
+                      evaluation.progress.status === "rejected"
                     }
                     onClick={resetAssessment}
                     className="px-4 py-3 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-slate-200 rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100 border border-slate-600 flex items-center gap-2"
@@ -395,15 +397,15 @@ export const AssessorEvaluationPage = ({
 
                   <button
                     disabled={
-                      evaluation.status === "completed" ||
-                      evaluation.status === "rejected"
+                      evaluation.progress.status === "completed" ||
+                      evaluation.progress.status === "rejected"
                     }
                     onClick={finishAssessment}
                     className="px-4 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100 flex items-center gap-2"
                   >
                     <CheckCircle size={20} />
                     <span className="hidden sm:inline">
-                      {evaluation.status === "completed"
+                      {evaluation.progress.status === "completed"
                         ? "Completed"
                         : "Complete"}
                     </span>

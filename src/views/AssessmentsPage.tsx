@@ -1,13 +1,13 @@
-import { FC } from "react";
 import "./AssessmentsPage.css";
+import { FC } from "react";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import { AssessmentSession } from "@lib/matrix";
-// import { Button } from "@/components/ui/Button";
 import { AssessmentList } from "@/components/ui/AssessmentList";
+import { AssessmentSessionWithProgress } from "@lib/matrix";
+// import { Button } from "@/components/ui/Button";
 
-export const AssessmentsPage: FC<{ assessments: Array<AssessmentSession> }> = ({
-  assessments,
-}) => {
+export const AssessmentsPage: FC<{
+  assessments: Array<AssessmentSessionWithProgress>;
+}> = ({ assessments }) => {
   return (
     <div className={"assessments-page"}>
       <div className={"container"}>

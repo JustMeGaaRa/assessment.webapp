@@ -10,6 +10,7 @@ import {
   Profile,
   IndividualAssessmentScore,
   AssessmentDetails,
+  SkillLevel,
 } from "../lib/matrix/types";
 import { BackupData } from "@/utils/backupHelper";
 
@@ -20,6 +21,7 @@ interface AssessmentContextType {
   levelMappings: ProficiencyLevel[];
   assessments: AssessmentSession[];
   assessorName: string;
+  skillLevels: SkillLevel[];
   setAssessorName: (name: string) => void;
   handleDataLoad: (
     matrix: CompetenceMatrix,
@@ -27,9 +29,15 @@ interface AssessmentContextType {
     levelMappings: ProficiencyLevel[],
   ) => void;
   createAssessment: (assessment: AssessmentSession) => void;
-  createEvaluation: (assessmentId: string, evaluation: IndividualAssessmentScore) => void;
+  createEvaluation: (
+    assessmentId: string,
+    evaluation: IndividualAssessmentScore,
+  ) => void;
   updateAssessment: (id: string, data: Partial<AssessmentSession>) => void;
-  updateEvaluation: (id: string, data: Partial<IndividualAssessmentScore>) => void;
+  updateEvaluation: (
+    id: string,
+    data: Partial<IndividualAssessmentScore>,
+  ) => void;
   deleteEvaluation: (assessmentId: string, evaluationId: string) => void;
   backupApplicationState: () => void;
   restoreApplicationState: (data: BackupData) => void;
@@ -60,6 +68,7 @@ export const AssessmentProvider = ({
     proficiencyLevels,
     assessments,
     assessorName,
+    skillLevels,
     setAssessorName,
     handleDataLoad,
     createAssessment,
@@ -82,18 +91,26 @@ export const AssessmentProvider = ({
   // Host Session Hook
   const hostSession = usePeerSession({
     assessorName,
-    currentAssessment: assessments.find((a) => a.assessmentId === hostedSessionId),
+    currentAssessment: assessments.find(
+      (a) => a.assessmentId === hostedSessionId,
+    ),
     currentMatrix: matrix,
     currentProfiles: profiles,
     currentProficiencyLevels: proficiencyLevels,
     onSyncReceived: () => {},
-    onEvaluationReceived: (assessmentId: string, ev: IndividualAssessmentScore) => {
+    onEvaluationReceived: (
+      assessmentId: string,
+      ev: IndividualAssessmentScore,
+    ) => {
       createEvaluation(assessmentId, ev);
     },
     onEvaluationDeleted: (assessmentId: string, evaluationId: string) => {
       deleteEvaluation(assessmentId, evaluationId);
     },
-    onAssessmentUpdateReceived: (assessmentId: string, update: Partial<AssessmentDetails>) => {
+    onAssessmentUpdateReceived: (
+      assessmentId: string,
+      update: Partial<AssessmentDetails>,
+    ) => {
       updateAssessment(assessmentId, { details: update as AssessmentDetails });
     },
     onSessionClosed: () => {
@@ -118,13 +135,19 @@ export const AssessmentProvider = ({
         handleDataLoad(syncedMatrix, syncedProfiles, syncedProficiencyLevels);
       }
     },
-    onEvaluationReceived: (assessmentId: string, ev: IndividualAssessmentScore) => {
+    onEvaluationReceived: (
+      assessmentId: string,
+      ev: IndividualAssessmentScore,
+    ) => {
       createEvaluation(assessmentId, ev);
     },
     onEvaluationDeleted: (assessmentId: string, evaluationId: string) => {
       deleteEvaluation(assessmentId, evaluationId);
     },
-    onAssessmentUpdateReceived: (assessmentId: string, update: Partial<AssessmentDetails>) => {
+    onAssessmentUpdateReceived: (
+      assessmentId: string,
+      update: Partial<AssessmentDetails>,
+    ) => {
       updateAssessment(assessmentId, { details: update as AssessmentDetails });
     },
     onSessionClosed: () => {
@@ -142,6 +165,7 @@ export const AssessmentProvider = ({
         levelMappings: proficiencyLevels,
         assessments,
         assessorName,
+        skillLevels,
         setAssessorName,
         handleDataLoad,
         createAssessment,

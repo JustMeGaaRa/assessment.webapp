@@ -1,18 +1,5 @@
-import { FC } from "react";
 import "./AssessmentDetailsPage.css";
-import { Breadcrumb } from "@/components/ui/Breadcrumb";
-import {
-  AssessmentSessionStatistics,
-  IndividualAssessmentStats,
-} from "@lib/matrix";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
-import { AssessmentModuleDetails } from "@/components/ui/AssessmentModuleDetails";
-import { AssessmentFeedbackCard } from "@/components/ui/AssessmentFeedbackCard";
-import { ColorPalette } from "@/constants/colors";
-import { LegendPanel } from "@/components/ui/LegendPanel";
-import { Tag } from "@/components/ui/Tag";
-// import { Avatar } from "@/components/ui/Avatar";
 import {
   Calendar,
   Layers,
@@ -20,12 +7,25 @@ import {
   ShieldCheck,
   SparklesIcon,
 } from "lucide-react";
+import { FC } from "react";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { Button } from "@/components/ui/Button";
+import { AssessmentModuleDetails } from "@/components/ui/AssessmentModuleDetails";
+import { AssessmentFeedbackCard } from "@/components/ui/AssessmentFeedbackCard";
+import { ColorPalette } from "@/constants/colors";
+import { LegendPanel } from "@/components/ui/LegendPanel";
+import { Tag } from "@/components/ui/Tag";
+import {
+  AssessmentSessionWithProgress,
+  IndividualAssessmentScoreWithProgress,
+} from "@lib/matrix";
 
 export const AssessmentDetailsPage: FC<{
-  status: "ongoing" | "completed";
-  assessment: AssessmentSessionStatistics;
-  feedbacks: IndividualAssessmentStats[];
+  assessment: AssessmentSessionWithProgress;
+  feedbacks: IndividualAssessmentScoreWithProgress[];
 }> = ({ assessment, feedbacks }) => {
+  const isCompleted = assessment.progress.status === "completed";
+
   return (
     <div className={"assessment-details-page"}>
       <div className={"container"}>
@@ -54,8 +54,25 @@ export const AssessmentDetailsPage: FC<{
                   {assessment.details.date.toLocaleDateString()}
                 </span>
               </div>
-              <div className={"assessment-details-score text-h1"}>
-                {assessment.summary.totalScore.toFixed(1)}
+              <div className={"assessment-details-score"}>
+                <span
+                  className={"text-h1"}
+                  style={{
+                    color: isCompleted ? "var(--brand-500)" : "var(--dark)",
+                    fontSize: "5rem",
+                    lineHeight: "64px",
+                  }}
+                >
+                  {isCompleted
+                    ? assessment.summary.totalScore.toFixed(1)
+                    : assessment.progress.completedFeedbacks}
+                </span>
+                <span
+                  className={"text-h3"}
+                  style={{ color: "var(--gray-text)" }}
+                >
+                  /{isCompleted ? 5 : assessment.progress.totalFeedbacks}
+                </span>
               </div>
             </div>
             <div className={"assessment-details-row"}>
@@ -68,8 +85,17 @@ export const AssessmentDetailsPage: FC<{
                 </Tag>
               </div>
               {assessment.summary.proficiencyLevel && (
-                <div className={"assessment-details-proficiency text-h4"}>
-                  {assessment.summary.proficiencyLevel}
+                <div
+                  className={"assessment-details-proficiency text-h4"}
+                  style={{
+                    color: isCompleted
+                      ? "var(--brand-500)"
+                      : "var(--gray-text)",
+                  }}
+                >
+                  {isCompleted
+                    ? assessment.summary.proficiencyLevel
+                    : "Feedbacks"}
                 </div>
               )}
             </div>
@@ -77,9 +103,9 @@ export const AssessmentDetailsPage: FC<{
           <div className={"assessment-details-content"}>
             <div className={"assessment-module-breakdown"}>
               <div className={"assessment-module-breakdown-heading"}>
-                <h4 className="assessment-module-breakdown-title text-h3">
-                  Modules breakdown
-                </h4>
+                <h3 className="assessment-module-breakdown-title text-h3">
+                  Review the performance for each module
+                </h3>
                 <p
                   className={
                     "assessment-module-breakdown-description text-body"
@@ -104,21 +130,21 @@ export const AssessmentDetailsPage: FC<{
               </div>
             </div>
             <div className={"assessment-feedback-panel"}>
-              <h4 className="text-h3">Feedbacks</h4>
+              <h3 className="text-h3">Feedbacks</h3>
               <div className={"assessment-feedback-list"}>
                 {feedbacks.map((feedback, index) => (
                   <Link
+                    key={feedback.feedbackId}
                     href={`/assessments/${assessment.assessmentId}/feedbacks/${feedback.feedbackId}`}
                   >
                     <AssessmentFeedbackCard
-                      key={feedback.feedbackId}
                       feedback={feedback}
                       avatarColor={ColorPalette[index % ColorPalette.length]}
                     />
                   </Link>
                 ))}
                 <div className={"assessment-feedback-actions"}>
-                  <Button variant={"accent"} leftIcon={<PlusIcon />}>
+                  <Button variant={"primary"} leftIcon={<PlusIcon />}>
                     Add expert feedback
                   </Button>
                   <Button variant={"secondary"} leftIcon={<SparklesIcon />}>

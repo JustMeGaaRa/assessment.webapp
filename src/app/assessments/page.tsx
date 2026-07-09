@@ -1,11 +1,47 @@
-"use client";
-
-import { useAssessment } from "@/context/AssessmentContext";
 import { AssessmentsPage } from "@/views/AssessmentsPage";
+import {
+  AssessmentSessionWithProgress,
+  calculateAssessmentStatistics,
+} from "@lib/matrix";
+import {
+  assessmentService,
+  competenceMatrixService,
+  jobProfileService,
+  proficiencyLevelsService,
+} from "@lib/services/azure/storage";
 
-export default function AssessmentsPageRoute() {
-  // TODO: use id from params to load from api
-  const { assessments } = useAssessment();
+export default async function AssessmentsPageRoute() {
+  const assessments = await assessmentService.getAssessments();
+  const matrix = await competenceMatrixService.getCompetenceMatrix();
+  const profiles = await jobProfileService.getJobProfiles();
+  const proficiencyLevels =
+    await proficiencyLevelsService.getProficiencyLevels();
 
-  return <AssessmentsPage assessments={assessments} />;
+  const allAssessments: Array<AssessmentSessionWithProgress> = assessments.map(
+    (assessment) => {
+      const profile = profiles.find(
+        (profile) => profile.profileId === assessment.details.profile.profileId,
+      )!;
+      return {
+        ...calculateAssessmentStatistics(
+          profile,
+          matrix,
+          proficiencyLevels,
+          assessment,
+        ),
+        // TODO: move this to state management
+        progress: {
+          totalFeedbacks: assessment.feedbacks.length,
+          completedFeedbacks: assessment.feedbacks.filter(
+            (f) => f.status === "completed",
+          ).length,
+          status: assessment.feedbacks.every((f) => f.status === "completed")
+            ? "completed"
+            : "ongoing",
+        },
+      };
+    },
+  );
+
+  return <AssessmentsPage assessments={allAssessments} />;
 }

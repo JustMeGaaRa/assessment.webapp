@@ -1,0 +1,4925 @@
+{
+  "version": 2,
+  "timestamp": "2026-07-05T11:58:16.497Z",
+  "matrix": {
+    "modules": [
+      {
+        "moduleId": "M1",
+        "moduleName": "Core Coding & Code Quality",
+        "description": "Fundamental language, paradigm, and maintainability competencies.",
+        "topics": [
+          {
+            "topicId": "t-M1-1",
+            "topicName": "Programming Language",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M1-2",
+            "topicName": "Runtime & Framework",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M1-3",
+            "topicName": "Paradigms & Code Quality",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M1-4",
+            "topicName": "Ecosystem & Tooling",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          }
+        ]
+      },
+      {
+        "moduleId": "M2",
+        "moduleName": "Application Architecture & System Design",
+        "description": "High-level engineering choices, architectural patterns.",
+        "topics": [
+          {
+            "topicId": "t-M2-5",
+            "topicName": "Design & Architecture Patterns",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M2-6",
+            "topicName": "API & Contract Design",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          }
+        ]
+      },
+      {
+        "moduleId": "M3",
+        "moduleName": "Data & Persistance Engineering",
+        "description": "Data modeling, storage systems, persistence strategies.",
+        "topics": [
+          {
+            "topicId": "t-M3-7",
+            "topicName": "Data Modeling & Persistence",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M3-8",
+            "topicName": "Messaging & Async Processing",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M3-9",
+            "topicName": "Data Processing & Pipelines",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          }
+        ]
+      },
+      {
+        "moduleId": "M4",
+        "moduleName": "Frontend Engineering",
+        "description": "UI/UX and browser-client development competencies.",
+        "topics": [
+          {
+            "topicId": "t-M4-10",
+            "topicName": "UI Frameworks & Components",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M4-11",
+            "topicName": "UX & Interaction Design",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M4-12",
+            "topicName": "Client-side Performance & Optimization",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          }
+        ]
+      },
+      {
+        "moduleId": "M5",
+        "moduleName": "Testing & Quality Engineering",
+        "description": "Principles and practices to validate software correctness.",
+        "topics": [
+          {
+            "topicId": "t-M5-13",
+            "topicName": "Unit Testing",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M5-14",
+            "topicName": "Integration & E2E Testing",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M5-15",
+            "topicName": "Test Strategy & QA Practices",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          }
+        ]
+      },
+      {
+        "moduleId": "M6",
+        "moduleName": "CI/CD & Release Management",
+        "description": "End-to-end software delivery and automation.",
+        "topics": [
+          {
+            "topicId": "t-M6-16",
+            "topicName": "CI/CD & Automation",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M6-19",
+            "topicName": "Release & Change Management",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          }
+        ]
+      },
+      {
+        "moduleId": "M7",
+        "moduleName": "Infrastructure, Cloud & Environments",
+        "description": "Ability to understand infra, deployment targets, and cloud/IaC tooling.",
+        "topics": [
+          {
+            "topicId": "t-M7-17",
+            "topicName": "Infrastructure & Environments (IaC)",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          }
+        ]
+      },
+      {
+        "moduleId": "M8",
+        "moduleName": "Observability & Reliability",
+        "description": "Reliability and operation of systems in production.",
+        "topics": [
+          {
+            "topicId": "t-M8-18",
+            "topicName": "Observability & Operability",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          }
+        ]
+      },
+      {
+        "moduleId": "M9",
+        "moduleName": "Application Security",
+        "description": "Security fundamentals that apply to all engineering roles.",
+        "topics": [
+          {
+            "topicId": "t-M9-20",
+            "topicName": "Application Security",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M9-21",
+            "topicName": "Data Protection & Privacy",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M9-22",
+            "topicName": "Secure SDLC & Compliance",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          }
+        ]
+      },
+      {
+        "moduleId": "M10",
+        "moduleName": "Collaboration & Delivery Process",
+        "description": "Software engineering process skills, communication, and documentation.",
+        "topics": [
+          {
+            "topicId": "t-M10-23",
+            "topicName": "Requirements & Backlog Management",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M10-24",
+            "topicName": "Documentation & Knowledge Sharing",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          },
+          {
+            "topicId": "t-M10-25",
+            "topicName": "Collaboration & Review Practices",
+            "type": "topic-definition",
+            "description": "<no_description_available>"
+          }
+        ]
+      }
+    ],
+    "stacks": [
+      {
+        "stackName": ".NET Stack",
+        "topics": [
+          {
+            "topicId": "t-M1-1",
+            "topicName": "Programming Language",
+            "type": "technology-topic",
+            "technologyDescription": "C# syntax & idioms; LINQ; async/await; delegates & events; generics; nullable reference types"
+          },
+          {
+            "topicId": "t-M1-2",
+            "topicName": "Runtime & Framework",
+            "type": "technology-topic",
+            "technologyDescription": ".NET runtime; ASP.NET Core pipeline; middleware; DI container; configuration system"
+          },
+          {
+            "topicId": "t-M1-3",
+            "topicName": "Paradigms & Code Quality",
+            "type": "technology-topic",
+            "technologyDescription": "OOP (encapsulation, inheritance, composition); SOLID; immutability where appropriate; clean architecture principles; refactoring patterns"
+          },
+          {
+            "topicId": "t-M1-4",
+            "topicName": "Ecosystem & Tooling",
+            "type": "technology-topic",
+            "technologyDescription": "Visual Studio / Rider; dotnet CLI; NuGet; analyzers (Roslyn, SonarLint); formatters; project templates"
+          },
+          {
+            "topicId": "t-M2-5",
+            "topicName": "Design & Architecture Patterns",
+            "type": "technology-topic",
+            "technologyDescription": "Layered & hexagonal architecture; DDD building blocks; CQRS; repository pattern; mediator; background workers"
+          },
+          {
+            "topicId": "t-M2-6",
+            "topicName": "API & Contract Design",
+            "type": "technology-topic",
+            "technologyDescription": "REST API design with ASP.NET Core; controllers vs minimal APIs; DTOs; versioning; OpenAPI/Swagger docs"
+          },
+          {
+            "topicId": "t-M3-7",
+            "topicName": "Data Modeling & Persistence",
+            "type": "technology-topic",
+            "technologyDescription": "Relational modeling; EF Core mapping; migrations; query optimization basics; transactional boundaries"
+          },
+          {
+            "topicId": "t-M3-8",
+            "topicName": "Messaging & Async Processing",
+            "type": "technology-topic",
+            "technologyDescription": "Using queues/topics (Azure Service Bus/RabbitMQ/Kafka); background services; outbox pattern; idempotency"
+          },
+          {
+            "topicId": "t-M3-9",
+            "topicName": "Data Processing & Pipelines",
+            "type": "technology-topic",
+            "technologyDescription": "ETL-ish background jobs in .NET; batching; streaming via Kafka consumers; data validation in pipeline steps"
+          },
+          {
+            "topicId": "t-M4-10",
+            "topicName": "UI Frameworks & Components",
+            "type": "technology-topic",
+            "technologyDescription": "ASP.NET Core MVC/Razor; Blazor components; component composition; layout & partial views"
+          },
+          {
+            "topicId": "t-M4-11",
+            "topicName": "UX & Interaction Design",
+            "type": "technology-topic",
+            "technologyDescription": "Basic UX patterns in web apps; form flows; validation; accessibility & localization in .NET apps"
+          },
+          {
+            "topicId": "t-M4-12",
+            "topicName": "Client-side Performance & Optimization",
+            "type": "technology-topic",
+            "technologyDescription": "Output caching; bundling/minification; reducing server roundtrips; view performance profiling"
+          },
+          {
+            "topicId": "t-M5-13",
+            "topicName": "Unit Testing",
+            "type": "technology-topic",
+            "technologyDescription": "xUnit/NUnit/MSTest; mocking (Moq/NSubstitute); FluentAssertions; testable design"
+          },
+          {
+            "topicId": "t-M5-14",
+            "topicName": "Integration & E2E Testing",
+            "type": "technology-topic",
+            "technologyDescription": "Integration tests with real DB/API; WebApplicationFactory; Postman/Newman; contract tests; Selenium/Playwright"
+          },
+          {
+            "topicId": "t-M5-15",
+            "topicName": "Test Strategy & QA Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Test pyramid; balancing unit/integration/E2E; regression strategy; test data management"
+          },
+          {
+            "topicId": "t-M6-16",
+            "topicName": "CI/CD & Automation",
+            "type": "technology-topic",
+            "technologyDescription": "GitHub Actions/Azure DevOps pipelines for .NET build/test/publish; artifacts; deployment to App Service/containers"
+          },
+          {
+            "topicId": "t-M6-19",
+            "topicName": "Release & Change Management",
+            "type": "technology-topic",
+            "technologyDescription": "Versioning strategy; blue-green/canary deployments; rollback; feature flags; migration rollout plans"
+          },
+          {
+            "topicId": "t-M7-17",
+            "topicName": "Infrastructure & Environments (IaC)",
+            "type": "technology-topic",
+            "technologyDescription": "Understanding hosting (IIS/Kestrel/App Service); basic ARM/Bicep/Terraform usage for app infra; config per env"
+          },
+          {
+            "topicId": "t-M8-18",
+            "topicName": "Observability & Operability",
+            "type": "technology-topic",
+            "technologyDescription": "Structured logging (Serilog/NLog); Application Insights; metrics; distributed tracing; dashboards; alerts"
+          },
+          {
+            "topicId": "t-M9-20",
+            "topicName": "Application Security",
+            "type": "technology-topic",
+            "technologyDescription": "OWASP for .NET; input validation; authN/authZ (ASP.NET Identity, JWT, OAuth2/OpenID); anti-forgery; secure config"
+          },
+          {
+            "topicId": "t-M9-21",
+            "topicName": "Data Protection & Privacy",
+            "type": "technology-topic",
+            "technologyDescription": "Encrypting data at rest/in transit; PII handling; GDPR-awareness in logging; retention policies"
+          },
+          {
+            "topicId": "t-M9-22",
+            "topicName": "Secure SDLC & Compliance",
+            "type": "technology-topic",
+            "technologyDescription": "Static analysis (SonarQube, analyzers); dependency checks; threat modeling input; security reviews in PRs"
+          },
+          {
+            "topicId": "t-M10-23",
+            "topicName": "Requirements & Backlog Management",
+            "type": "technology-topic",
+            "technologyDescription": "Understanding user stories; clarifying acceptance criteria; refining backend tasks; estimating and breaking down work"
+          },
+          {
+            "topicId": "t-M10-24",
+            "topicName": "Documentation & Knowledge Sharing",
+            "type": "technology-topic",
+            "technologyDescription": "XML docs; README/ADR; architecture docs; code comments; wiki contributions; API docs"
+          },
+          {
+            "topicId": "t-M10-25",
+            "topicName": "Collaboration & Review Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Code reviews; pair programming; refinement meetings; giving/receiving feedback; mentoring juniors"
+          }
+        ]
+      },
+      {
+        "stackName": "Angular Stack",
+        "topics": [
+          {
+            "topicId": "t-M1-1",
+            "topicName": "Programming Language",
+            "type": "technology-topic",
+            "technologyDescription": "TypeScript syntax & types; interfaces & generics; ESNext JS features; strict type checking"
+          },
+          {
+            "topicId": "t-M1-2",
+            "topicName": "Runtime & Framework",
+            "type": "technology-topic",
+            "technologyDescription": "Angular runtime; NgModules/standalone components; DI; change detection; Angular CLI"
+          },
+          {
+            "topicId": "t-M1-3",
+            "topicName": "Paradigms & Code Quality",
+            "type": "technology-topic",
+            "technologyDescription": "Component-based + reactive patterns; RxJS usage; smart vs dumb components; clean, modular services"
+          },
+          {
+            "topicId": "t-M1-4",
+            "topicName": "Ecosystem & Tooling",
+            "type": "technology-topic",
+            "technologyDescription": "Angular CLI; npm/yarn/pnpm; ESLint; Prettier; schematics; Angular DevTools"
+          },
+          {
+            "topicId": "t-M2-5",
+            "topicName": "Design & Architecture Patterns",
+            "type": "technology-topic",
+            "technologyDescription": "Smart/dumb components; facades & services; state management architecture (NgRx/Akita); module boundaries"
+          },
+          {
+            "topicId": "t-M2-6",
+            "topicName": "API & Contract Design",
+            "type": "technology-topic",
+            "technologyDescription": "Consuming REST/GraphQL; typed clients; interceptors; error handling contracts; API models"
+          },
+          {
+            "topicId": "t-M3-7",
+            "topicName": "Data Modeling & Persistence",
+            "type": "technology-topic",
+            "technologyDescription": "Using APIs that expose domain/data models; caching strategies in client; minimal offline storage"
+          },
+          {
+            "topicId": "t-M3-8",
+            "topicName": "Messaging & Async Processing",
+            "type": "technology-topic",
+            "technologyDescription": "Consuming event streams via SignalR/WebSockets; handling push/real-time updates; retry patterns on client"
+          },
+          {
+            "topicId": "t-M3-9",
+            "topicName": "Data Processing & Pipelines",
+            "type": "technology-topic",
+            "technologyDescription": "Data transformation in client (mapping to view models); local caching & sync strategies"
+          },
+          {
+            "topicId": "t-M4-10",
+            "topicName": "UI Frameworks & Components",
+            "type": "technology-topic",
+            "technologyDescription": "Components, templates, directives; forms (reactive/template); routing; modules/standalone; material or other UI libs"
+          },
+          {
+            "topicId": "t-M4-11",
+            "topicName": "UX & Interaction Design",
+            "type": "technology-topic",
+            "technologyDescription": "UX best practices; A11y; responsive layouts; user flows; error & loading states; design system usage"
+          },
+          {
+            "topicId": "t-M4-12",
+            "topicName": "Client-side Performance & Optimization",
+            "type": "technology-topic",
+            "technologyDescription": "Change detection strategies; OnPush; lazy loading routes/modules; bundle size optimization; trackBy usage"
+          },
+          {
+            "topicId": "t-M5-13",
+            "topicName": "Unit Testing",
+            "type": "technology-topic",
+            "technologyDescription": "Jasmine/Karma or Jest; Angular Testing Library; component tests; mocking services"
+          },
+          {
+            "topicId": "t-M5-14",
+            "topicName": "Integration & E2E Testing",
+            "type": "technology-topic",
+            "technologyDescription": "Protractor (legacy)/Cypress/Playwright; API integration tests; mocking backend selectively"
+          },
+          {
+            "topicId": "t-M5-15",
+            "topicName": "Test Strategy & QA Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Frontend test pyramid; visual regression; cross-browser strategy; accessibility testing"
+          },
+          {
+            "topicId": "t-M6-16",
+            "topicName": "CI/CD & Automation",
+            "type": "technology-topic",
+            "technologyDescription": "CI for Angular builds/tests/lint; cache node_modules; build artifacts; deploy to static hosting/CDN"
+          },
+          {
+            "topicId": "t-M6-19",
+            "topicName": "Release & Change Management",
+            "type": "technology-topic",
+            "technologyDescription": "SPA versioning; cache invalidation; rollout monitoring; feature toggles"
+          },
+          {
+            "topicId": "t-M7-17",
+            "topicName": "Infrastructure & Environments (IaC)",
+            "type": "technology-topic",
+            "technologyDescription": "Deploy targets (static hosting, App Service); environment configs; feature flags; CDN caching"
+          },
+          {
+            "topicId": "t-M8-18",
+            "topicName": "Observability & Operability",
+            "type": "technology-topic",
+            "technologyDescription": "Logging patterns from client; error reporting (Sentry, App Insights frontends); UX for error & loading states"
+          },
+          {
+            "topicId": "t-M9-20",
+            "topicName": "Application Security",
+            "type": "technology-topic",
+            "technologyDescription": "Avoiding XSS; Angular sanitization; auth flows; secure storage (tokens in memory); CSP basics"
+          },
+          {
+            "topicId": "t-M9-21",
+            "topicName": "Data Protection & Privacy",
+            "type": "technology-topic",
+            "technologyDescription": "Not logging PII; cookie consent flows; masked logs; frontend handling of sensitive data"
+          },
+          {
+            "topicId": "t-M9-22",
+            "topicName": "Secure SDLC & Compliance",
+            "type": "technology-topic",
+            "technologyDescription": "Dependency scanning; lint rules for security; secure coding checklists; security-focused code reviews"
+          },
+          {
+            "topicId": "t-M10-23",
+            "topicName": "Requirements & Backlog Management",
+            "type": "technology-topic",
+            "technologyDescription": "Converting requirements into UI flows; clarifying UX; estimating UI tasks; backlog refinement"
+          },
+          {
+            "topicId": "t-M10-24",
+            "topicName": "Documentation & Knowledge Sharing",
+            "type": "technology-topic",
+            "technologyDescription": "Component library docs; storybook stories; UX guidelines; front-end readmes"
+          },
+          {
+            "topicId": "t-M10-25",
+            "topicName": "Collaboration & Review Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Design & code reviews; collaborating with UX; cross-team communication; handling UI trade-offs"
+          }
+        ]
+      },
+      {
+        "stackName": "React Stack",
+        "topics": [
+          {
+            "topicId": "t-M1-1",
+            "topicName": "Programming Language",
+            "type": "technology-topic",
+            "technologyDescription": "TypeScript + JSX/TSX; generics; ESNext; async/await; functional array methods"
+          },
+          {
+            "topicId": "t-M1-2",
+            "topicName": "Runtime & Framework",
+            "type": "technology-topic",
+            "technologyDescription": "React runtime & VDOM; hooks lifecycle; Next.js/Remix routing; bundler (Vite/Webpack) basics"
+          },
+          {
+            "topicId": "t-M1-3",
+            "topicName": "Paradigms & Code Quality",
+            "type": "technology-topic",
+            "technologyDescription": "Functional & declarative React; hooks composition; presentational vs container components; immutability; clean state management patterns"
+          },
+          {
+            "topicId": "t-M1-4",
+            "topicName": "Ecosystem & Tooling",
+            "type": "technology-topic",
+            "technologyDescription": "Vite/CRA/Next CLI; npm/yarn/pnpm; ESLint; Prettier; React DevTools; Storybook"
+          },
+          {
+            "topicId": "t-M2-5",
+            "topicName": "Design & Architecture Patterns",
+            "type": "technology-topic",
+            "technologyDescription": "Container/presentational components; state management (Redux/Zustand/MobX); hooks abstractions; micro frontends basics"
+          },
+          {
+            "topicId": "t-M2-6",
+            "topicName": "API & Contract Design",
+            "type": "technology-topic",
+            "technologyDescription": "Consuming REST/GraphQL; API clients with Axios/fetch/React Query; error & loading state modeling"
+          },
+          {
+            "topicId": "t-M3-7",
+            "topicName": "Data Modeling & Persistence",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular: shape of data, normalization/denormalization for client state; localStorage/indexedDB basics"
+          },
+          {
+            "topicId": "t-M3-8",
+            "topicName": "Messaging & Async Processing",
+            "type": "technology-topic",
+            "technologyDescription": "WebSockets/SSE; real-time updates; handling reconnection & backoff; consuming event-driven APIs"
+          },
+          {
+            "topicId": "t-M3-9",
+            "topicName": "Data Processing & Pipelines",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular; client-side normalization; derived data; cache invalidation patterns"
+          },
+          {
+            "topicId": "t-M4-10",
+            "topicName": "UI Frameworks & Components",
+            "type": "technology-topic",
+            "technologyDescription": "Functional components; hooks; JSX/TSX; routing (React Router/Next); UI libs (MUI/Chakra/Ant); Storybook"
+          },
+          {
+            "topicId": "t-M4-11",
+            "topicName": "UX & Interaction Design",
+            "type": "technology-topic",
+            "technologyDescription": "UX patterns in SPAs; A11y; responsive design; navigation; design systems; micro-interactions"
+          },
+          {
+            "topicId": "t-M4-12",
+            "topicName": "Client-side Performance & Optimization",
+            "type": "technology-topic",
+            "technologyDescription": "Avoiding unnecessary re-renders; memoization; code splitting; lazy loading; optimizing bundle; performance profiling tools"
+          },
+          {
+            "topicId": "t-M5-13",
+            "topicName": "Unit Testing",
+            "type": "technology-topic",
+            "technologyDescription": "Jest/Vitest; React Testing Library; component tests; mocking fetch/APIs; snapshot tests (careful use)"
+          },
+          {
+            "topicId": "t-M5-14",
+            "topicName": "Integration & E2E Testing",
+            "type": "technology-topic",
+            "technologyDescription": "Cypress/Playwright; API integration tests; contract tests with backend; testing routing & auth flows"
+          },
+          {
+            "topicId": "t-M5-15",
+            "topicName": "Test Strategy & QA Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular; component vs integration vs E2E balance; confidence thresholds; visual regression considerations"
+          },
+          {
+            "topicId": "t-M6-16",
+            "topicName": "CI/CD & Automation",
+            "type": "technology-topic",
+            "technologyDescription": "CI for React/Next builds/tests/lint; storybook builds; deploy to static hosting/serverless; preview environments"
+          },
+          {
+            "topicId": "t-M6-19",
+            "topicName": "Release & Change Management",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular; Next.js/SPA versioning; staged rollouts; A/B experiments"
+          },
+          {
+            "topicId": "t-M7-17",
+            "topicName": "Infrastructure & Environments (IaC)",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular; hosting on Vercel/Netlify/Azure Static Web Apps; env variables & runtime configs"
+          },
+          {
+            "topicId": "t-M8-18",
+            "topicName": "Observability & Operability",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular; logging errors to monitoring tools; RUM metrics; performance monitoring"
+          },
+          {
+            "topicId": "t-M9-20",
+            "topicName": "Application Security",
+            "type": "technology-topic",
+            "technologyDescription": "XSS prevention; React escaping; auth flows (OAuth2/OIDC); CSRF mitigation; secure localStorage usage"
+          },
+          {
+            "topicId": "t-M9-21",
+            "topicName": "Data Protection & Privacy",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular; local storage of sensitive data (avoidance or proper encryption); consent flows"
+          },
+          {
+            "topicId": "t-M9-22",
+            "topicName": "Secure SDLC & Compliance",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular; npm audit; SCA tools; secure PR practices"
+          },
+          {
+            "topicId": "t-M10-23",
+            "topicName": "Requirements & Backlog Management",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular; close work with designers & PO; slicing UI work; managing tech debt"
+          },
+          {
+            "topicId": "t-M10-24",
+            "topicName": "Documentation & Knowledge Sharing",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular; Storybook as living docs; ADRs for front-end architecture decisions"
+          },
+          {
+            "topicId": "t-M10-25",
+            "topicName": "Collaboration & Review Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Same as Angular; collab with design/backend; demos; constructive feedback in PRs"
+          }
+        ]
+      },
+      {
+        "stackName": "Python Stack",
+        "topics": [
+          {
+            "topicId": "t-M1-1",
+            "topicName": "Programming Language",
+            "type": "technology-topic",
+            "technologyDescription": "Python syntax; list/dict comprehensions; decorators; context managers; typing module basics"
+          },
+          {
+            "topicId": "t-M1-2",
+            "topicName": "Runtime & Framework",
+            "type": "technology-topic",
+            "technologyDescription": "CPython runtime; virtualenv/venv; Django/ORM lifecycle; ASGI servers (uvicorn/gunicorn)"
+          },
+          {
+            "topicId": "t-M1-3",
+            "topicName": "Paradigms & Code Quality",
+            "type": "technology-topic",
+            "technologyDescription": "Pythonic style (EAFP vs LBYL); functional constructs; modular design; clean, readable code; refactoring"
+          },
+          {
+            "topicId": "t-M1-4",
+            "topicName": "Ecosystem & Tooling",
+            "type": "technology-topic",
+            "technologyDescription": "pip/poetry; virtualenv; pytest tooling; Black/ruff/isort; Jupyter (where relevant)"
+          },
+          {
+            "topicId": "t-M2-5",
+            "topicName": "Design & Architecture Patterns",
+            "type": "technology-topic",
+            "technologyDescription": "MVC patterns (Django); service layers; repository patterns; hexagonal for services; modular project layout"
+          },
+          {
+            "topicId": "t-M2-6",
+            "topicName": "API & Contract Design",
+            "type": "technology-topic",
+            "technologyDescription": "Designing/implementing REST APIs (FastAPI/Django REST); Pydantic models; OpenAPI schemas; status codes & error shapes"
+          },
+          {
+            "topicId": "t-M3-7",
+            "topicName": "Data Modeling & Persistence",
+            "type": "technology-topic",
+            "technologyDescription": "Relational modeling (PostgreSQL/MySQL); Django ORM; SQLAlchemy; migrations; query performance tuning basics"
+          },
+          {
+            "topicId": "t-M3-8",
+            "topicName": "Messaging & Async Processing",
+            "type": "technology-topic",
+            "technologyDescription": "Celery/RQ; task queues; Kafka/PubSub basics; idempotent consumers; backoff strategies"
+          },
+          {
+            "topicId": "t-M3-9",
+            "topicName": "Data Processing & Pipelines",
+            "type": "technology-topic",
+            "technologyDescription": "Batch jobs (Airflow, Prefect, cron); Pandas; streaming with Kafka/Flink/Spark Structured Streaming"
+          },
+          {
+            "topicId": "t-M4-10",
+            "topicName": "UI Frameworks & Components",
+            "type": "technology-topic",
+            "technologyDescription": "Django templates; Jinja2; basic frontends for internal tools; admin panel customization"
+          },
+          {
+            "topicId": "t-M4-11",
+            "topicName": "UX & Interaction Design",
+            "type": "technology-topic",
+            "technologyDescription": "Simple UX for admin panels; forms; basic accessibility; error handling for internal tools"
+          },
+          {
+            "topicId": "t-M4-12",
+            "topicName": "Client-side Performance & Optimization",
+            "type": "technology-topic",
+            "technologyDescription": "Minimal client performance; template rendering efficiency where applicable"
+          },
+          {
+            "topicId": "t-M5-13",
+            "topicName": "Unit Testing",
+            "type": "technology-topic",
+            "technologyDescription": "pytest/unittest; fixtures; mocking (unittest.mock); factory patterns for test data"
+          },
+          {
+            "topicId": "t-M5-14",
+            "topicName": "Integration & E2E Testing",
+            "type": "technology-topic",
+            "technologyDescription": "API integration tests (pytest + HTTPX/requests); contract tests; Selenium/Playwright for UI if present"
+          },
+          {
+            "topicId": "t-M5-15",
+            "topicName": "Test Strategy & QA Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Test strategy for APIs & data flows; data-driven tests; regression and smoke suites"
+          },
+          {
+            "topicId": "t-M6-16",
+            "topicName": "CI/CD & Automation",
+            "type": "technology-topic",
+            "technologyDescription": "CI for Python (lint, tests, packaging); build Docker images; deploy to app platforms; versioning and tagging"
+          },
+          {
+            "topicId": "t-M6-19",
+            "topicName": "Release & Change Management",
+            "type": "technology-topic",
+            "technologyDescription": "API versioning; DB migration rollout; deprecation policies; backwards compatibility"
+          },
+          {
+            "topicId": "t-M7-17",
+            "topicName": "Infrastructure & Environments (IaC)",
+            "type": "technology-topic",
+            "technologyDescription": "Dockerization; basic Kubernetes; infra definitions for DBs, queues, caches; Python app env configs"
+          },
+          {
+            "topicId": "t-M8-18",
+            "topicName": "Observability & Operability",
+            "type": "technology-topic",
+            "technologyDescription": "Logging (structlog/loguru); metrics (Prometheus, StatsD); traces; building operational dashboards"
+          },
+          {
+            "topicId": "t-M9-20",
+            "topicName": "Application Security",
+            "type": "technology-topic",
+            "technologyDescription": "Input validation; avoiding injection; authN/authZ; secrets handling; security middleware; rate limiting"
+          },
+          {
+            "topicId": "t-M9-21",
+            "topicName": "Data Protection & Privacy",
+            "type": "technology-topic",
+            "technologyDescription": "Data anonymization/pseudonymization; retention; secure backups; masking in logs"
+          },
+          {
+            "topicId": "t-M9-22",
+            "topicName": "Secure SDLC & Compliance",
+            "type": "technology-topic",
+            "technologyDescription": "Bandit/other linters; dependency scanning; threat modeling for services; compliance basics"
+          },
+          {
+            "topicId": "t-M10-23",
+            "topicName": "Requirements & Backlog Management",
+            "type": "technology-topic",
+            "technologyDescription": "Translating data/API requirements; clarifying contracts; slicing ETL/pipeline work"
+          },
+          {
+            "topicId": "t-M10-24",
+            "topicName": "Documentation & Knowledge Sharing",
+            "type": "technology-topic",
+            "technologyDescription": "README; API docs (OpenAPI, ReDoc); data flow documentation; notebooks as living docs"
+          },
+          {
+            "topicId": "t-M10-25",
+            "topicName": "Collaboration & Review Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Cross-team collaboration with data/ML/product; reviewing ETL/code; knowledge sharing sessions"
+          }
+        ]
+      },
+      {
+        "stackName": "Node.js Stack",
+        "topics": [
+          {
+            "topicId": "t-M1-1",
+            "topicName": "Programming Language",
+            "type": "technology-topic",
+            "technologyDescription": "JavaScript/TypeScript; async/await; promises; modules; error handling; functional array methods"
+          },
+          {
+            "topicId": "t-M1-2",
+            "topicName": "Runtime & Framework",
+            "type": "technology-topic",
+            "technologyDescription": "Node.js event loop; Express/NestJS request lifecycle; common middleware; npm scripts"
+          },
+          {
+            "topicId": "t-M1-3",
+            "topicName": "Paradigms & Code Quality",
+            "type": "technology-topic",
+            "technologyDescription": "Functional + modular JS/TS; FP utilities; DI in NestJS; layered architecture; clean abstractions"
+          },
+          {
+            "topicId": "t-M1-4",
+            "topicName": "Ecosystem & Tooling",
+            "type": "technology-topic",
+            "technologyDescription": "npm/yarn/pnpm; nodemon; ts-node; ESLint; Prettier; nvm"
+          },
+          {
+            "topicId": "t-M2-5",
+            "topicName": "Design & Architecture Patterns",
+            "type": "technology-topic",
+            "technologyDescription": "Layered APIs; Hexagonal/Clean Architecture; NestJS modules; dependency injection; CQRS/event-driven designs"
+          },
+          {
+            "topicId": "t-M2-6",
+            "topicName": "API & Contract Design",
+            "type": "technology-topic",
+            "technologyDescription": "Designing REST/GraphQL (Express/NestJS); DTOs & validation; OpenAPI; pagination, filtering, sorting contracts"
+          },
+          {
+            "topicId": "t-M3-7",
+            "topicName": "Data Modeling & Persistence",
+            "type": "technology-topic",
+            "technologyDescription": "Relational/NoSQL modeling; TypeORM/Prisma/Mongoose; migrations; indexing strategies"
+          },
+          {
+            "topicId": "t-M3-8",
+            "topicName": "Messaging & Async Processing",
+            "type": "technology-topic",
+            "technologyDescription": "Kafka/RabbitMQ/SQS; workers; event-driven microservices; outbox pattern; idempotent handlers"
+          },
+          {
+            "topicId": "t-M3-9",
+            "topicName": "Data Processing & Pipelines",
+            "type": "technology-topic",
+            "technologyDescription": "ETL microservices; Node-based workers; streams & pipelines; cron jobs; orchestrators"
+          },
+          {
+            "topicId": "t-M4-10",
+            "topicName": "UI Frameworks & Components",
+            "type": "technology-topic",
+            "technologyDescription": "Server-side rendered views (Next.js/Nuxt, Nest+SSR); simple component-based UIs for admin tools"
+          },
+          {
+            "topicId": "t-M4-11",
+            "topicName": "UX & Interaction Design",
+            "type": "technology-topic",
+            "technologyDescription": "UX for API consoles/admin UIs; developer-focused UX; A11y basics"
+          },
+          {
+            "topicId": "t-M4-12",
+            "topicName": "Client-side Performance & Optimization",
+            "type": "technology-topic",
+            "technologyDescription": "SSR/CSR considerations; caching; compression; bundle and asset optimization"
+          },
+          {
+            "topicId": "t-M5-13",
+            "topicName": "Unit Testing",
+            "type": "technology-topic",
+            "technologyDescription": "Jest/Vitest/Mocha; supertest for controllers; dependency injection for testability"
+          },
+          {
+            "topicId": "t-M5-14",
+            "topicName": "Integration & E2E Testing",
+            "type": "technology-topic",
+            "technologyDescription": "Integration/API tests (supertest); Postman/Newman; E2E via Playwright/Cypress; contract tests"
+          },
+          {
+            "topicId": "t-M5-15",
+            "topicName": "Test Strategy & QA Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Test strategy for microservices; contract-first testing; regression and release verification"
+          },
+          {
+            "topicId": "t-M6-16",
+            "topicName": "CI/CD & Automation",
+            "type": "technology-topic",
+            "technologyDescription": "CI for Node apps; build/test/lint; Docker images; deploy to containers or serverless; semantic release"
+          },
+          {
+            "topicId": "t-M6-19",
+            "topicName": "Release & Change Management",
+            "type": "technology-topic",
+            "technologyDescription": "Service versioning & deprecation; deployment waves; config-driven rollout"
+          },
+          {
+            "topicId": "t-M7-17",
+            "topicName": "Infrastructure & Environments (IaC)",
+            "type": "technology-topic",
+            "technologyDescription": "Node app hosting (containers, PaaS); env configs; DNS, SSL, reverse proxies basics"
+          },
+          {
+            "topicId": "t-M8-18",
+            "topicName": "Observability & Operability",
+            "type": "technology-topic",
+            "technologyDescription": "Logging frameworks (winston/pino); metrics (Prometheus); tracing (OpenTelemetry); health checks"
+          },
+          {
+            "topicId": "t-M9-20",
+            "topicName": "Application Security",
+            "type": "technology-topic",
+            "technologyDescription": "Securing APIs; JWT/OAuth flows; validation; rate limiting; helmet/cors configs; avoiding common Node vulns"
+          },
+          {
+            "topicId": "t-M9-21",
+            "topicName": "Data Protection & Privacy",
+            "type": "technology-topic",
+            "technologyDescription": "Secure storage & encryption; token/secret handling; privacy in logs & events"
+          },
+          {
+            "topicId": "t-M9-22",
+            "topicName": "Secure SDLC & Compliance",
+            "type": "technology-topic",
+            "technologyDescription": "npm audit; SCA tools; secure coding checklists; security gates in CI"
+          },
+          {
+            "topicId": "t-M10-23",
+            "topicName": "Requirements & Backlog Management",
+            "type": "technology-topic",
+            "technologyDescription": "Capturing API/service requirements; non-functional requirements (perf, reliability)"
+          },
+          {
+            "topicId": "t-M10-24",
+            "topicName": "Documentation & Knowledge Sharing",
+            "type": "technology-topic",
+            "technologyDescription": "API docs; sequence diagrams; ADRs for service decisions; runbooks for service ownership"
+          },
+          {
+            "topicId": "t-M10-25",
+            "topicName": "Collaboration & Review Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Collaboration across services; API contract negotiation; PR reviews; swarm on incidents"
+          }
+        ]
+      },
+      {
+        "stackName": "Azure DevOps Stack",
+        "topics": [
+          {
+            "topicId": "t-M1-1",
+            "topicName": "Programming Language",
+            "type": "technology-topic",
+            "technologyDescription": "Bash/PowerShell scripting; YAML (pipelines); basic Python/Go for tooling; CLI usage"
+          },
+          {
+            "topicId": "t-M1-2",
+            "topicName": "Runtime & Framework",
+            "type": "technology-topic",
+            "technologyDescription": "Container runtimes (Docker); Azure App Service/Kubernetes basics; Terraform CLI & state; GitHub Actions runners"
+          },
+          {
+            "topicId": "t-M1-3",
+            "topicName": "Paradigms & Code Quality",
+            "type": "technology-topic",
+            "technologyDescription": "Infrastructure as Code mindset; declarative configs; DRY in pipelines; modular Terraform; idempotent scripts"
+          },
+          {
+            "topicId": "t-M1-4",
+            "topicName": "Ecosystem & Tooling",
+            "type": "technology-topic",
+            "technologyDescription": "Terraform CLI; Azure CLI; kubectl; Helm; GitHub Actions workflows; Azure DevOps agents; secret managers"
+          },
+          {
+            "topicId": "t-M2-5",
+            "topicName": "Design & Architecture Patterns",
+            "type": "technology-topic",
+            "technologyDescription": "Microservices vs monolith; GitOps patterns; infrastructure layering; blueprints/modules for reuse; reference architectures"
+          },
+          {
+            "topicId": "t-M2-6",
+            "topicName": "API & Contract Design",
+            "type": "technology-topic",
+            "technologyDescription": "Defining service APIs; API gateways; OpenAPI-driven infra; contracts for health, readiness, metrics endpoints"
+          },
+          {
+            "topicId": "t-M3-7",
+            "topicName": "Data Modeling & Persistence",
+            "type": "technology-topic",
+            "technologyDescription": "State backends for infra (Azure Storage, Key Vault, Config Stores); understanding relational/NoSQL choices for platform services"
+          },
+          {
+            "topicId": "t-M3-8",
+            "topicName": "Messaging & Async Processing",
+            "type": "technology-topic",
+            "technologyDescription": "Message brokers (Service Bus/Event Hubs/Kafka); event routing; DLQs; retries & backoff; event schemas and contracts"
+          },
+          {
+            "topicId": "t-M3-9",
+            "topicName": "Data Processing & Pipelines",
+            "type": "technology-topic",
+            "technologyDescription": "CI pipelines as data flows; log/data collection pipelines; artifact flows; using tools like Data Factory where relevant"
+          },
+          {
+            "topicId": "t-M4-10",
+            "topicName": "UI Frameworks & Components",
+            "type": "technology-topic",
+            "technologyDescription": "Usually N/A; optionally basic React/Angular for internal dashboards & portals"
+          },
+          {
+            "topicId": "t-M4-11",
+            "topicName": "UX & Interaction Design",
+            "type": "technology-topic",
+            "technologyDescription": "Mostly N/A; awareness of UX for tooling dashboards; making observability/CI dashboards usable"
+          },
+          {
+            "topicId": "t-M4-12",
+            "topicName": "Client-side Performance & Optimization",
+            "type": "technology-topic",
+            "technologyDescription": "N/A or limited; focus typically on performance of control planes (monitoring UIs) rather than rich UX"
+          },
+          {
+            "topicId": "t-M5-13",
+            "topicName": "Unit Testing",
+            "type": "technology-topic",
+            "technologyDescription": "Unit tests for Terraform modules (terraform validate, terratest); testing scripts; unit tests for pipeline logic; policy-as-code tests"
+          },
+          {
+            "topicId": "t-M5-14",
+            "topicName": "Integration & E2E Testing",
+            "type": "technology-topic",
+            "technologyDescription": "Infra integration tests (deploy to sandbox, validate resources); smoke tests post-deploy; E2E tests for CI/CD flows; canary validation scripts"
+          },
+          {
+            "topicId": "t-M5-15",
+            "topicName": "Test Strategy & QA Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Testing in pipelines (shift-left); release gates; environment testing strategy; chaos/DR drills where applicable"
+          },
+          {
+            "topicId": "t-M6-16",
+            "topicName": "CI/CD & Automation",
+            "type": "technology-topic",
+            "technologyDescription": "Full CI/CD design; multi-stage pipelines; deployment templates; reusable workflows; environment promotion; infra + app pipelines integration"
+          },
+          {
+            "topicId": "t-M6-19",
+            "topicName": "Release & Change Management",
+            "type": "technology-topic",
+            "technologyDescription": "Change windows; release approval flows; deployment strategies; rollback automation; change logging & auditing"
+          },
+          {
+            "topicId": "t-M7-17",
+            "topicName": "Infrastructure & Environments (IaC)",
+            "type": "technology-topic",
+            "technologyDescription": "Terraform modules & workspaces; Azure Resource Groups; VNets, AKS/App Service; environment topology; secret & config stores"
+          },
+          {
+            "topicId": "t-M8-18",
+            "topicName": "Observability & Operability",
+            "type": "technology-topic",
+            "technologyDescription": "Centralized logs; metrics & tracing stack (Azure Monitor/Prometheus/Grafana); alert rules; SLO/SLA; runbooks & incident workflows"
+          },
+          {
+            "topicId": "t-M9-20",
+            "topicName": "Application Security",
+            "type": "technology-topic",
+            "technologyDescription": "IAM/RBAC in Azure; secret management (Key Vault); secure Terraform patterns; least privilege; rotating credentials; hardened images"
+          },
+          {
+            "topicId": "t-M9-21",
+            "topicName": "Data Protection & Privacy",
+            "type": "technology-topic",
+            "technologyDescription": "Encryption for data stores; backup and retention configs; data residency; logging policies; DLP integration"
+          },
+          {
+            "topicId": "t-M9-22",
+            "topicName": "Secure SDLC & Compliance",
+            "type": "technology-topic",
+            "technologyDescription": "Security gates in pipelines; policy-as-code (OPA, Azure Policy); audit trails; compliance reports; vulnerability management integration"
+          },
+          {
+            "topicId": "t-M10-23",
+            "topicName": "Requirements & Backlog Management",
+            "type": "technology-topic",
+            "technologyDescription": "Infra & platform requirements; non-functional requirements; capacity planning; infra backlog and roadmap"
+          },
+          {
+            "topicId": "t-M10-24",
+            "topicName": "Documentation & Knowledge Sharing",
+            "type": "technology-topic",
+            "technologyDescription": "Runbooks; infra diagrams; Terraform module docs; pipeline docs; incident postmortems; platform wikis"
+          },
+          {
+            "topicId": "t-M10-25",
+            "topicName": "Collaboration & Review Practices",
+            "type": "technology-topic",
+            "technologyDescription": "Collaboration with dev teams; participation in incident calls; advising on infra designs; reviewing pipelines & Terraform; cross-team enablement"
+          }
+        ]
+      }
+    ]
+  },
+  "proficiencyLevels": [
+    {
+      "level": "Principal",
+      "description": "<no_description_available>",
+      "scoreThreshold": 4.5,
+      "title": "Principal"
+    },
+    {
+      "level": "Expert",
+      "description": "<no_description_available>",
+      "scoreThreshold": 3.9,
+      "title": "Expert"
+    },
+    {
+      "level": "Senior",
+      "description": "<no_description_available>",
+      "scoreThreshold": 3,
+      "title": "Senior"
+    },
+    {
+      "level": "Middle",
+      "description": "<no_description_available>",
+      "scoreThreshold": 2,
+      "title": "Middle"
+    },
+    {
+      "level": "Junior",
+      "description": "<no_description_available>",
+      "scoreThreshold": 1,
+      "title": "Junior"
+    },
+    {
+      "level": "Trainee",
+      "description": "<no_description_available>",
+      "scoreThreshold": 0,
+      "title": "Trainee"
+    }
+  ],
+  "profiles": [
+    {
+      "profileId": "p-2",
+      "profileName": "Backend Engineer",
+      "stack": "General",
+      "description": "Profile for Backend Engineer",
+      "modules": [
+        {
+          "moduleId": "M1",
+          "weight": 30
+        },
+        {
+          "moduleId": "M2",
+          "weight": 20
+        },
+        {
+          "moduleId": "M3",
+          "weight": 15
+        },
+        {
+          "moduleId": "M5",
+          "weight": 10
+        },
+        {
+          "moduleId": "M6",
+          "weight": 10
+        },
+        {
+          "moduleId": "M7",
+          "weight": 5
+        },
+        {
+          "moduleId": "M8",
+          "weight": 5
+        },
+        {
+          "moduleId": "M9",
+          "weight": 3
+        },
+        {
+          "moduleId": "M10",
+          "weight": 2
+        }
+      ]
+    },
+    {
+      "profileId": "p-3",
+      "profileName": "Frontend Engineer",
+      "stack": "General",
+      "description": "Profile for Frontend Engineer",
+      "modules": [
+        {
+          "moduleId": "M1",
+          "weight": 20
+        },
+        {
+          "moduleId": "M2",
+          "weight": 10
+        },
+        {
+          "moduleId": "M4",
+          "weight": 35
+        },
+        {
+          "moduleId": "M5",
+          "weight": 15
+        },
+        {
+          "moduleId": "M6",
+          "weight": 10
+        },
+        {
+          "moduleId": "M7",
+          "weight": 5
+        },
+        {
+          "moduleId": "M9",
+          "weight": 3
+        },
+        {
+          "moduleId": "M10",
+          "weight": 2
+        }
+      ]
+    },
+    {
+      "profileId": "p-4",
+      "profileName": "Data Engineer",
+      "stack": "General",
+      "description": "Profile for Data Engineer",
+      "modules": [
+        {
+          "moduleId": "M1",
+          "weight": 15
+        },
+        {
+          "moduleId": "M2",
+          "weight": 10
+        },
+        {
+          "moduleId": "M3",
+          "weight": 35
+        },
+        {
+          "moduleId": "M5",
+          "weight": 10
+        },
+        {
+          "moduleId": "M6",
+          "weight": 10
+        },
+        {
+          "moduleId": "M7",
+          "weight": 10
+        },
+        {
+          "moduleId": "M8",
+          "weight": 5
+        },
+        {
+          "moduleId": "M9",
+          "weight": 3
+        },
+        {
+          "moduleId": "M10",
+          "weight": 2
+        }
+      ]
+    },
+    {
+      "profileId": "p-5",
+      "profileName": "QA Engineer",
+      "stack": "General",
+      "description": "Profile for QA Engineer",
+      "modules": [
+        {
+          "moduleId": "M1",
+          "weight": 5
+        },
+        {
+          "moduleId": "M2",
+          "weight": 5
+        },
+        {
+          "moduleId": "M3",
+          "weight": 5
+        },
+        {
+          "moduleId": "M5",
+          "weight": 50
+        },
+        {
+          "moduleId": "M6",
+          "weight": 15
+        },
+        {
+          "moduleId": "M8",
+          "weight": 10
+        },
+        {
+          "moduleId": "M9",
+          "weight": 5
+        },
+        {
+          "moduleId": "M10",
+          "weight": 5
+        }
+      ]
+    },
+    {
+      "profileId": "p-6",
+      "profileName": "Software Architect",
+      "stack": "General",
+      "description": "Profile for Software Architect",
+      "modules": [
+        {
+          "moduleId": "M1",
+          "weight": 15
+        },
+        {
+          "moduleId": "M2",
+          "weight": 35
+        },
+        {
+          "moduleId": "M3",
+          "weight": 15
+        },
+        {
+          "moduleId": "M6",
+          "weight": 10
+        },
+        {
+          "moduleId": "M7",
+          "weight": 10
+        },
+        {
+          "moduleId": "M8",
+          "weight": 5
+        },
+        {
+          "moduleId": "M9",
+          "weight": 7
+        },
+        {
+          "moduleId": "M10",
+          "weight": 3
+        }
+      ]
+    },
+    {
+      "profileId": "p-7",
+      "profileName": "DevOps Engineer",
+      "stack": "General",
+      "description": "Profile for DevOps Engineer",
+      "modules": [
+        {
+          "moduleId": "M1",
+          "weight": 5
+        },
+        {
+          "moduleId": "M2",
+          "weight": 5
+        },
+        {
+          "moduleId": "M6",
+          "weight": 30
+        },
+        {
+          "moduleId": "M7",
+          "weight": 25
+        },
+        {
+          "moduleId": "M8",
+          "weight": 20
+        },
+        {
+          "moduleId": "M9",
+          "weight": 10
+        },
+        {
+          "moduleId": "M10",
+          "weight": 5
+        }
+      ]
+    },
+    {
+      "profileId": "p-8",
+      "profileName": "Full Stack Engineer",
+      "stack": "General",
+      "description": "Profile for Full Stack Engineer",
+      "modules": []
+    }
+  ],
+  "skillLevels": [
+    {
+      "score": 1,
+      "label": "Awareness",
+      "description": "Has little to no practical experience. Relies entirely on guidance and examples. Can perform only the most basic tasks under supervision.",
+      "example": "Knows what a List<T> or a class is, but struggles with syntax and needs a tutorial open to write basic loops",
+      "criteria": ""
+    },
+    {
+      "score": 2,
+      "label": "Beginner",
+      "description": "Understands fundamentals. Can complete simple tasks with some independence. Still needs frequent guidance for unfamiliar or complex work.",
+      "example": "Writes standard API endpoints, uses LINQ basics, but doesn't understand underlying concepts like memory management (struct vs. class) or async/await pitfalls.",
+      "criteria": ""
+    },
+    {
+      "score": 3,
+      "label": "Competent",
+      "description": "Can work independently on standard tasks. Applies best practices. Identifies issues and suggests solutions. Needs support only in complex or ambiguous cases.",
+      "example": "Uses asynchronous programming (Task/await) correctly, understands generics, writes clean object-oriented code, and uses standard collections efficiently.",
+      "criteria": ""
+    },
+    {
+      "score": 4,
+      "label": "Advanced",
+      "description": "Handles complex tasks and systems with confidence. Optimizes and improves existing solutions. Mentors others, shares knowledge, and ensures quality.",
+      "example": "Understands high-performance memory management (Span<T>, Memory<T>), fine-tunes garbage collection impacts, and effectively debugs multi-threaded race conditions.",
+      "criteria": ""
+    },
+    {
+      "score": 5,
+      "label": "Expert",
+      "description": "Recognized authority in the skill. Defines standards, anticipates risks, and sets direction. Coaches teams, drives innovation, and aligns skill application with business goals.",
+      "example": "Writes custom source generators, contributes to open-source .NET repositories, or architects the core framework extensions used across the entire company.",
+      "criteria": ""
+    }
+  ],
+  "assessments": [
+    {
+      "assessmentId": "14512889-31b9-48df-86f1-46dc2c27f5ae",
+      "details": {
+        "candidate": {
+          "fullname": "Anna Kharko"
+        },
+        "date": "2026-07-03T09:32:24.967Z",
+        "profile": {
+          "profileId": "p-2",
+          "title": "Backend Engineer"
+        },
+        "stack": "Node.js Stack"
+      },
+      "feedbacks": [
+        {
+          "feedbackId": "83bc40f6-25a1-4b8e-89e3-08f60d1d663d",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Pavlo Hodysh"
+          },
+          "status": "ongoing",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            }
+          ],
+          "date": "2026-07-03T09:32:32.622Z"
+        }
+      ]
+    },
+    {
+      "assessmentId": "34274665-c485-46cd-acf1-1997b9666e37",
+      "details": {
+        "candidate": {
+          "fullname": "Oleksandr Orlovskii"
+        },
+        "date": "2026-06-25T09:23:42.917Z",
+        "profile": {
+          "profileId": "p-2",
+          "title": "Backend Engineer"
+        },
+        "stack": ".NET Stack"
+      },
+      "feedbacks": [
+        {
+          "feedbackId": "d2d817db-09c6-49f6-980c-6c1852c3cb19",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Pavlo Hodysh"
+          },
+          "status": "completed",
+          "date": "2026-06-25T09:23:46.182Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 3,
+                  "notes": "Has experience using linters and difernt analyzers to boost code quality"
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 2,
+                  "notes": "Basic concepts of DDD and onion architecture. Does not know about N-Layered architecture. Misses crucial concepts of clean architecture."
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 2,
+                  "notes": "Worked with SQL Server, MongoDB, PostgreSQL, MogoDB driver and Entity Framework. Needs improvement in understanding core differences between RDBMS and NoSQL like MongoDB."
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 2,
+                  "notes": "He very little experience with using Azure Service Bus. Has knowledge "
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 3,
+                  "notes": "Used selenium and playwright some time ago to write automated e2e tests"
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 3,
+                  "notes": "Good knowledge on releases through staging/UAT to prod, sanity checks, permissions and branch management. Needs imrpovement: git squash vs rebasr vs merge commit."
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 3,
+                  "notes": "Nees improvement: different git branching models"
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "feedbackId": "d402ab6d-d0a6-411d-b06e-9fb340f6d15d",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Google Gemini"
+          },
+          "status": "completed",
+          "date": "2026-07-03T06:01:33.040Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 3,
+                  "reasoning": "The candidate has a solid, practical understanding of Onion Architecture and standard pattern implementation (such as Controller-Repository). However, they struggled with advanced domain-driven design concepts, such as defining aggregates and detailing strict dependency rules, indicating a competent developer who follows established patterns but is not yet fully designing complex structures from scratch.",
+                  "notes": "Proposed Cart and CartItem entities for shopping cart structure. Defined the purpose of Domain, Infrastructure, and Application layers in Onion Architecture. Specified repositories (CartRepository, CartItemRepository) for data persistence. Identified common CRUD operations for repositories. Suggested a background job for cleaning up old carts. Outlined use cases for the Application layer (add/remove/update items, calculate price, clear cart). Described the API/Presentation layer with a CartController for exposing CRUD endpoints. Struggled to articulate concrete dependency rules between layers in Onion Architecture without referring to external diagrams. Provided a vague definition of DDD and how domain entities differentiate from DTOs. Justified separating the CartPriceService from the domain entity primarily for testability and separation of concerns, but did not fully address the concept of domain logic residing within the domain model itself. Did not provide a clear definition of an Aggregate in DDD or its distinction from an Entity. Initially struggled to define microservices beyond 'more than one service'. Did not initially identify independent databases as a key characteristic of microservices. Struggled to articulate how Onion Architecture aids in splitting a monolith into microservices, beyond general separation of concerns."
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 2,
+                  "reasoning": "The candidate demonstrates practical familiarity with standard REST API design (HTTP verbs, resource nesting). However, they hit a wall regarding advanced REST principles (statelessness, uniform interface), protocol details (HTTP/2/3 features), and resolving operations that are not naturally resource-centric (like email actions), which matches the Beginner level requiring guidance on complex or non-routine API scenarios.",
+                  "notes": "Defined POST for creation, PUT for full update, and PATCH for partial update. Explained that distinct HTTP methods provide semantic clarity for operations. Proposed a logical URL structure for shopping cart resources and nested items (e.g., /cart/{id}/items). Provided a high-level definition of REST but struggled to elaborate on its core principles (e.g., statelessness, uniform interface) and how it guarantees certain behaviors or solves specific problems (e.g., concurrency). Initially found designing a REST endpoint for 'sending email' problematic due to it being an action rather than a resource. Showed limited knowledge of HTTP/2 and HTTP/3 features (e.g., persistent connections, multiplexing), incorrectly stating REST (implicitly HTTP/1.1) does not have persistent connections. Could not explain how REST, by itself, guarantees avoidance of simultaneous data changes or ensures atomic operations."
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 3,
+                  "reasoning": "The candidate builds with ORMs (EF Core/Dapper) and understands data storage paradigms (relational vs NoSQL document store) and core database transaction concepts (ACID). Minor gaps in explaining distributed NoSQL transaction constraints and detailed ACID elements (Isolation, Durability) align with a Competent level of solid feature delivery without deep database internals mastery.",
+                  "notes": "Listed experience with MS SQL, PostgreSQL, SQLite, and MongoDB. Identified Entity Framework and Dapper for relational databases, and MongoDB driver for MongoDB. Clearly articulated the fundamental difference: Entity Framework for relational databases (strict schema, tables, rows, relationships) vs. MongoDB driver for document-oriented databases (flexible schema, collections, documents). Listed benefits of relational databases: strong for complex queries/joins, strict schema (predictability, error catching at DB level), data integrity (critical for financial transactions), ACID properties. Listed drawbacks of relational databases: schema changes require migrations (can be complex), slow joins on large datasets, inflexible for rapidly changing/unstructured data. Listed benefits of non-relational databases (MongoDB): flexible schema, good for horizontal scaling. Defined Atomicity (all or nothing, no intermediate state) and Consistency (valid state to valid state, no rule violation) from ACID. Struggled to articulate why transactions are inherently harder to guarantee across multiple documents/servers in distributed NoSQL compared to relational databases, though correctly linked it to horizontal scaling and consistency trade-offs. Struggled to provide a comprehensive explanation for why PostgreSQL's native JSON capabilities don't fully negate the need for a dedicated NoSQL database like MongoDB for certain use cases. Struggled with Durability from ACID. Struggled to define Isolation from ACID in his own words clearly, initially reading directly from notes."
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 2,
+                  "reasoning": "While the candidate has practical experience using a Service Bus for event integration, they struggled with foundational messaging concepts, reliability patterns (retries, dead-letter queues), decision matrices for HTTP vs. queues, and could not name specific tech stacks (Azure Service Bus, RabbitMQ, Kafka) until guided, reflecting a Beginner level.",
+                  "notes": "Identified HTTP requests for simple point-to-point communication. Suggested SignalR for real-time, constant connections. Provided a concrete example of using a Service Bus in a previous project for event-driven communication (updating smart lock access groups based on user role changes). Initially struggled to define Service Bus clearly, describing it generally as a 'data transferrer' or 'place for queues' rather than a message broker or platform. Did not clearly articulate the criteria for choosing different integration patterns (e.g., when to choose HTTP vs. a message queue). Struggled with how message queues ensure message delivery and prevent loss in scenarios where the consumer service crashes after receiving but before fully processing a message. Needed prompting to discuss message acknowledgment, dead-lettering, and retries. Could not name specific Service Bus technologies (e.g., RabbitMQ, Azure Service Bus, Kafka)."
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 3,
+                  "reasoning": "The candidate autonomously writes standard tests and understands the principle of isolation. They corrected an initial mistake regarding external dependencies (DateTime.Now), demonstrating solid logical troubleshooting skills.",
+                  "notes": "Clearly defined Unit Tests: isolate a single unit of code (function, class), mock all external dependencies (DB, network), focus on logic, no real I/O. Gave an example of testing a calculator. Initially classified a date difference calculation that uses DateTime.Now as a Unit Test, then correctly identified it as having an uncontrolled external dependency, making it more akin to an Integration Test unless DateTime.Now is mocked."
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 3,
+                  "reasoning": "The candidate accurately defined the boundary between integration and E2E testing, including browser automation. However, they did not elaborate on specific advanced test data management or complex automation setups within their own practical projects.",
+                  "notes": "Clearly defined Integration Tests: test interaction between multiple components, use real dependencies (DB, files), minimal mocking, not fully isolated. Clearly defined End-to-End (E2E) Tests: simulate a complete user flow from UI to backend and database, highest level of testing, verifies full business processes. Provided a strong example: user opening browser, logging in, adding to cart, placing order, receiving email confirmation. Identified tools like Playwright and Selenium for E2E testing. Did not elaborate on specific strategies or tools for automated integration or E2E testing in his project."
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 3,
+                  "reasoning": "The candidate can autonomously explain and reason about standard CI/CD workflows, branching strategies, and basic repository management (git squash, merge, rebase). Gaps exist in their awareness of specific workflow models (Git Flow vs GitHub Flow) and verifying post-merge builds, which fits the Competent level of standard task execution within team bounds.",
+                  "notes": "Described common CI/CD pipeline steps: trigger, checkout code, dependency installation, static analysis/linting, build, unit tests, integration tests, code coverage analysis, artifact storage, deployment to test environments, automated testing, monitoring/health checks. Explained the purpose of staging slots for zero-downtime deployments and warming up applications. Described current project's branching strategy: develop for testing, master for production, with develop merging to master for releases and hotfixes branching from master. Identified key security measures in CI/CD: branch protection (no direct pushes, PR approval), pre-commit hooks (code style), and secrets scanning. Described the difference between Git squash and merge commit and justified preferring merge commit for better history and easier partial reverts. Explained the purpose of Git rebase for keeping feature branches up-to-date with a base branch and avoiding extra merge commits. Had heard of Git Flow and GitHub Flow but could not recall specific details. Did not initially mention the significance of health checks or monitoring as part of the deployment process but clarified it after prompting. Struggled with how to ensure a build is 'working' after resolving merge conflicts, initially focusing on re-running tests."
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assessmentId": "094b6203-a9ce-4cfb-8f40-3ef465d0f133",
+      "details": {
+        "candidate": {
+          "fullname": "Nazar Mykytyshyn"
+        },
+        "date": "2026-06-03T08:57:41.281Z",
+        "profile": {
+          "profileId": "p-3",
+          "title": "Frontend Engineer"
+        },
+        "stack": "Angular Stack"
+      },
+      "feedbacks": [
+        {
+          "feedbackId": "267c8674-ec84-4bbf-90f2-26162e4534ff",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Andrii Vankovych"
+          },
+          "status": "completed",
+          "date": "2026-05-28T08:56:21.281Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 3,
+                  "notes": "There are gaps in advanced JS core parts, but anyway good knowledge of JS and TS"
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 4,
+                  "notes": "Good knowledge of DI and Change detection. One gap is missing knowledge about built in DI tokens."
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 3,
+                  "notes": "Good understanding of data flow architecture in components."
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 3,
+                  "notes": "No experience with Angular dev tools, but it is not a significant gap."
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 3,
+                  "notes": "Good understanding of state management architecture. Just not so much experience using it in big projects."
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 3,
+                  "notes": "Good understaning and hands on experience with REST and GraphQL"
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 2,
+                  "notes": "Good knowledge of Angular building blocks, gaps in build in directives and no hands on experience using advanced parts from deirectives and pipes."
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 2,
+                  "notes": "No experience writing unit tests in recent years"
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 2,
+                  "notes": "Nazar is aware of XSS, gaps arte the rest vulnurabilities from OWASP top 10."
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assessmentId": "d1d060a3-a956-4d60-85ce-6e71c5ee71e2",
+      "details": {
+        "candidate": {
+          "fullname": "Rostyslav Oryshchak"
+        },
+        "date": "2026-05-21T10:17:08.557Z",
+        "profile": {
+          "profileId": "p-3",
+          "title": "Frontend Engineer"
+        },
+        "stack": "Angular Stack"
+      },
+      "feedbacks": [
+        {
+          "feedbackId": "8496351a-ebd2-485b-a8e0-3b36fbff76b7",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Andrii Vankovych"
+          },
+          "status": "completed",
+          "date": "2026-05-19T08:56:59.404Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 2,
+                  "notes": "Good experinece in Typescript, but many gaps in Javascript basics, e.g types, event  loop."
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 1,
+                  "notes": "Basic understanding of change detection in Angular"
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 2,
+                  "notes": "Very basic knowledge of RxJs"
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 2,
+                  "notes": "Basic experience working with Angular DevTools."
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 2,
+                  "notes": "Very basic knowlege of state management approaches in Angular"
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 3,
+                  "notes": "Good understanding of communication with API"
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 1,
+                  "notes": "Very basic knowkedge of compoents lifecycle"
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 1,
+                  "notes": "Not much experience working with various design systems and libs."
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 1,
+                  "notes": "Basic understanding of change detection in Angular"
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 2,
+                  "notes": "Very basic experience on testing in frontend"
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 2,
+                  "notes": "Basic undesrtanding and experience on setup CI/CI pipelines"
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 2,
+                  "notes": "Basic understanding and experience working with feature flags"
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 2,
+                  "notes": "Understands bascic contcepts of web security"
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assessmentId": "c469d218-61fd-4dc7-a8aa-dbdd7a09fc8c",
+      "details": {
+        "candidate": {
+          "fullname": "Rostyslav Oryshchak"
+        },
+        "date": "2026-05-21T10:13:32.242Z",
+        "profile": {
+          "profileId": "p-2",
+          "title": "Backend Engineer"
+        },
+        "stack": ".NET Stack"
+      },
+      "feedbacks": [
+        {
+          "feedbackId": "9aa4b8ce-eaac-4e8f-b0b5-1b00f5da4c34",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Pavlo Hodysh"
+          },
+          "status": "completed",
+          "date": "2026-05-21T10:13:36.053Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 3,
+                  "notes": "Strong knowledge: records in addition to class and struct, with async/await. Needs improvement in TPL vs AsParallel vs. Parallel.ForEach"
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 3,
+                  "notes": "Needs improvement: Disposable vs. Finalization and Disposable pattern and how it affects GC. Strong knowledge: ASP.NET request lifecycle, middlewares, routing, configuration"
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 2,
+                  "notes": "Needs improvement: Liskov principle, Open/Closed principle"
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 2,
+                  "notes": "Strong knowledge: N-layered architecture. Needs improvement: Clean Architecture and how it compares to N-layered architecture, CQRS and it's purpose"
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 2,
+                  "notes": "Needs improvement: REST design principles, HATEOAS, "
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 3,
+                  "notes": "Needs improvement: Repository Pattern when using EF, Expression Trees. Good knowledge: Basic SQL and queries, joins, indexes"
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 2,
+                  "notes": "Needs improvement: .NET BackgroundService and how to configure it"
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 2,
+                  "notes": "Good knowledge: automated code tests, integration testing, testing frameworks. Needs improvement: importance of unit testing and what is a Unit Test"
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assessmentId": "38f9e09b-a0f0-4386-acc6-6199848338f5",
+      "details": {
+        "candidate": {
+          "fullname": "Eduard Mosesov"
+        },
+        "date": "2026-03-20T11:50:50.707Z",
+        "profile": {
+          "profileId": "p-3",
+          "title": "Frontend Engineer"
+        },
+        "stack": "Angular Stack"
+      },
+      "feedbacks": [
+        {
+          "feedbackId": "3a67a51b-79ff-45ee-a840-cd271ca32c07",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Andrii Vankovych"
+          },
+          "status": "completed",
+          "date": "2026-03-19T10:56:13.022Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 3,
+                  "notes": "Gaps: JS advanced parts"
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 4,
+                  "notes": "Gaps: DI advanced parts, project configurations"
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 2,
+                  "notes": "Gaps: OWASP top 10"
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 2,
+                  "notes": "Gaps: Storybook"
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assessmentId": "97ada4dd-6b40-47c0-bf10-5b02c4ba1e60",
+      "details": {
+        "candidate": {
+          "fullname": "Anastasiia Koltyka"
+        },
+        "date": "2026-02-24T11:05:12.130Z",
+        "profile": {
+          "profileId": "p-3",
+          "title": "Frontend Engineer"
+        },
+        "stack": "Angular Stack"
+      },
+      "feedbacks": [
+        {
+          "feedbackId": "1403d7a9-6e9b-4888-a8ea-1757c4c72b78",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Andriy Vankovych"
+          },
+          "status": "completed",
+          "date": "2026-02-24T11:04:28.498Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "feedbackId": "2efa6506-754b-478c-bdf4-4fb792dd7d93",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Pavlo Hodysh"
+          },
+          "status": "completed",
+          "date": "2026-02-24T11:05:14.737Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 2,
+                  "notes": "Needs improvement with types like Set"
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 2,
+                  "notes": "Weak knowledge of CI/CD tools besides using linters and build, basic git usage and branching models"
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assessmentId": "0e958c34-5ac2-46fc-a705-f883398a5396",
+      "details": {
+        "candidate": {
+          "fullname": "Danylo Helei"
+        },
+        "date": "2026-02-13T10:54:01.882Z",
+        "profile": {
+          "profileId": "p-2",
+          "title": "Backend Engineer"
+        },
+        "stack": ".NET Stack"
+      },
+      "feedbacks": [
+        {
+          "feedbackId": "d2d8b478-e6b6-419e-9cb9-c3c4263439aa",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Pavlo Hodysh"
+          },
+          "status": "completed",
+          "date": "2026-02-13T10:54:10.371Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 2,
+                  "notes": "Weak knowledge on C# records, abstract vs virtual in classes, threads vs tasks and paralellization"
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 2,
+                  "notes": "Needs improvement with ASP.NET authentication and authorization lifecycle and existing middlewares"
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 2,
+                  "notes": "Knowledge about OOP is present, but struggled to explain the concepts clearly enough. Good real life example on Liskov principle."
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 1,
+                  "notes": "Score estimated from code review and daily tasks"
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 1,
+                  "notes": "Research the differnce between Hexagonal and Layered architecture implementation in .NET."
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 1,
+                  "notes": "Only basic awareness of REST and WebSockets"
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 2,
+                  "notes": "Worked with Entity Framework, but lacks knowledge how it works \"under the hood\". Is able to setup EF project usign Code First setup."
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 1,
+                  "notes": "Score estimated from code review and daily tasks"
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 2,
+                  "notes": "Score estimated from code review and daily tasks"
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 2,
+                  "notes": "Score estimated from code review and daily tasks"
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 2,
+                  "notes": "Score estimated from code review and daily tasks"
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 2,
+                  "notes": "Score estimated from code review and daily tasks"
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 2,
+                  "notes": "Score estimated from code review and daily tasks"
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assessmentId": "c8278c8b-645f-4206-8b3c-7b7a4de397c3",
+      "details": {
+        "candidate": {
+          "fullname": "Sofia Popadiuk"
+        },
+        "date": "2026-01-29T15:44:00.765Z",
+        "profile": {
+          "profileId": "p-3",
+          "title": "Frontend Engineer"
+        },
+        "stack": "Angular Stack"
+      },
+      "feedbacks": [
+        {
+          "feedbackId": "21637d0b-81fe-40c9-bc25-bf31aacbeddd",
+          "type": "self",
+          "assessor": {
+            "fullname": "Sofia Popadiuk"
+          },
+          "status": "completed",
+          "date": "2026-01-29T15:44:11.675Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "feedbackId": "d220eb42-7c90-4e60-b635-e68841d1b2ed",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Andriy Vankovych"
+          },
+          "status": "completed",
+          "date": "2026-01-29T15:44:11.675Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "feedbackId": "2728a3e9-a55d-40fe-b563-57738f5f8f6a",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Pavlo Hodysh"
+          },
+          "status": "completed",
+          "date": "2026-01-29T15:44:11.675Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 3,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 3,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 1,
+                  "notes": "Needs improvement: test driven development, relies on AI agents to generate tests"
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 1,
+                  "notes": "Needs improvement: nx and monorepo setup"
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assessmentId": "508c1a7a-b107-4c46-8483-a1380809a4e8",
+      "details": {
+        "candidate": {
+          "fullname": "Danylo Helei"
+        },
+        "date": "2026-01-29T10:40:08.634Z",
+        "profile": {
+          "profileId": "p-3",
+          "title": "Frontend Engineer"
+        },
+        "stack": "Angular Stack"
+      },
+      "feedbacks": [
+        {
+          "feedbackId": "00eeb653-74dc-4176-b021-7a87ad2e5472",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Andriy Vankovych"
+          },
+          "status": "completed",
+          "date": "2026-01-29T11:03:43.814Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 1,
+                  "notes": "There is good basic knowledge of Typescript, but poor knowledge of JS basics, topics that goes beyond types."
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 1,
+                  "notes": "Weak points - how change detection works"
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 0,
+                  "notes": "No experience with state management in Angular"
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 1,
+                  "notes": "Very basic knowledge, weak points - component lifecycle, directives, routing advanced parts (guards), very basic knowledge of Angular Material, forms (CVA, form state and status)"
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 1,
+                  "notes": "Basic understanding of CI"
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "feedbackId": "470538b2-f728-4028-bf95-a4d97cebf4a6",
+          "type": "expert",
+          "assessor": {
+            "fullname": "Pavlo Hodysh"
+          },
+          "status": "completed",
+          "date": "2026-01-29T10:40:18.148Z",
+          "modules": [
+            {
+              "moduleId": "M1",
+              "moduleName": "Core Coding & Code Quality",
+              "topics": [
+                {
+                  "topicId": "t-M1-1",
+                  "topicName": "Programming Language",
+                  "score": 1,
+                  "notes": "Weak knowledge on types, operators, "
+                },
+                {
+                  "topicId": "t-M1-2",
+                  "topicName": "Runtime & Framework",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-3",
+                  "topicName": "Paradigms & Code Quality",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M1-4",
+                  "topicName": "Ecosystem & Tooling",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M2",
+              "moduleName": "Application Architecture & System Design",
+              "topics": [
+                {
+                  "topicId": "t-M2-5",
+                  "topicName": "Design & Architecture Patterns",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M2-6",
+                  "topicName": "API & Contract Design",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M3",
+              "moduleName": "Data & Persistance Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M3-7",
+                  "topicName": "Data Modeling & Persistence",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-8",
+                  "topicName": "Messaging & Async Processing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M3-9",
+                  "topicName": "Data Processing & Pipelines",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M4",
+              "moduleName": "Frontend Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M4-10",
+                  "topicName": "UI Frameworks & Components",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-11",
+                  "topicName": "UX & Interaction Design",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M4-12",
+                  "topicName": "Client-side Performance & Optimization",
+                  "score": 2,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M5",
+              "moduleName": "Testing & Quality Engineering",
+              "topics": [
+                {
+                  "topicId": "t-M5-13",
+                  "topicName": "Unit Testing",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-14",
+                  "topicName": "Integration & E2E Testing",
+                  "score": 0,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M5-15",
+                  "topicName": "Test Strategy & QA Practices",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M6",
+              "moduleName": "CI/CD & Release Management",
+              "topics": [
+                {
+                  "topicId": "t-M6-16",
+                  "topicName": "CI/CD & Automation",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M6-19",
+                  "topicName": "Release & Change Management",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M7",
+              "moduleName": "Infrastructure, Cloud & Environments",
+              "topics": [
+                {
+                  "topicId": "t-M7-17",
+                  "topicName": "Infrastructure & Environments (IaC)",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M8",
+              "moduleName": "Observability & Reliability",
+              "topics": [
+                {
+                  "topicId": "t-M8-18",
+                  "topicName": "Observability & Operability",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M9",
+              "moduleName": "Application Security",
+              "topics": [
+                {
+                  "topicId": "t-M9-20",
+                  "topicName": "Application Security",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-21",
+                  "topicName": "Data Protection & Privacy",
+                  "score": 1,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M9-22",
+                  "topicName": "Secure SDLC & Compliance",
+                  "score": 0,
+                  "notes": ""
+                }
+              ]
+            },
+            {
+              "moduleId": "M10",
+              "moduleName": "Collaboration & Delivery Process",
+              "topics": [
+                {
+                  "topicId": "t-M10-23",
+                  "topicName": "Requirements & Backlog Management",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-24",
+                  "topicName": "Documentation & Knowledge Sharing",
+                  "score": 2,
+                  "notes": ""
+                },
+                {
+                  "topicId": "t-M10-25",
+                  "topicName": "Collaboration & Review Practices",
+                  "score": 1,
+                  "notes": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assessorName": "Pavlo Hodysh"
+}

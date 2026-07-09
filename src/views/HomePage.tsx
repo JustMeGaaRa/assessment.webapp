@@ -1,8 +1,8 @@
 import { FC } from "react";
 import "./HomePage.css";
-import { AssessmentSession } from "@lib/matrix";
 import { AssessmentsSection } from "@/components/ui/AssessmentsSection";
 import { StatisticsSection } from "@/components/ui/StatisticsSection";
+import { AssessmentSessionWithProgress } from "@lib/matrix";
 
 interface AssessmentStats {
   total: number;
@@ -11,7 +11,7 @@ interface AssessmentStats {
 }
 
 export const HomePage: FC<{
-  recentAssessments: Array<AssessmentSession>;
+  recentAssessments: Array<AssessmentSessionWithProgress>;
   assessmentStats: AssessmentStats;
 }> = ({ recentAssessments, assessmentStats }) => {
   return (

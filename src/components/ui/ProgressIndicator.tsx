@@ -7,11 +7,12 @@ export const ProgressIndicator: FC<{
   max?: number;
   min?: number;
   fill?: UiKitColor;
-}> = ({ value, min = 0, max = 100, fill = "blue" }) => {
+  height?: string;
+}> = ({ value, min = 0, max = 100, fill = "blue", height = "20px" }) => {
   const percentage = ((value - min) / (max - min)) * 100;
   const normalizedPercentage = Math.max(0, Math.min(100, percentage));
   return (
-    <div className={"progress-indicator"}>
+    <div className={"progress-indicator"} style={{ height }}>
       <div
         className={"progress-fill"}
         style={{

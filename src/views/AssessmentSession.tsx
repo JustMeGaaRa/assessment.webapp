@@ -52,10 +52,7 @@ interface AssessmentSessionPageProps {
   levelMappings?: ProficiencyLevel[];
   onCreateAssessment: (assessment: AssessmentSession) => void;
   onCreateEvaluation: (session: IndividualAssessmentScore) => void;
-  onUpdateAssessment: (
-    id: string,
-    data: Partial<AssessmentSession>,
-  ) => void;
+  onUpdateAssessment: (id: string, data: Partial<AssessmentSession>) => void;
   onDeleteEvaluation?: (evaluationId: string) => void;
   onStartSession: () => void;
   onEndSession: () => void;
@@ -86,7 +83,9 @@ export const AssessmentSessionPage = ({
   const assessmentId = params?.assessmentId as string;
   const router = useRouter();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [evaluationType, setEvaluationType] = useState<"expert" | "self">("expert");
+  const [evaluationType, setEvaluationType] = useState<"expert" | "self">(
+    "expert",
+  );
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [transcriptText, setTranscriptText] = useState("");
   const [isEvaluating, setIsEvaluating] = useState(false);
@@ -122,9 +121,13 @@ export const AssessmentSessionPage = ({
     setEvaluationError(null);
 
     try {
-      const selectedStack = matrix.stacks.find((s) => s.stackName === assessment.details.stack);
+      const selectedStack = matrix.stacks.find(
+        (s) => s.stackName === assessment.details.stack,
+      );
       if (!selectedStack) {
-        throw new Error(`Tech stack "${assessment.details.stack}" not found in matrix.`);
+        throw new Error(
+          `Tech stack "${assessment.details.stack}" not found in matrix.`,
+        );
       }
 
       const response = await fetch("/api/assessment/generate", {
@@ -167,7 +170,9 @@ export const AssessmentSessionPage = ({
           moduleId: m.moduleId,
           moduleName: m.moduleName,
           topics: m.topics.map((t) => {
-            const found = aiTopics.find((at) => at.name.toLowerCase() === t.topicName.toLowerCase());
+            const found = aiTopics.find(
+              (at) => at.name.toLowerCase() === t.topicName.toLowerCase(),
+            );
             return {
               topicId: t.topicId,
               topicName: t.topicName,
@@ -202,7 +207,8 @@ export const AssessmentSessionPage = ({
     }
   };
 
-  const candidateName = assessment?.details.candidate.fullname || "Unknown Candidate";
+  const candidateName =
+    assessment?.details.candidate.fullname || "Unknown Candidate";
   const colors = [
     {
       color: "bg-indigo-500",
@@ -281,20 +287,20 @@ export const AssessmentSessionPage = ({
     (ev) =>
       ev.assessor.fullname &&
       assessorName &&
-      ev.assessor.fullname.trim().toLowerCase() === assessorName.trim().toLowerCase()
+      ev.assessor.fullname.trim().toLowerCase() ===
+        assessorName.trim().toLowerCase(),
   );
 
-  const assessors = evaluations
-    .map((ev, idx) => {
-      const style = colors[idx % colors.length];
-      return {
-        name: ev.assessor.fullname || `Assessor ${idx + 1}`,
-        color: style.color,
-        text: style.text,
-        light: style.light,
-        isCurrentUser: false,
-      };
-    });
+  const assessors = evaluations.map((ev, idx) => {
+    const style = colors[idx % colors.length];
+    return {
+      name: ev.assessor.fullname || `Assessor ${idx + 1}`,
+      color: style.color,
+      text: style.text,
+      light: style.light,
+      isCurrentUser: false,
+    };
+  });
 
   const assessmentStatistics = calculateAssessmentStatistics(
     profile,
@@ -311,10 +317,10 @@ export const AssessmentSessionPage = ({
       moduleName: module.moduleName,
       weightedScore:
         assessmentStatistics.modules.find((x) => x.moduleId === module.moduleId)
-          ?.stats?.weightedScore ?? 0,
+          ?.statistics?.weightedScore ?? 0,
       weight:
         assessmentStatistics.modules.find((x) => x.moduleId === module.moduleId)
-          ?.stats?.weight ?? 0,
+          ?.statistics?.weight ?? 0,
       notes:
         assessmentStatistics.modules.find((x) => x.moduleId === module.moduleId)
           ?.notes ?? [],
@@ -409,7 +415,7 @@ export const AssessmentSessionPage = ({
                 profileTitle: assessment.details.profile.title,
                 stack: assessment.details.stack,
                 date: assessment.details.date.toISOString(),
-              }
+              },
             ],
             evaluations: [imported],
           };
@@ -558,7 +564,9 @@ export const AssessmentSessionPage = ({
               </label>
               <select
                 value={evaluationType}
-                onChange={(e) => setEvaluationType(e.target.value as "expert" | "self")}
+                onChange={(e) =>
+                  setEvaluationType(e.target.value as "expert" | "self")
+                }
                 className="w-full p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all bg-white font-sans text-sm text-slate-700"
               >
                 <option value="expert">Expert Evaluation</option>

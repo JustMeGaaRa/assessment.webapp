@@ -1,4 +1,4 @@
-import { AssessmentModuleStatistics } from "@lib/matrix";
+import { AssessmentModuleStatistics, IndividualModuleScore } from "@lib/matrix";
 import { FC } from "react";
 import "./AssessmentModuleDetails.css";
 import { ColorPalette } from "@/constants/colors";
@@ -19,7 +19,9 @@ export const AssessmentModuleDetails: FC<{
           </p>
         </div>
         <div className="assessment-module-header-right">
-          <p className={"text-h4"}>{module.stats.averageScore.toFixed(1)}</p>
+          <p className={"text-h4"}>
+            {module.statistics.averageScore.toFixed(1)}
+          </p>
           <p className={"assessment-module-level text-body-2-compact"}>
             Competent
           </p>
@@ -27,7 +29,10 @@ export const AssessmentModuleDetails: FC<{
       </div>
       <div className="assessment-module-content">
         {module.assessorStats.map((assessorStat, index) => (
-          <div className={"assessor-stat-row"}>
+          <div
+            key={assessorStat.assessor.fullname}
+            className={"assessor-stat-row"}
+          >
             <span
               className={"assessor-stat-fullname text-body-2-compact-semi"}
               title={assessorStat.assessor.fullname}
@@ -48,4 +53,10 @@ export const AssessmentModuleDetails: FC<{
       </div>
     </div>
   );
+};
+
+export const IndividualFeedbackModuleDetails: FC<{
+  module: IndividualModuleScore;
+}> = ({ module }) => {
+  return <div>{module.moduleName}</div>;
 };

@@ -1,26 +1,30 @@
-"use client";
-
 import { notFound } from "next/navigation";
-import { useAssessment } from "@/context/AssessmentContext";
 import { IndividualFeedbackPage } from "@/views/IndividualFeedbackPage";
+import {
+  assessmentService,
+  skillLevelsService,
+} from "@lib/services/azure/storage";
 
-export default function IndividualFeedbackPageRoute() {
-  // TODO: use id from params to load from api
-  const { assessments, profiles, matrix, levelMappings } = useAssessment();
+export default async function IndividualFeedbackPageRoute({
+  params,
+}: {
+  params: Promise<{ assessmentId: string; feedbackId: string }>;
+}) {
+  const { assessmentId, feedbackId } = await params;
+  const assessment = await assessmentService.getAssessmentById(assessmentId);
+  const feedback = await assessmentService.getFeedbackById(
+    assessmentId,
+    feedbackId,
+  );
+  const skillLevels = await skillLevelsService.getSkillLevels();
 
-  console.log("inside IndividualFeedbackPageRoute");
-
-  if (
-    assessments.length <= 0 ||
-    profiles.length <= 0 ||
-    levelMappings.length <= 0 ||
-    !matrix
-  )
-    return notFound();
-
-  const feedback = assessments[1].feedbacks[0];
+  if (!assessment || !feedback) return notFound();
 
   return (
-    <IndividualFeedbackPage assessment={assessments[1]} feedback={feedback} />
+    <IndividualFeedbackPage
+      assessment={assessment}
+      feedback={feedback}
+      skillLevels={skillLevels}
+    />
   );
 }

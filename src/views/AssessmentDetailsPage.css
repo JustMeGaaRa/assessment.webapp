@@ -47,9 +47,9 @@
 }
 
 .assessment-details-score {
-  color: var(--brand-500);
-  font-size: 5rem;
-  line-height: 64px;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: end;
 }
 
 .assessment-details-tags {
@@ -60,6 +60,7 @@
 }
 
 .assessment-details-proficiency {
+  text-transform: uppercase;
   color: var(--gray-text);
 }
 

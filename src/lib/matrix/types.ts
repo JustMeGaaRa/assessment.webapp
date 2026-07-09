@@ -72,7 +72,7 @@ export interface AssessmentDetails {
 export interface IndividualTopicScore {
   topicId: string;
   topicName: string;
-  score: number;
+  score?: number;
   reasoning?: string;
   notes: string;
 }
@@ -100,6 +100,14 @@ export interface AssessmentSession {
   feedbacks: Array<IndividualAssessmentScore>;
 }
 
+export type AssessmentSessionWithProgress = AssessmentSessionStatistics & {
+  progress: {
+    totalFeedbacks: number;
+    completedFeedbacks: number;
+    status?: "ongoing" | "completed";
+  };
+};
+
 export interface ConsolidatedAssessmentSummary {
   assessmentId: string;
   details: AssessmentDetails;
@@ -123,15 +131,26 @@ export interface Stats {
   weight: number;
 }
 
-export type IndividualAssessmentStats = IndividualAssessmentScore & {
-  stats: Stats;
+export type IndividualAssessmentStatistics = IndividualAssessmentScore & {
+  statistics: Stats;
 };
+
+export type IndividualAssessmentScoreWithProgress =
+  IndividualAssessmentStatistics & {
+    progress: {
+      totalTopics: number;
+      completedTopics: number;
+      status?: "ongoing" | "completed" | "rejected";
+    };
+  };
 
 export interface AssessorModuleStatistics {
   moduleId: string;
   moduleName: string;
-  assessorName: string;
-  stats: Stats;
+  assessor: {
+    fullname: string;
+  };
+  statistics: Stats;
 }
 
 export interface AssessmentModuleStatistics {
@@ -145,7 +164,7 @@ export interface AssessmentModuleStatistics {
     module: Stats;
   }>;
   notes: string[];
-  stats: Stats;
+  statistics: Stats;
 }
 
 export interface AssessmentSessionStatistics {
@@ -157,12 +176,3 @@ export interface AssessmentSessionStatistics {
     totalScore: number;
   };
 }
-
-// CONSOLIDATED TYPES
-// class AssessmentSessionResult {
-//   public constructor(public readonly session: AssessmentSession) {}
-// }
-
-// const assessment: AssessmentSessionResult = new AssessmentSessionResult({
-
-// })

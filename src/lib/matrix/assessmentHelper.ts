@@ -24,8 +24,10 @@ function calculateModuleStatistics(
     return {
       moduleId: "",
       moduleName: "",
-      assessorName: assessorName,
-      stats: {
+      assessor: {
+        fullname: assessorName,
+      },
+      statistics: {
         averageScore: 0,
         weightedScore: 0,
         weight: 0,
@@ -49,8 +51,10 @@ function calculateModuleStatistics(
   return {
     moduleId: module.moduleId,
     moduleName: module.moduleName,
-    assessorName: assessorName,
-    stats: {
+    assessor: {
+      fullname: assessorName,
+    },
+    statistics: {
       averageScore,
       weightedScore,
       weight,
@@ -70,14 +74,14 @@ export function calculateAssessorFeedbackScore(
   return {
     averageScore:
       moduleStats.reduce(
-        (total, module) => total + module.stats.averageScore,
+        (total, module) => total + module.statistics.averageScore,
         0,
       ) / moduleStats.length,
     weightedScore: moduleStats.reduce(
-      (total, module) => total + module.stats.weightedScore,
+      (total, module) => total + module.statistics.weightedScore,
       0,
     ),
-    weight: moduleStats ? moduleStats[0]?.stats.weight : 0,
+    weight: moduleStats ? moduleStats[0]?.statistics.weight : 0,
   };
 }
 
@@ -110,31 +114,29 @@ function calculateAssessmentModuleStatistics(
     moduleId: module.moduleId,
     moduleName: module.moduleName,
     description: module.description,
-    stats: {
+    statistics: {
       averageScore:
         moduleStatsPerAssessor.length > 0
           ? moduleStatsPerAssessor.reduce(
-              (total, module) => total + module.stats.averageScore,
+              (total, module) => total + module.statistics.averageScore,
               0,
             ) / moduleStatsPerAssessor.length
           : 0,
       weightedScore:
         moduleStatsPerAssessor.length > 0
           ? moduleStatsPerAssessor.reduce(
-              (total, module) => total + module.stats.weightedScore,
+              (total, module) => total + module.statistics.weightedScore,
               0,
             ) / moduleStatsPerAssessor.length
           : 0,
       weight:
         moduleStatsPerAssessor.length > 0
-          ? moduleStatsPerAssessor[0]?.stats.weight
+          ? moduleStatsPerAssessor[0]?.statistics.weight
           : 0,
     },
     assessorStats: moduleStatsPerAssessor.map((module) => ({
-      assessor: {
-        fullname: module.assessorName,
-      },
-      module: module.stats,
+      assessor: module.assessor,
+      module: module.statistics,
     })),
     notes: assessorFeedbacks
       .map((feedback) => {
@@ -182,7 +184,7 @@ export function calculateAssessmentStatistics(
 
   const factor = Math.pow(10, 2);
   const totalScore = moduleScores.reduce(
-    (total, moduleScore) => total + moduleScore.stats.weightedScore,
+    (total, moduleScore) => total + moduleScore.statistics.weightedScore,
     0,
   );
   const totalScoreRounded = Math.ceil(totalScore * factor) / factor;

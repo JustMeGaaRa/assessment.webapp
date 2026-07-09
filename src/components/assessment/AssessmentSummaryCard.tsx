@@ -110,9 +110,9 @@ const ModuleScoreCard = ({
     return null;
   }
 
-  const averagePoints = moduleStats.stats.averageScore.toFixed(1);
-  const weight = moduleStats.stats.weight;
-  const weightedPoints = moduleStats.stats.weightedScore.toFixed(2);
+  const averagePoints = moduleStats.statistics.averageScore.toFixed(1);
+  const weight = moduleStats.statistics.weight;
+  const weightedPoints = moduleStats.statistics.weightedScore.toFixed(2);
 
   // Derive notes for all assessors (including self-feedback) from feedbacks
   const notes = feedbacks

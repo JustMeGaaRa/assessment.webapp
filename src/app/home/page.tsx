@@ -1,12 +1,46 @@
-"use client";
-
-import { useAssessment } from "@/context/AssessmentContext";
 import { HomePage } from "@/views/HomePage";
+import {
+  AssessmentSessionWithProgress,
+  calculateAssessmentStatistics,
+} from "@lib/matrix";
+import {
+  assessmentService,
+  competenceMatrixService,
+  jobProfileService,
+  proficiencyLevelsService,
+} from "@lib/services/azure/storage";
 
-export default function HomePageRoute() {
-  const { assessments } = useAssessment();
+export default async function HomePageRoute() {
+  const assessments = await assessmentService.getAssessments();
+  const matrix = await competenceMatrixService.getCompetenceMatrix();
+  const profiles = await jobProfileService.getJobProfiles();
+  const proficiencyLevels =
+    await proficiencyLevelsService.getProficiencyLevels();
 
-  const recenetAssessments = assessments.slice(0, 6);
+  const recenetAssessments: Array<AssessmentSessionWithProgress> = assessments
+    .slice(0, 6)
+    .map((assessment) => {
+      const profile = profiles.find(
+        (profile) => profile.profileId === assessment.details.profile.profileId,
+      )!;
+      return {
+        ...calculateAssessmentStatistics(
+          profile,
+          matrix,
+          proficiencyLevels,
+          assessment,
+        ),
+        progress: {
+          totalFeedbacks: assessment.feedbacks.length,
+          completedFeedbacks: assessment.feedbacks.filter(
+            (f) => f.status === "completed",
+          ).length,
+          status: assessment.feedbacks.every((f) => f.status === "completed")
+            ? "completed"
+            : "ongoing",
+        },
+      };
+    });
 
   // TODO: compute stats in the service
   const uniqueExperts = new Set(
@@ -14,7 +48,7 @@ export default function HomePageRoute() {
       assessment.feedbacks.map((feedback) => feedback.assessor.fullname),
     ),
   );
-  const stats = {
+  const assessmentStats = {
     total: assessments.length,
     monthly: assessments.filter((assessment) => {
       const date = new Date(assessment.details.date);
@@ -28,6 +62,9 @@ export default function HomePageRoute() {
   };
 
   return (
-    <HomePage recentAssessments={recenetAssessments} assessmentStats={stats} />
+    <HomePage
+      recentAssessments={recenetAssessments}
+      assessmentStats={assessmentStats}
+    />
   );
 }

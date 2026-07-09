@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { AssessmentCard } from "./AssessmentCard";
-import { AssessmentSession } from "@lib/matrix";
-import { FC } from "react";
 import "./AssessmentList.css";
+import Link from "next/link";
+import { FC } from "react";
+import { AssessmentCard } from "./AssessmentCard";
+import { AssessmentSessionWithProgress } from "@lib/matrix";
 
 export const AssessmentList: FC<{
-  assessments: AssessmentSession[];
+  assessments: AssessmentSessionWithProgress[];
 }> = ({ assessments }) => {
   return (
     <div className={"assessment-list"}>

@@ -1,7 +1,6 @@
 .feedback-card {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 
   border-bottom: 1px solid var(--gray-400);
   padding-bottom: 1rem;
@@ -9,26 +8,24 @@
   cursor: pointer;
 }
 
+.feedback-card:hover {
+}
+
 .feedback-card-row {
   display: flex;
   flex-direction: row;
-  align-items: start;
   justify-content: space-between;
-  gap: 1rem;
 }
 
-.feedback-card-actions {
-  flex: 1 0 0;
-  height: 48px;
+.feedback-card-row.align-bottom {
+  align-items: end;
 }
 
-.feedback-card-info {
-  flex: 2 1 0;
-  display: flex;
-  flex-direction: column;
+.feedback-card-row.align-top {
+  align-items: start;
 }
 
-.feedback-date {
+.feedback-field-date {
   color: var(--gray-text);
   display: flex;
   flex-direction: row;
@@ -36,13 +33,9 @@
   gap: 0.5rem;
 }
 
-.feedback-card-score {
+.feedback-field-score {
   display: flex;
-  align-items: center;
-}
-
-.feedback-card-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: end;
+  text-transform: uppercase;
 }

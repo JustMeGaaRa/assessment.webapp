@@ -1,47 +1,78 @@
-"use client";
-
 import { notFound } from "next/navigation";
-import { useAssessment } from "@/context/AssessmentContext";
 import { AssessmentDetailsPage } from "@/views/AssessmentDetailsPage";
 import {
+  AssessmentSessionWithProgress,
   calculateAssessmentStatistics,
   calculateAssessorFeedbackScore,
+  IndividualAssessmentScoreWithProgress,
 } from "@lib/matrix";
+import {
+  assessmentService,
+  competenceMatrixService,
+  jobProfileService,
+  proficiencyLevelsService,
+} from "@lib/services/azure/storage";
 
-export default function AssessmentDetailsPageRoute() {
-  // TODO: use id from params to load from api
-  const { assessments, profiles, matrix, levelMappings } = useAssessment();
+export default async function AssessmentDetailsPageRoute({
+  params,
+}: {
+  params: Promise<{ assessmentId: string; feedbackId: string }>;
+}) {
+  const { assessmentId } = await params;
+  const assessment = await assessmentService.getAssessmentById(assessmentId);
+  const matrix = await competenceMatrixService.getCompetenceMatrix();
+  const profile = await jobProfileService.getJobProfileById(
+    assessment?.details.profile.profileId,
+  );
+  const proficiencyLevels =
+    await proficiencyLevelsService.getProficiencyLevels();
 
-  if (
-    assessments.length <= 0 ||
-    profiles.length <= 0 ||
-    levelMappings.length <= 0 ||
-    !matrix
-  )
+  if (!assessment || !matrix || !profile || proficiencyLevels.length <= 0)
     return notFound();
 
-  const assessmentSummary = calculateAssessmentStatistics(
-    profiles[0],
-    matrix,
-    levelMappings,
-    assessments[1],
-  );
-  const feedbacks = assessments[1].feedbacks.map((feedback) => ({
-    ...feedback,
-    stats: calculateAssessorFeedbackScore(
-      profiles[0],
-      feedback.assessor.fullname,
-      feedback.modules,
+  const assessmentStatistics: AssessmentSessionWithProgress = {
+    ...calculateAssessmentStatistics(
+      profile,
+      matrix,
+      proficiencyLevels,
+      assessment,
     ),
-  }));
-  const status = assessments[1].feedbacks.every((f) => f.status === "completed")
-    ? "completed"
-    : "ongoing";
+    // TODO: move this to state management
+    progress: {
+      totalFeedbacks: assessment.feedbacks.length,
+      completedFeedbacks: assessment.feedbacks.filter(
+        (f) => f.status === "completed",
+      ).length,
+      status: assessment.feedbacks.every((f) => f.status === "completed")
+        ? "completed"
+        : "ongoing",
+    },
+  };
+  const feedbacks: Array<IndividualAssessmentScoreWithProgress> =
+    assessment.feedbacks.map((feedback) => ({
+      ...feedback,
+      statistics: calculateAssessorFeedbackScore(
+        profile,
+        feedback.assessor.fullname,
+        feedback.modules,
+      ),
+      progress: {
+        totalTopics: feedback.modules.reduce(
+          (total, module) => total + module.topics.length,
+          0,
+        ),
+        completedTopics: feedback.modules.reduce(
+          (scored, m) =>
+            scored + m.topics.filter((t) => t.score !== undefined).length,
+          0,
+        ),
+        status: "completed",
+      },
+    }));
 
   return (
     <AssessmentDetailsPage
-      status={status}
-      assessment={assessmentSummary}
+      assessment={assessmentStatistics}
       feedbacks={feedbacks}
     />
   );

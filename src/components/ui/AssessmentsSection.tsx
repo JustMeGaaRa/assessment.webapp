@@ -1,14 +1,13 @@
-import { FC } from "react";
-import Link from "next/link";
-import { AssessmentSession } from "@lib/matrix";
 import "./AssessmentsSection.css";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { FC } from "react";
 import { Button } from "./Button";
-import { AssessmentList } from "./AssessmentList";
+import { AssessmentList, AssessmentSessionProps } from "./AssessmentList";
 
 export const AssessmentsSection: FC<{
   title: string;
-  assessments: AssessmentSession[];
+  assessments: AssessmentSessionProps[];
 }> = ({ title, assessments }) => {
   return (
     <section className={"assessments-section"}>
