@@ -46,13 +46,14 @@ export const IndividualFeedbackPage: FC<{
                   <IndividualFeedbackModuleDetails
                     key={module.moduleId}
                     module={module}
+                    skillLevels={skillLevels}
                   />
                 ))}
               </div>
             </div>
             <div className={"skill-levels-panel"}>
               <h3 className={"text-h3"}>Skill Levels</h3>
-              <div className={"skill-levels-list"}>
+              <div className={"skill-level-definitions"}>
                 {skillLevels.map((skillLevel) => (
                   <div key={skillLevel.label}>{skillLevel.label}</div>
                 ))}

@@ -8,9 +8,6 @@
   cursor: pointer;
 }
 
-.feedback-card:hover {
-}
-
 .feedback-card-row {
   display: flex;
   flex-direction: row;

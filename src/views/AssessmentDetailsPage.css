@@ -115,21 +115,11 @@
     flex-direction: column;
     gap: 6rem;
   }
-
-  .separator {
-    border-top: 1px solid;
-    border-color: var(--gray-400);
-  }
 }
 
 @media (max-width: 768px) {
   .assessment-details-content {
     flex-direction: column;
     gap: 4rem;
-  }
-
-  .separator {
-    border-top: 1px solid;
-    border-color: var(--gray-400);
   }
 }
