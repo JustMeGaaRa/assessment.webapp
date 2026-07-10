@@ -57,8 +57,12 @@ export const IndividualFeedbackPage: FC<{
             <div className={"skill-levels-panel"}>
               <h3 className={"text-h3"}>Skill Levels</h3>
               <div className={"skill-level-definitions"}>
-                {skillLevels.map((skillLevel) => (
-                  <div key={skillLevel.label}>{skillLevel.label}</div>
+                {skillLevels.map((level) => (
+                  <div key={level.label} className={"skill-level-card"}>
+                    <p>//{level.score}</p>
+                    <p className={"text-h4"}>{level.label}</p>
+                    <p>{level.description}</p>
+                  </div>
                 ))}
               </div>
             </div>

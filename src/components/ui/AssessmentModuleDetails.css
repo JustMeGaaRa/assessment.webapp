@@ -52,7 +52,7 @@
 .feedback-module {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--gray-400);
 }
@@ -89,6 +89,8 @@
   gap: 2rem;
 }
 
+/* Feedback Topic Scoring */
+
 .topic-details {
   display: flex;
   flex-direction: row;
@@ -111,13 +113,15 @@
   color: var(--gray-text);
 }
 
-.skill-levels-scores {
+/* Skill Level Values */
+
+.skill-levels-value-list {
   display: inline-flex;
   flex-direction: row;
   gap: 0.5rem;
 }
 
-.skill-level-score {
+.skill-level-value {
   width: 40px;
   height: 40px;
   background-color: var(--gray-steel-400);

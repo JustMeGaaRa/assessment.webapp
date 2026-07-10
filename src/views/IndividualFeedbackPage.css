@@ -45,6 +45,14 @@
   padding: 2rem;
 }
 
+.skill-level-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-bottom: 1px solid var(--gray-400);
+  padding-bottom: 1rem;
+}
+
 @media (min-width: 769px) and (max-width: 1100px) {
   .individual-feedback-content {
     flex-direction: column;

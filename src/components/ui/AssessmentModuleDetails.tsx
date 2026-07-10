@@ -93,11 +93,9 @@ export const IndividualFeedbackModuleDetails: FC<{
                 }
               </span>
             </div>
-            <div className={"skill-levels-scores text-body-2-compact-semi"}>
+            <div className={"skill-levels-value-list text-body-2-compact-semi"}>
               {skillLevels.map((level) => (
-                <span key={level.label} className={"skill-level-score"}>
-                  {level.score}
-                </span>
+                <span className={"skill-level-value"}>{level.score}</span>
               ))}
             </div>
           </div>
