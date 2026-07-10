@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { IndividualFeedbackPage } from "@/views/IndividualFeedbackPage";
 import {
   assessmentService,
+  competenceMatrixService,
   skillLevelsService,
 } from "@lib/services/azure/storage";
 
@@ -16,14 +17,18 @@ export default async function IndividualFeedbackPageRoute({
     assessmentId,
     feedbackId,
   );
+  const stack = (
+    await competenceMatrixService.getCompetenceMatrix()
+  ).stacks.find((s) => s.stackName === assessment.details.stack);
   const skillLevels = await skillLevelsService.getSkillLevels();
 
-  if (!assessment || !feedback) return notFound();
+  if (!assessment || !feedback || !stack) return notFound();
 
   return (
     <IndividualFeedbackPage
       assessment={assessment}
       feedback={feedback}
+      stack={stack}
       skillLevels={skillLevels}
     />
   );

@@ -2,6 +2,7 @@ import {
   AssessmentModuleStatistics,
   IndividualModuleScore,
   SkillLevel,
+  TechnologyStack,
 } from "@lib/matrix";
 import { FC } from "react";
 import "./AssessmentModuleDetails.css";
@@ -61,15 +62,16 @@ export const AssessmentModuleDetails: FC<{
 
 export const IndividualFeedbackModuleDetails: FC<{
   module: IndividualModuleScore;
+  stack: TechnologyStack;
   skillLevels: SkillLevel[];
-}> = ({ module, skillLevels }) => {
+}> = ({ module, stack, skillLevels }) => {
   return (
     <div className={"feedback-module"}>
       <div className="feedback-module-header">
         <div className={"feedback-module-header-left"}>
           <p className={"feedback-module-name text-h4"}>{module.moduleName}</p>
           <p className={"feedback-module-description text-body-2-compact"}>
-            {"module.description"}
+            {module.description}
           </p>
         </div>
         <div className="feedback-module-header-right">
@@ -81,17 +83,23 @@ export const IndividualFeedbackModuleDetails: FC<{
       </div>
       <div className="feedback-module-content">
         {module.topics.map((topic) => (
-          <div key={topic.topicName} className={"module-topic-details"}>
-            <span className={"module-topic-name text-body-2-compact-semi"}>
-              {topic.topicName}
-            </span>
-            <span className={"skill-levels-scores text-body-2-compact-semi"}>
+          <div key={topic.topicName} className={"topic-details"}>
+            <div className={"topic-details-block"}>
+              <span className={"topic-name text-h5"}>{topic.topicName}</span>
+              <span className={"topic-tech-description text-body-2-compact"}>
+                {
+                  stack.topics.find((s) => s.topicId === topic.topicId)
+                    ?.technologyDescription
+                }
+              </span>
+            </div>
+            <div className={"skill-levels-scores text-body-2-compact-semi"}>
               {skillLevels.map((level) => (
-                <span key={level.label} title={level.label}>
+                <span key={level.label} className={"skill-level-score"}>
                   {level.score}
                 </span>
               ))}
-            </span>
+            </div>
           </div>
         ))}
       </div>

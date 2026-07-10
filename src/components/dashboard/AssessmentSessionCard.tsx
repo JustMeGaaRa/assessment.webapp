@@ -31,11 +31,11 @@ export const AssessmentSessionCard = ({
   const router = useRouter();
 
   const completed = assessment.feedbacks.filter(
-    (f) => f.progress.status === "completed" && f.type !== "self",
+    (f) => f.status === "completed" && f.type !== "self",
   );
   const isCompleted =
     assessment.feedbacks.length > 0 &&
-    assessment.feedbacks.every((f) => f.progress.status === "completed");
+    assessment.feedbacks.every((f) => f.status === "completed");
 
   const profile = profiles?.find(
     (p) => p.profileId === assessment.details.profile.profileId,

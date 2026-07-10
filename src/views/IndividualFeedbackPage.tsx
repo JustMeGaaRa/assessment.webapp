@@ -3,6 +3,7 @@ import {
   AssessmentSession,
   IndividualAssessmentScore,
   SkillLevel,
+  TechnologyStack,
 } from "@lib/matrix";
 import { FC } from "react";
 import "./IndividualFeedbackPage.css";
@@ -11,8 +12,9 @@ import { IndividualFeedbackModuleDetails } from "@/components/ui/AssessmentModul
 export const IndividualFeedbackPage: FC<{
   assessment: AssessmentSession;
   feedback: IndividualAssessmentScore;
+  stack: TechnologyStack;
   skillLevels: SkillLevel[];
-}> = ({ assessment, feedback, skillLevels }) => {
+}> = ({ assessment, feedback, stack, skillLevels }) => {
   return (
     <div className={"individual-feedback-page"}>
       <div className={"container"}>
@@ -34,7 +36,7 @@ export const IndividualFeedbackPage: FC<{
             <div className={"module-breakdown"}>
               <div className={"module-breakdown-heading"}>
                 <h3 className={"module-breakdown-title text-h3"}>
-                  Score the performence for each module
+                  Score the proficiency within each topic
                 </h3>
                 <p className={"module-breakdown-description text-body"}>
                   Assign score for each topic within modules based on cadidates
@@ -46,6 +48,7 @@ export const IndividualFeedbackPage: FC<{
                   <IndividualFeedbackModuleDetails
                     key={module.moduleId}
                     module={module}
+                    stack={stack}
                     skillLevels={skillLevels}
                   />
                 ))}

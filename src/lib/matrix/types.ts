@@ -80,6 +80,7 @@ export interface IndividualTopicScore {
 export interface IndividualModuleScore {
   moduleId: string;
   moduleName: string;
+  description?: string;
   topics: Array<IndividualTopicScore>;
 }
 
@@ -99,6 +100,51 @@ export interface AssessmentSession {
   details: AssessmentDetails;
   feedbacks: Array<IndividualAssessmentScore>;
 }
+
+export const createAssessmentSession = (
+  profile: Profile,
+  cadidate: { fullname: string },
+  stack: TechnologyStack,
+): AssessmentSession => {
+  return {
+    assessmentId: crypto.randomUUID(),
+    details: {
+      date: new Date(),
+      candidate: cadidate,
+      profile: {
+        profileId: profile.profileId,
+        title: profile.profileName,
+      },
+      stack: stack.stackName,
+    },
+    feedbacks: [],
+  };
+};
+
+export const createIndividualFeedback = (
+  assessor: {
+    fullname: string;
+  },
+  modules: Array<CompetenceMatrixModule>,
+): IndividualAssessmentScore => {
+  return {
+    feedbackId: crypto.randomUUID(),
+    type: "expert",
+    assessor: assessor,
+    date: new Date(),
+    modules: modules.map((m) => ({
+      moduleId: m.moduleId,
+      moduleName: m.moduleName,
+      description: m.description,
+      topics: m.topics.map((t) => ({
+        topicId: t.topicId,
+        topicName: t.topicName,
+        notes: "",
+      })),
+    })),
+    status: "ongoing",
+  };
+};
 
 export type AssessmentSessionWithProgress = AssessmentSessionStatistics & {
   progress: {

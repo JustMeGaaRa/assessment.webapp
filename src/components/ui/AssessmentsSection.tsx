@@ -3,11 +3,12 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { FC } from "react";
 import { Button } from "./Button";
-import { AssessmentList, AssessmentSessionProps } from "./AssessmentList";
+import { AssessmentList } from "./AssessmentList";
+import { AssessmentSessionWithProgress } from "@lib/matrix";
 
 export const AssessmentsSection: FC<{
   title: string;
-  assessments: AssessmentSessionProps[];
+  assessments: AssessmentSessionWithProgress[];
 }> = ({ title, assessments }) => {
   return (
     <section className={"assessments-section"}>

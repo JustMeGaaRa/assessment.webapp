@@ -129,7 +129,9 @@ export const AssessorEvaluationPage = ({
       (m) => m.moduleId === module.moduleId,
     );
     return evalModule
-      ? evalModule.topics.filter((topic) => topic.score > 0).length
+      ? evalModule.topics.filter(
+          (topic) => topic.score !== undefined && topic.score > 0,
+        ).length
       : 0;
   };
 
@@ -153,14 +155,14 @@ export const AssessorEvaluationPage = ({
 
   const isReadOnly =
     isLocked ||
-    evaluation.progress.status === "completed" ||
-    evaluation.progress.status === "rejected";
+    evaluation.status === "completed" ||
+    evaluation.status === "rejected";
 
   const scoresMap = evaluation.modules
     .flatMap((m) => m.topics)
     .reduce<
       Record<string, number>
-    >((acc, curr) => ({ ...acc, [curr.topicName]: curr.score }), {});
+    >((acc, curr) => ({ ...acc, [curr.topicName]: curr.score ?? 0 }), {});
 
   const notesMap = evaluation.modules
     .flatMap((m) => m.topics)
@@ -384,8 +386,8 @@ export const AssessorEvaluationPage = ({
                 <div className="flex gap-3">
                   <button
                     disabled={
-                      evaluation.progress.status === "completed" ||
-                      evaluation.progress.status === "rejected"
+                      evaluation.status === "completed" ||
+                      evaluation.status === "rejected"
                     }
                     onClick={resetAssessment}
                     className="px-4 py-3 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-slate-200 rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100 border border-slate-600 flex items-center gap-2"
@@ -397,15 +399,15 @@ export const AssessorEvaluationPage = ({
 
                   <button
                     disabled={
-                      evaluation.progress.status === "completed" ||
-                      evaluation.progress.status === "rejected"
+                      evaluation.status === "completed" ||
+                      evaluation.status === "rejected"
                     }
                     onClick={finishAssessment}
                     className="px-4 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold transition-all shadow-lg active:scale-95 disabled:active:scale-100 flex items-center gap-2"
                   >
                     <CheckCircle size={20} />
                     <span className="hidden sm:inline">
-                      {evaluation.progress.status === "completed"
+                      {evaluation.status === "completed"
                         ? "Completed"
                         : "Complete"}
                     </span>

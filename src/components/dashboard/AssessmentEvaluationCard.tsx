@@ -58,7 +58,7 @@ export const AssessmentEvaluationCard = ({
     >
       <Card.Header className="flex justify-between items-start gap-2">
         <div className="flex gap-2 flex-wrap">
-          <Badge status={evalSession.progress.status} />
+          <Badge status={evalSession.status} />
           <Badge variant={evalSession.type} />
           <Badge icon={<MessageSquareText size={12} />}>Feedback</Badge>
         </div>
