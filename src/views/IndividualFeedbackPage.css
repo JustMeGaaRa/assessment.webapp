@@ -24,10 +24,19 @@
   gap: 2rem;
 }
 
+.module-breakdown-heading {
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--gray-400);
+}
+
+.module-breakdown-description {
+  color: var(--gray-text);
+}
+
 .module-list {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 4rem;
 }
 
 .skill-levels-panel {

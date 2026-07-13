@@ -1,3 +1,4 @@
+import "./IndividualFeedbackPage.css";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import {
   AssessmentSession,
@@ -6,8 +7,7 @@ import {
   TechnologyStack,
 } from "@lib/matrix";
 import { FC } from "react";
-import "./IndividualFeedbackPage.css";
-import { IndividualFeedbackModuleDetails } from "@/components/ui/AssessmentModuleDetails";
+import { FeedbackModuleDetails } from "@/components/ui/FeedbackModuleDetails";
 
 export const IndividualFeedbackPage: FC<{
   assessment: AssessmentSession;
@@ -45,7 +45,7 @@ export const IndividualFeedbackPage: FC<{
               </div>
               <div className={"module-list"}>
                 {feedback.modules.map((module) => (
-                  <IndividualFeedbackModuleDetails
+                  <FeedbackModuleDetails
                     key={module.moduleId}
                     module={module}
                     stack={stack}
