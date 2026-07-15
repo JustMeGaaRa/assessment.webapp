@@ -1,0 +1,21 @@
+.skill-level-value {
+  width: 40px;
+  height: 40px;
+  background-color: var(--gray-steel-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.skill-level-value:hover {
+  background-color: var(--gray-steel-500);
+}
+
+.skill-level-value[data-selected="true"] {
+  background-color: var(--brand-300);
+}
+
+.skill-level-value[data-selected="true"]:hover {
+  background-color: var(--brand-400);
+}

@@ -1,0 +1,21 @@
+.skill-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  gap: 1rem;
+
+  border-bottom: 1px solid var(--gray-400);
+  padding-bottom: 1rem;
+  min-height: 250px;
+}
+
+.skill-card-attribute-score {
+  flex: 1 1 0;
+  text-transform: uppercase;
+  color: var(--gray-steel-600);
+  font-weight: 700;
+}
+
+.skill-card-attribute-desc {
+  color: var(--gray-steel-900);
+}

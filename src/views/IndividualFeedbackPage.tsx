@@ -8,6 +8,7 @@ import {
 } from "@lib/matrix";
 import { FC } from "react";
 import { FeedbackModuleDetails } from "@/components/ui/FeedbackModuleDetails";
+import { SkillLevelCard } from "@/components/ui/SkillLevelCard";
 
 export const IndividualFeedbackPage: FC<{
   assessment: AssessmentSession;
@@ -65,20 +66,6 @@ export const IndividualFeedbackPage: FC<{
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-export const SkillLevelCard: FC<{
-  level: SkillLevel;
-}> = ({ level }) => {
-  return (
-    <div className={"skill-card"}>
-      <p className={"skill-card-attribute-score text-body-2-compact-semi"}>
-        LEVEL {level.score}
-      </p>
-      <p className={"skill-card-attribute-label text-h4"}>{level.label}</p>
-      <p className={"skill-card-attribute-desc"}>{level.description}</p>
     </div>
   );
 };

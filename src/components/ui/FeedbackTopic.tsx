@@ -2,6 +2,7 @@ import "./FeedbackTopic.css";
 import { FC, PropsWithChildren } from "react";
 import { IndividualTopicScore, SkillLevel, TechnologyStack } from "@lib/matrix";
 import Textarea from "./Textarea";
+import { SkillLevelScore } from "./SkillLevelScore";
 
 export const FeedbackTopic: FC<{
   topicScore: IndividualTopicScore;
@@ -21,11 +22,15 @@ export const FeedbackTopic: FC<{
           </span>
         </div>
         <div className={"skill-levels-value-list text-body-2-compact-semi"}>
-          {skillLevels.map((level) => (
-            <span key={level.label} className={"skill-level-value"}>
-              {level.score}
-            </span>
-          ))}
+          <ButtonGroup>
+            {skillLevels.map((level) => (
+              <SkillLevelScore
+                key={level.label}
+                level={level}
+                selected={topicScore.score === level.score}
+              />
+            ))}
+          </ButtonGroup>
         </div>
       </div>
       <Textarea

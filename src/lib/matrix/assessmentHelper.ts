@@ -208,15 +208,15 @@ function findProficiencyLevel(
   proficiencyLevels: ProficiencyLevel[],
 ) {
   const targetProficiency = proficiencyLevels
-    .sort((a, b) => b.scoreThreshold - a.scoreThreshold)
-    .find((level) => totalScore >= level.scoreThreshold);
+    .sort((a, b) => a.scoreThreshold - b.scoreThreshold)
+    .find((level) => totalScore <= level.scoreThreshold);
   return targetProficiency?.level;
 }
 
 function findSkillLevel(score: number, skillLevels: SkillLevel[]) {
   const targetSkillLevel = skillLevels
-    .sort((a, b) => b.score - a.score)
-    .find((level) => score >= level.score);
+    .sort((a, b) => a.score - b.score)
+    .find((level) => level.score >= score);
   return targetSkillLevel?.label;
 }
 

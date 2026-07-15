@@ -32,8 +32,6 @@
   resize: vertical;
 }
 
-/* Skill Level Values */
-
 .skill-levels-value-list {
   display: inline-flex;
   flex-direction: row;
@@ -41,11 +39,10 @@
   gap: 0.5rem;
 }
 
-.skill-level-value {
-  width: 40px;
-  height: 40px;
-  background-color: var(--gray-steel-400);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Button Group */
+.button-group {
+  display: inline-flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  gap: 0.5rem;
 }

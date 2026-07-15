@@ -1161,37 +1161,37 @@
     {
       "level": "Principal",
       "description": "<no_description_available>",
-      "scoreThreshold": 4.5,
+      "scoreThreshold": 5,
       "title": "Principal"
     },
     {
       "level": "Expert",
       "description": "<no_description_available>",
-      "scoreThreshold": 3.9,
+      "scoreThreshold": 4.3,
       "title": "Expert"
     },
     {
       "level": "Senior",
       "description": "<no_description_available>",
-      "scoreThreshold": 3,
+      "scoreThreshold": 3.5,
       "title": "Senior"
     },
     {
       "level": "Middle",
       "description": "<no_description_available>",
-      "scoreThreshold": 2,
+      "scoreThreshold": 2.6,
       "title": "Middle"
     },
     {
       "level": "Junior",
       "description": "<no_description_available>",
-      "scoreThreshold": 1,
+      "scoreThreshold": 1.6,
       "title": "Junior"
     },
     {
       "level": "Trainee",
       "description": "<no_description_available>",
-      "scoreThreshold": 0,
+      "scoreThreshold": 0.7,
       "title": "Trainee"
     }
   ],
