@@ -22,7 +22,9 @@ export const FeedbackTopic: FC<{
         </div>
         <div className={"skill-levels-value-list text-body-2-compact-semi"}>
           {skillLevels.map((level) => (
-            <span className={"skill-level-value"}>{level.score}</span>
+            <span key={level.label} className={"skill-level-value"}>
+              {level.score}
+            </span>
           ))}
         </div>
       </div>

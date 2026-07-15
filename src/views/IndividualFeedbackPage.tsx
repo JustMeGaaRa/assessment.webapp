@@ -54,21 +54,31 @@ export const IndividualFeedbackPage: FC<{
                 ))}
               </div>
             </div>
-            <div className={"skill-levels-panel"}>
+            <div className={"skill-cards-panel"}>
               <h3 className={"text-h3"}>Skill Levels</h3>
-              <div className={"skill-level-definitions"}>
+              <div className={"skill-card-list"}>
                 {skillLevels.map((level) => (
-                  <div key={level.label} className={"skill-level-card"}>
-                    <p>//{level.score}</p>
-                    <p className={"text-h4"}>{level.label}</p>
-                    <p>{level.description}</p>
-                  </div>
+                  <SkillLevelCard key={level.label} level={level} />
                 ))}
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  );
+};
+
+export const SkillLevelCard: FC<{
+  level: SkillLevel;
+}> = ({ level }) => {
+  return (
+    <div className={"skill-card"}>
+      <p className={"skill-card-attribute-score text-body-2-compact-semi"}>
+        LEVEL {level.score}
+      </p>
+      <p className={"skill-card-attribute-label text-h4"}>{level.label}</p>
+      <p className={"skill-card-attribute-desc"}>{level.description}</p>
     </div>
   );
 };

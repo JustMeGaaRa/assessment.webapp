@@ -49,6 +49,7 @@
 
 .assessment-field-proficiency {
   text-transform: uppercase;
+  font-weight: 700;
   color: var(--gray-text);
 }
 

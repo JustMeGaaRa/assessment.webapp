@@ -18,7 +18,7 @@ export const AssessmentFeedbackCard: FC<{
     <div className={"feedback-card"}>
       <div className={"feedback-card-row align-top"}>
         <Avatar label={feedback.assessor.fullname} colorPalette={avatarColor} />
-        <ArrowUpRight size={32} />
+        <ArrowUpRight size={24} />
       </div>
       <div className={"feedback-card-row align-bottom"}>
         <span className={"feedback-assessor-fullname text-h4"}>
@@ -52,10 +52,9 @@ export const AssessmentFeedbackCard: FC<{
           </span>
         </span>
         <span
-          className={"feedback-field-score text-body-2-compact-semi"}
-          style={{ color: "var(--gray-text)" }}
+          className={"feedback-card-attribute-level text-body-2-compact-semi"}
         >
-          {isCompleted ? "Senior" : "Progress"}
+          {isCompleted ? feedback.statistics.proficiencyLevel : "Progress"}
         </span>
       </div>
     </div>

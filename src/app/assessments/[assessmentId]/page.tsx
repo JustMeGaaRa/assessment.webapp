@@ -11,6 +11,7 @@ import {
   competenceMatrixService,
   jobProfileService,
   proficiencyLevelsService,
+  skillLevelsService,
 } from "@lib/services/azure/storage";
 
 export default async function AssessmentDetailsPageRoute({
@@ -26,6 +27,7 @@ export default async function AssessmentDetailsPageRoute({
   );
   const proficiencyLevels =
     await proficiencyLevelsService.getProficiencyLevels();
+  const skillLevels = await skillLevelsService.getSkillLevels();
 
   if (!assessment || !matrix || !profile || proficiencyLevels.length <= 0)
     return notFound();
@@ -35,6 +37,7 @@ export default async function AssessmentDetailsPageRoute({
       profile,
       matrix,
       proficiencyLevels,
+      skillLevels,
       assessment,
     ),
     // TODO: move this to state management
@@ -53,8 +56,10 @@ export default async function AssessmentDetailsPageRoute({
       ...feedback,
       statistics: calculateAssessorFeedbackScore(
         profile,
+        feedback,
         feedback.assessor.fullname,
         feedback.modules,
+        proficiencyLevels,
       ),
       progress: {
         totalTopics: feedback.modules.reduce(

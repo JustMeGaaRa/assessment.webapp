@@ -8,6 +8,7 @@ import {
   competenceMatrixService,
   jobProfileService,
   proficiencyLevelsService,
+  skillLevelsService,
 } from "@lib/services/azure/storage";
 
 export default async function HomePageRoute() {
@@ -16,6 +17,7 @@ export default async function HomePageRoute() {
   const profiles = await jobProfileService.getJobProfiles();
   const proficiencyLevels =
     await proficiencyLevelsService.getProficiencyLevels();
+  const skillLevels = await skillLevelsService.getSkillLevels();
 
   const recenetAssessments: Array<AssessmentSessionWithProgress> = assessments
     .slice(0, 6)
@@ -28,6 +30,7 @@ export default async function HomePageRoute() {
           profile,
           matrix,
           proficiencyLevels,
+          skillLevels,
           assessment,
         ),
         progress: {
@@ -44,9 +47,10 @@ export default async function HomePageRoute() {
 
   // TODO: compute stats in the service
   const uniqueExperts = new Set(
-    assessments.flatMap((assessment) =>
-      assessment.feedbacks.map((feedback) => feedback.assessor.fullname),
-    ),
+    assessments
+      .flatMap((assessment) => assessment.feedbacks)
+      .filter((feedback) => feedback.type === "expert")
+      .map((feedback) => feedback.assessor.fullname),
   );
   const assessmentStats = {
     total: assessments.length,

@@ -175,6 +175,8 @@ export interface Stats {
   averageScore: number;
   weightedScore: number;
   weight: number;
+  proficiencyLevel?: string;
+  skillLevel?: string;
 }
 
 export type IndividualAssessmentStatistics = IndividualAssessmentScore & {
@@ -193,6 +195,10 @@ export type IndividualAssessmentScoreWithProgress =
 export interface AssessorModuleStatistics {
   moduleId: string;
   moduleName: string;
+  feedback: {
+    type: "expert" | "self" | "llm";
+    status?: "completed" | "ongoing" | "rejected";
+  };
   assessor: {
     fullname: string;
   };

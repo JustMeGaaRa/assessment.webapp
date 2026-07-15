@@ -139,6 +139,7 @@ export const AssessorEvaluationPage = ({
     profile,
     evaluation.assessor.fullname ?? "Anonymous",
     evaluation.modules,
+    [],
   );
 
   const evaluationStats = {

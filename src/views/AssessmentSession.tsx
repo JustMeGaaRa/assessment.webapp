@@ -305,7 +305,8 @@ export const AssessmentSessionPage = ({
   const assessmentStatistics = calculateAssessmentStatistics(
     profile,
     matrix,
-    levelMappings,
+    levelMappings ?? [],
+    [],
     assessment,
   );
 

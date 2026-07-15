@@ -19,11 +19,13 @@ export const AssessmentModuleDetails: FC<{
           </p>
         </div>
         <div className="assessment-module-header-right">
-          <p className={"text-h4"}>
+          <p className={"assessment-module-attribute-score text-h4"}>
             {module.statistics.averageScore.toFixed(1)}
           </p>
-          <p className={"assessment-module-level text-body-2-compact"}>
-            Competent
+          <p
+            className={"assessment-module-attribute-level text-body-2-compact"}
+          >
+            {module.statistics.proficiencyLevel}
           </p>
         </div>
       </div>

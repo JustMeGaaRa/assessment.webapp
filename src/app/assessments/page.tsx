@@ -8,6 +8,7 @@ import {
   competenceMatrixService,
   jobProfileService,
   proficiencyLevelsService,
+  skillLevelsService,
 } from "@lib/services/azure/storage";
 
 export default async function AssessmentsPageRoute() {
@@ -16,6 +17,7 @@ export default async function AssessmentsPageRoute() {
   const profiles = await jobProfileService.getJobProfiles();
   const proficiencyLevels =
     await proficiencyLevelsService.getProficiencyLevels();
+  const skillLevels = await skillLevelsService.getSkillLevels();
 
   const allAssessments: Array<AssessmentSessionWithProgress> = assessments.map(
     (assessment) => {
@@ -27,6 +29,7 @@ export default async function AssessmentsPageRoute() {
           profile,
           matrix,
           proficiencyLevels,
+          skillLevels,
           assessment,
         ),
         // TODO: move this to state management
